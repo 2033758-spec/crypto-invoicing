@@ -1,0 +1,373 @@
+{
+  "meta": {
+    "title": "Crypto Invoicing — Get paid from abroad in USDC. No hidden spreads.",
+    "description": "Your client pays in USDC. We convert at the best market rate and you receive funds in your bank account in 2–4 business hours. Tax-ready invoices auto-generated.",
+    "ogTitle": "Get paid from abroad. Legal. Without losing 4%.",
+    "ogDescription": "USDC invoicing for LATAM freelancers. Best-rate FX, tax-ready PDFs, non-custodial.",
+    "twitterDescription": "USDC invoicing for LATAM freelancers. Best-rate FX, tax-ready PDFs, non-custodial."
+  },
+  "nav": {
+    "how": "How it works",
+    "calculator": "Calculator",
+    "pricing": "Pricing",
+    "faq": "FAQ",
+    "trust": "Security",
+    "login": "Login",
+    "cta": "Start now"
+  },
+  "hero": {
+    "eyebrow": "[ 00 / Crypto Invoicing ]",
+    "h1Line1": "Get paid from abroad in USDC.",
+    "h1Line2": "Cashed out in pesos.",
+    "subtitle": "Your client pays in USDC. We convert at the best market rate and you get funds in your local bank in <strong>2&ndash;4 business hours</strong>. <strong>Tax-ready PDFs</strong> and monthly reports generate themselves. Your accountant thanks you.",
+    "primaryCta": "Start your first invoice",
+    "secondaryCta": "Calculate your losses",
+    "trustLine": "Non-custodial · Safe multisig on Base · CNV/VASP · Sumsub KYC",
+    "rate": {
+      "label": "Live exchange rate",
+      "source": "CriptoYa · 12s ago",
+      "from": "1 USDC =",
+      "fromBr": "1 USDC =",
+      "footerRouting": "Routing · Binance P2P → Galicia",
+      "footerSources": "Best of 6 sources"
+    }
+  },
+  "marquee": {
+    "meta": "Powered by"
+  },
+  "problem": {
+    "eyebrow": "[ 01 / Problem ]",
+    "h2Prefix": "Every month you lose ",
+    "h2Accent": "3–5%",
+    "h2Suffix": " to spreads, fees and manual filings.",
+    "lead": "Your client pays in dollars. By the time it lands in your account, it's fewer pesos than the number on the invoice. And you still have to file the receipt.",
+    "cards": [
+      {
+        "id": "[ 01.a ] FX spread",
+        "title": "The gap nobody shows you.",
+        "body": "Lemon, PayPal, the banks — each one keeps a slice of the conversion. It's not a line-item fee, it's just a worse rate.",
+        "costLabel": "Monthly avg",
+        "costValue": "≈ 2.5%"
+      },
+      {
+        "id": "[ 01.b ] Visible fees",
+        "title": "Fees to receive, convert, transfer.",
+        "body": "PayPal charges 4.4%. Payoneer stacks its fee on top of the bank spread. Every hop in the chain takes a point.",
+        "costLabel": "PayPal typical",
+        "costValue": "≈ 4.4% + spread"
+      },
+      {
+        "id": "[ 01.c ] Manual tax filing",
+        "title": "Receipt, monthly report, Lemon screenshots.",
+        "body": "Every month: copy amounts into a spreadsheet, calculate the rate, fill in the PDF, send it to your accountant. One hour you repeat twelve times a year.",
+        "costLabel": "Time / year",
+        "costValue": "≈ 12–14h"
+      }
+    ]
+  },
+  "how": {
+    "eyebrow": "[ 02 / Solution ]",
+    "h2Prefix": "One tool. ",
+    "h2Accent": "Four steps.",
+    "lead": "No wallet install, no private keys, no need to understand crypto. Your client pays via a link; you receive in your local bank.",
+    "steps": [
+      {
+        "num": "Step 01",
+        "title": "Create the link",
+        "body": "Client, USD amount, description. Tax-ready PDF pre-built in the draft.",
+        "time": "≈ 30 seconds"
+      },
+      {
+        "num": "Step 02",
+        "title": "Client pays USDC",
+        "body": "They get the link by email. Pay from Coinbase, Metamask or any exchange. They don't need to know what Base is.",
+        "time": "On-chain confirmation"
+      },
+      {
+        "num": "Step 03",
+        "title": "We convert at best rate",
+        "body": "Binance P2P + Bybit + 4 other sources. Automatic routing. You see the rate and the source before accepting.",
+        "time": "Live exchange rate"
+      },
+      {
+        "num": "Step 04",
+        "title": "Pesos in your bank",
+        "body": "ARS to your CBU or BRL via Pix. PDF ready to download. Monthly report generated.",
+        "time": "2–4 business hours"
+      }
+    ]
+  },
+  "calc": {
+    "eyebrow": "[ 03 / Calculator ]",
+    "h2": "How much are you losing per year with your current method?",
+    "lead": "Calculate the exact difference between what you pay today and what you'd pay with Crypto Invoicing. Live data from CriptoYa, no tricks.",
+    "monthlyLabel": "Monthly amount",
+    "currency": "USD",
+    "toolLabel": "Your current method",
+    "countryLabel": "Country",
+    "countryAR": "Argentina · ARS",
+    "countryBR": "Brazil · BRL",
+    "betaTag": "BETA",
+    "outLabel": "Estimated yearly loss vs",
+    "lossOnLabel": "On",
+    "lossOnSuffix": "/year — what disappears to spread + fees.",
+    "spreadLabel": "FX spread",
+    "feeLabel": "Commissions / fees",
+    "oursLabel": "With Crypto Invoicing (1%)",
+    "saveLabel": "↗ You save per year",
+    "footnote": "CriptoYa spreads · 24-month average · Doesn't include reverse-FX costs."
+  },
+  "features": {
+    "eyebrow": "[ 04 / Features ]",
+    "h2": "Everything a LATAM freelancer needs.",
+    "lead": "A work tool, not a wallet. Designed so you open it once a week and everything's ready.",
+    "items": [
+      {
+        "title": "Auto invoice PDF",
+        "body": "Tax-ready PDF generated per operation. Download it, send to client, archive."
+      },
+      {
+        "title": "Monthly filing report",
+        "body": "RG 5642/2025 format. Monthly and yearly PDFs. Regenerable whenever your accountant needs."
+      },
+      {
+        "title": "Multi-rate routing",
+        "body": "6 sources queried per operation. Binance P2P primary, Bybit backup, automatic fallback."
+      },
+      {
+        "title": "Full audit trail",
+        "body": "Every state — with timestamp, tx hash on Base, bank-transfer receipt."
+      },
+      {
+        "title": "Telegram support",
+        "body": "Our bot + human ops. Average response under 30 min in ART business hours."
+      },
+      {
+        "title": "Non-custodial",
+        "body": "Safe multisig on Base. You sign, we co-sign. Money never lives in our balance sheet."
+      }
+    ]
+  },
+  "trust": {
+    "eyebrow": "[ 05 / Trust ]",
+    "h2": "Compliance, not \"trust me bro\".",
+    "lead": "Architecture decisions are deliberately boring. That's what separates a work tool from a Twitter promise.",
+    "cards": [
+      {
+        "title": "Non-custodial Safe multisig",
+        "body": "Your funds flow through a multi-sig <code>Safe</code> on Base. Public on-chain audit. We never hold full custody."
+      },
+      {
+        "title": "Circle USDC",
+        "body": "Audited stablecoin, monthly reserve reports. Compatible with Coinbase, Metamask, every exchange. <code>1 USDC = 1 USD</code>."
+      },
+      {
+        "title": "Sumsub KYC · CNV registered",
+        "body": "ID verification in 5 minutes. Registered with the <code>CNV</code> under the PSAV regime. Your accountant can verify the entity."
+      },
+      {
+        "title": "AFIP / ARCA compliant",
+        "body": "Factura E, monthly filing <code>RG 5642/2025</code>, CSV/PDF formats accepted by Tango, Colppy and AFIP web. For Brazil, conversion-only beta — <code>Receita ↦ 2027</code>."
+      }
+    ]
+  },
+  "pricing": {
+    "eyebrow": "[ 06 / Pricing ]",
+    "h2Prefix": "No surprises. ",
+    "h2Accent": "No minimums.",
+    "lead": "Start free with per-transaction commission. Switch to Pro when automated reports save you more than the plan costs.",
+    "starter": {
+      "plan": "Starter",
+      "amt": "1",
+      "unit": "% per transaction",
+      "tagline": "No subscription. No minimums. Pay only when you get paid.",
+      "features": [
+        "Unlimited USDC invoices",
+        "USDC → ARS / BRL conversion",
+        "Manual PDF invoice (download)",
+        "Email support"
+      ],
+      "muted": [
+        "Auto-generated AFIP report",
+        "Priority Telegram support"
+      ],
+      "cta": "Start free"
+    },
+    "pro": {
+      "ribbon": "RECOMMENDED",
+      "plan": "Pro",
+      "amt": "$9",
+      "unit": "/ month",
+      "tagline": "For freelancers invoicing more than USD 1,000/month. Pays for itself in month one.",
+      "features": [
+        "Everything in Starter",
+        "Auto-generated invoice PDF",
+        "Auto monthly + yearly AFIP report",
+        "CSV export for accountant (Tango, Colppy)",
+        "Telegram support < 30 min ART",
+        "Multi-client (up to 25 clients)"
+      ],
+      "cta": "Start with Pro",
+      "guarantee": "30-day money-back · if you don't save 1.5% vs Lemon we refund the plan."
+    }
+  },
+  "faq": {
+    "eyebrow": "[ 07 / FAQ ]",
+    "h2": "Frequently asked.",
+    "lead": "What freelancers from Sysarmy, DevsAR and Frontend Cafe ask us the most. If yours is missing, write us.",
+    "items": [
+      {
+        "q": "Is it legal to receive crypto in Argentina?",
+        "a": "Yes. Crypto Invoicing is registered with the CNV as a Virtual Asset Service Provider (PSAV), under the current regime. Each operation generates an export-services receipt (Factura E) and is reported automatically to the monthly filing (RG 5642/2025). Your accountant processes it like any other foreign income."
+      },
+      {
+        "q": "Does my client need to understand crypto?",
+        "a": "Barely. You send them a link, they pay from Coinbase, Metamask, or any exchange they already use. If they've never used USDC, we send them a 2-minute guide. Most US/EU clients already have Coinbase."
+      },
+      {
+        "q": "What if USDC depegs from the dollar?",
+        "a": "USDC has reserves audited monthly by Circle, a company registered in the EU and US. During the brief March 2023 depeg (Silicon Valley Bank), parity returned in under 48h. For conversions we use the peso/USDC price at the exact moment your client pays — you see the rate before accepting."
+      },
+      {
+        "q": "How long until the money lands?",
+        "a": "Between 2 and 4 business hours from when the USDC enters our Safe on Base. Off-hours payments process at next business-day open. Status is live in the dashboard with a timestamp at every stage."
+      },
+      {
+        "q": "What about the receipt if I'm in a low Monotributo category?",
+        "a": "We generate Factura E (export of services) for every Monotributo category and Responsable Inscripto. The system validates your tax status with AFIP before issuing each invoice. If you're near your category limit, we warn you."
+      },
+      {
+        "q": "Why is Brazil in beta?",
+        "a": "USDC → BRL conversion works fully. What's in beta is the Receita Federal integration (NFe, DeCripto), planned for 2027. Today we generate a generic transactions PDF that your accountant processes manually. We open BR beta only if the waitlist exceeds 100 freelancers."
+      }
+    ]
+  },
+  "finalCta": {
+    "eyebrow": "[ 08 / Start now ]",
+    "h2Prefix": "Your first invoice is ",
+    "h2Accent": "30 seconds",
+    "h2Suffix": " away.",
+    "sub": "Manual onboarding with the founder in 24h. No waitlist. No credit card to register.",
+    "cta": "Create free account",
+    "disclaimer": "Not financial or tax advice. Consult your accountant."
+  },
+  "footer": {
+    "about": "I'm a gringo living in Buenos Aires. My partner Diana is an Argentine designer who loses money to Lemon every month. That's why I built it.",
+    "product": "Product",
+    "productLinks": {
+      "how": "How it works",
+      "calc": "Calculator",
+      "features": "Features",
+      "pricing": "Pricing"
+    },
+    "company": "Company",
+    "companyLinks": {
+      "about": "About",
+      "compliance": "Compliance · CNV",
+      "blog": "Blog · soon",
+      "email": "hola@cryptoinvoicing.com"
+    },
+    "legal": "Legal",
+    "legalLinks": {
+      "terms": "Terms",
+      "privacy": "Privacy",
+      "cookies": "Cookies",
+      "security": "Security · disclosure"
+    },
+    "bottom": {
+      "left": "© 2026 Crypto Invoicing · Buenos Aires, AR",
+      "right": "v0.4.2 · Q1 launch · concierge onboarding"
+    }
+  },
+  "signup": {
+    "title": "Create your account",
+    "subtitle": "Continue with Google or drop your email — we'll send a magic link. No password.",
+    "googleCta": "Continue with Google",
+    "or": "or",
+    "emailLabel": "Work email",
+    "emailPlaceholder": "you@email.com",
+    "submit": "Send magic link",
+    "submitting": "Sending…",
+    "successTitle": "Check your inbox",
+    "successBody": "We sent an access link to {email}. Click it to open your dashboard.",
+    "errorTitle": "We couldn't send the link",
+    "errorBody": "Network failed. Try again, or write hola@cryptoinvoicing.com.",
+    "back": "Back to home",
+    "footnote": "By continuing you accept our terms. We never share your email.",
+    "footnoteWithLinks": "By creating your account you agree to our <terms>Terms</terms> and <privacy>Privacy Policy</privacy>. We never share your email."
+  },
+  "dashboard": {
+    "welcome": "Welcome to Crypto Invoicing",
+    "body": "Your first-invoice flow lives here in Q1. Manual onboarding for the first 50 freelancers — we'll write you to schedule a 15-min call.",
+    "cta": "Request first invoice setup",
+    "ctaHint": "Q1 concierge mode: founder onboards manually. Click to request a 15-min call.",
+    "signOut": "Sign out",
+    "concierge": "Q1 · Concierge mode",
+    "ctaSending": "Sending…",
+    "ctaSent": "✓ We will reach out",
+    "ctaHintAfter": "Check your Telegram or email within 24h.",
+    "ctaHintError": "Couldn't send the request. Try again or email hola@cryptoinvoicing.com.",
+    "welcomeShort": "Your concierge workspace",
+    "loading": "Authenticating…",
+    "hero": "Fill the form to request your first invoice. We provision a USDC payment address on Base mainnet, you share it with your client, and pesos / reais land on your bank within 2–4 business hours after payment. First 50 freelancers — manual onboarding by the founder.",
+    "form": {
+      "title": "Request an invoice",
+      "subtitle": "We provision the USDC payment address and email you the shareable link within 4 business hours.",
+      "clientName": "Client name",
+      "clientNamePlaceholder": "Acme Inc.",
+      "clientEmail": "Client email",
+      "clientEmailHint": "Optional. We send them the payment link directly if you provide it.",
+      "amount": "Amount",
+      "country": "Settle into",
+      "description": "Service description",
+      "descriptionHint": "Visible on the invoice PDF and AFIP / Receita filings.",
+      "descriptionPlaceholder": "API integration work, May 2026",
+      "submit": "Request invoice",
+      "submitSending": "Submitting…",
+      "submitOk": "✓ Request received",
+      "footnote": "Not a final invoice — we review every request manually during Q1.",
+      "errClientName": "Client name is required.",
+      "errAmount": "Amount must be a positive number.",
+      "errGeneric": "We could not save your request. Try again or email hola@cryptoinvoicing.com."
+    },
+    "list": {
+      "title": "Your requests",
+      "empty": "No invoice requests yet. Submit one above and it will appear here.",
+      "paymentAddress": "USDC address — Base mainnet"
+    },
+    "status": {
+      "pending_setup": "Setting up",
+      "payment_link_ready": "Ready",
+      "paid": "Paid",
+      "settled": "Settled to bank",
+      "cancelled": "Cancelled"
+    }
+  },
+  "locale": {
+    "label": "Language",
+    "es": "ES · AR",
+    "pt": "PT · BR",
+    "en": "EN · US"
+  },
+  "auth": {
+    "callback": {
+      "errorTitle": "Couldn't finish sign-in",
+      "errorNoSession": "No code or session found in callback URL.",
+      "errorUnexpected": "Unexpected error completing sign-in.",
+      "tryAgain": "Try again →",
+      "signingIn": "Signing you in…"
+    }
+  },
+  "cookies": {
+    "consent": {
+      "title": "Cookies & analytics",
+      "body": "We use essential cookies to make the site work, and — only if you accept — anonymous analytics to understand what breaks and what works. No third-party trackers.",
+      "accept": "Accept",
+      "reject": "Reject"
+    }
+  },
+  "legalLanguageBanner": {
+    "title": "English only",
+    "body": "These legal documents are published in English while we finalise the AR-lawyer redline. A Spanish (rioplatense) version will be added after the review."
+  }
+}

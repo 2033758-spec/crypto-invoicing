@@ -1,0 +1,373 @@
+{
+  "meta": {
+    "title": "Crypto Invoicing — Receba do exterior em USDC. Sem spreads escondidos.",
+    "description": "Seu cliente paga em USDC. Convertemos no melhor câmbio do mercado e você recebe no seu Pix em 2–4 horas úteis. PDFs prontos para o contador.",
+    "ogTitle": "Receba do exterior. Legal. Sem perder 4%.",
+    "ogDescription": "Recebimento USDC para freelancers LATAM. Melhor câmbio, PDFs para contador, non-custodial.",
+    "twitterDescription": "Recebimento USDC para freelancers LATAM. Melhor câmbio, PDFs para contador, non-custodial."
+  },
+  "nav": {
+    "how": "Como funciona",
+    "calculator": "Calculadora",
+    "pricing": "Preços",
+    "faq": "FAQ",
+    "trust": "Segurança",
+    "login": "Login",
+    "cta": "Começar agora"
+  },
+  "hero": {
+    "eyebrow": "[ 00 / Crypto Invoicing ]",
+    "h1Line1": "Receba do exterior em USDC.",
+    "h1Line2": "Receba em reais no Pix.",
+    "subtitle": "Seu cliente paga em USDC. Convertemos no melhor câmbio do mercado e você recebe via Pix em <strong>2&ndash;4 horas úteis</strong>. <strong>Invoice em PDF</strong> e relatório de operações gerados automaticamente. Seu contador agradece.",
+    "primaryCta": "Comece sua primeira invoice",
+    "secondaryCta": "Calcule sua perda",
+    "trustLine": "Non-custodial · Safe multisig na Base · Sumsub KYC · Beta BR",
+    "rate": {
+      "label": "Câmbio ao vivo",
+      "source": "Binance P2P · 12s atrás",
+      "from": "1 USDC =",
+      "fromBr": "1 USDC =",
+      "footerRouting": "Routing · Binance P2P → Pix",
+      "footerSources": "Melhor de 6 fontes"
+    }
+  },
+  "marquee": {
+    "meta": "Powered by"
+  },
+  "problem": {
+    "eyebrow": "[ 01 / Problema ]",
+    "h2Prefix": "Todo mês você perde ",
+    "h2Accent": "3–5%",
+    "h2Suffix": " entre spreads, taxas e burocracia manual.",
+    "lead": "Seu cliente paga em dólares. Quando o dinheiro chega na sua conta, sobrou menos do que o número da invoice. E ainda falta organizar pro contador.",
+    "cards": [
+      {
+        "id": "[ 01.a ] Spread cambial",
+        "title": "A diferença que ninguém te mostra.",
+        "body": "Wise, Husky, os bancos — cada um fica com uma fatia na conversão. Não aparece como taxa, aparece como câmbio pior.",
+        "costLabel": "Média mensal",
+        "costValue": "≈ 2.5%"
+      },
+      {
+        "id": "[ 01.b ] Taxas visíveis",
+        "title": "Taxa para receber, para converter, para transferir.",
+        "body": "PayPal cobra 4.4%. Payoneer soma taxa em cima do spread bancário. Cada etapa leva um ponto.",
+        "costLabel": "PayPal típico",
+        "costValue": "≈ 4.4% + spread"
+      },
+      {
+        "id": "[ 01.c ] Burocracia manual",
+        "title": "DeCripto, planilhas, screenshots da Wise.",
+        "body": "Todo mês: copia valores na planilha, calcula o câmbio, manda screenshot pro contador. Uma hora que você repete doze vezes por ano.",
+        "costLabel": "Tempo / ano",
+        "costValue": "≈ 12–14h"
+      }
+    ]
+  },
+  "how": {
+    "eyebrow": "[ 02 / Solução ]",
+    "h2Prefix": "Uma única ferramenta. ",
+    "h2Accent": "Quatro passos.",
+    "lead": "Sem instalar wallet, sem chave privada, sem entender de cripto. Seu cliente paga por um link; você recebe em reais no Pix.",
+    "steps": [
+      {
+        "num": "Passo 01",
+        "title": "Gere o link",
+        "body": "Cliente, valor em USD, descrição. Invoice em PDF pré-montada no rascunho.",
+        "time": "≈ 30 segundos"
+      },
+      {
+        "num": "Passo 02",
+        "title": "Cliente paga USDC",
+        "body": "Recebe o link por email. Paga via Coinbase, Metamask ou qualquer exchange. Sem precisar saber o que é Base.",
+        "time": "Confirmação on-chain"
+      },
+      {
+        "num": "Passo 03",
+        "title": "Convertemos no melhor câmbio",
+        "body": "Binance P2P + Bybit + 4 fontes. Routing automático. Você vê a taxa e a fonte antes de aceitar.",
+        "time": "Câmbio ao vivo"
+      },
+      {
+        "num": "Passo 04",
+        "title": "Reais no seu Pix",
+        "body": "BRL via Pix. Invoice em PDF pronto para baixar. Relatório de transações do mês gerado.",
+        "time": "2–4 horas úteis"
+      }
+    ]
+  },
+  "calc": {
+    "eyebrow": "[ 03 / Calculadora ]",
+    "h2": "Quanto você perde por ano com seu método atual?",
+    "lead": "Calcule a diferença exata entre o que você paga hoje e o que pagaria com Crypto Invoicing. Dados ao vivo, sem pegadinha.",
+    "monthlyLabel": "Valor mensal",
+    "currency": "USD",
+    "toolLabel": "Seu método atual",
+    "countryLabel": "País",
+    "countryAR": "Argentina · ARS",
+    "countryBR": "Brasil · BRL",
+    "betaTag": "BETA",
+    "outLabel": "Perda anual estimada vs",
+    "lossOnLabel": "Sobre",
+    "lossOnSuffix": "/ano — o que vai em spread + taxa.",
+    "spreadLabel": "Spread cambial",
+    "feeLabel": "Taxas",
+    "oursLabel": "Com Crypto Invoicing (1%)",
+    "saveLabel": "↗ Você economiza por ano",
+    "footnote": "Spreads de mercado · média 24 meses · Não inclui custo de câmbio reverso."
+  },
+  "features": {
+    "eyebrow": "[ 04 / Recursos ]",
+    "h2": "Tudo que um freelancer LATAM precisa.",
+    "lead": "Uma ferramenta de trabalho, não uma wallet. Pensada para você abrir uma vez por semana e já estar tudo pronto.",
+    "items": [
+      {
+        "title": "Invoice em PDF",
+        "body": "PDF gerado por operação. Baixa, manda pro cliente, arquiva. Beta BR: PDF genérico."
+      },
+      {
+        "title": "Relatório de operações",
+        "body": "PDF mensal e anual. Regenerável quando seu contador pedir. Receita integration → 2027."
+      },
+      {
+        "title": "Roteamento multi-fonte",
+        "body": "6 fontes consultadas por operação. Binance P2P principal, Bybit backup, fallback automático."
+      },
+      {
+        "title": "Audit trail completo",
+        "body": "Cada estado — com timestamp, tx hash na Base, comprovante de transferência BRL."
+      },
+      {
+        "title": "Suporte por Telegram",
+        "body": "Bot próprio + ops humano. Resposta média < 30 min em horário ART."
+      },
+      {
+        "title": "Non-custodial",
+        "body": "Safe multisig na Base. Você assina, nós co-assinamos. O dinheiro nunca passa pela nossa conta."
+      }
+    ]
+  },
+  "trust": {
+    "eyebrow": "[ 05 / Segurança ]",
+    "h2": "Compliance, não «trust me bro».",
+    "lead": "As decisões de arquitetura são chatas de propósito. É o que separa uma ferramenta de trabalho de uma promessa no Twitter.",
+    "cards": [
+      {
+        "title": "Non-custodial Safe multisig",
+        "body": "Seu dinheiro flui por um <code>Safe</code> multi-sig na Base. Auditoria on-chain pública. Nunca temos custódia total."
+      },
+      {
+        "title": "USDC da Circle",
+        "body": "Stablecoin auditada, reservas reportadas mensalmente. Compatível com Coinbase, Metamask, todo exchange. <code>1 USDC = 1 USD</code>."
+      },
+      {
+        "title": "Sumsub KYC",
+        "body": "Verificação de identidade em 5 minutos. Travel Rule compliant. Screening de sanções em cada wallet."
+      },
+      {
+        "title": "Beta no Brasil",
+        "body": "Conversão USDC → BRL funciona completa. Integração Receita Federal (NFe, DeCripto) <code>↦ 2027</code>. Hoje você cuida do DeCripto com seu contador."
+      }
+    ]
+  },
+  "pricing": {
+    "eyebrow": "[ 06 / Preços ]",
+    "h2Prefix": "Sem surpresas. ",
+    "h2Accent": "Sem mínimo.",
+    "lead": "Comece grátis com comissão por transação. Migre pro Pro quando os relatórios automáticos economizarem mais que o plano.",
+    "starter": {
+      "plan": "Starter",
+      "amt": "1",
+      "unit": "% por transação",
+      "tagline": "Sem assinatura. Sem mínimo. Paga só quando recebe.",
+      "features": [
+        "Invoices USDC ilimitadas",
+        "Conversão USDC → BRL",
+        "PDF de invoice (download)",
+        "Suporte por email"
+      ],
+      "muted": [
+        "Relatório auto-gerado",
+        "Suporte Telegram prioritário"
+      ],
+      "cta": "Começar grátis"
+    },
+    "pro": {
+      "ribbon": "RECOMENDADO",
+      "plan": "Pro",
+      "amt": "$9",
+      "unit": "/ mês",
+      "tagline": "Para quem fatura mais de USD 1.000/mês. Se paga no primeiro mês.",
+      "features": [
+        "Tudo do Starter",
+        "Invoice auto-gerada",
+        "Relatório mensal + anual",
+        "Export CSV pro contador",
+        "Suporte Telegram < 30 min",
+        "Multi-cliente (até 25 clientes)"
+      ],
+      "cta": "Começar com Pro",
+      "guarantee": "30 dias money-back · se você não economizar 1.5% vs Wise, devolvemos o plano."
+    }
+  },
+  "faq": {
+    "eyebrow": "[ 07 / FAQ ]",
+    "h2": "Perguntas frequentes.",
+    "lead": "O que freelancers brasileiros mais perguntam. Faltou alguma? Escreva para a gente.",
+    "items": [
+      {
+        "q": "É legal receber cripto no Brasil?",
+        "a": "Sim. Você declara as operações no DeCripto via seu contador. Geramos um PDF genérico de transações que ele processa manualmente. Integração Receita Federal nativa chega em 2027."
+      },
+      {
+        "q": "Meu cliente precisa entender de cripto?",
+        "a": "Quase nada. Você manda o link, ele paga de Coinbase, Metamask ou qualquer exchange. Se nunca usou USDC, mandamos um guia de 2 minutos. A maioria dos clientes EUA/UE já tem Coinbase."
+      },
+      {
+        "q": "E se USDC desancorar do dólar?",
+        "a": "USDC tem reservas auditadas mensalmente pela Circle. No depeg breve de março-2023 (Silicon Valley Bank), a paridade voltou em menos de 48h. Para conversões, usamos o preço BRL/USDC no momento exato do pagamento — você vê a taxa antes de aceitar."
+      },
+      {
+        "q": "Quanto tempo até o BRL cair no Pix?",
+        "a": "Entre 2 e 4 horas úteis depois que o USDC entra na nossa Safe na Base. Fora de horário, processamos na abertura do próximo dia útil. Status ao vivo no dashboard com timestamp em cada etapa."
+      },
+      {
+        "q": "Como funciona o DeCripto?",
+        "a": "Beta BR: você cuida do DeCripto com seu contador. Geramos um PDF genérico de operações que ele importa. Integração Receita Federal nativa (NFe + DeCripto auto) chega em 2027."
+      },
+      {
+        "q": "Por que Brasil está em beta?",
+        "a": "A conversão USDC → BRL funciona completa. O que está em beta é a integração com a Receita Federal (NFe, DeCripto), prevista para 2027. Hoje geramos um PDF genérico de transações. Abrimos beta ampla só se a lista de espera passar de 100 freelancers."
+      }
+    ]
+  },
+  "finalCta": {
+    "eyebrow": "[ 08 / Comece agora ]",
+    "h2Prefix": "Sua primeira invoice está a ",
+    "h2Accent": "30 segundos",
+    "h2Suffix": ".",
+    "sub": "Onboarding manual com o founder em 24h. Sem lista de espera. Sem cartão para registrar.",
+    "cta": "Criar conta grátis",
+    "disclaimer": "Não é consultoria financeira ou tributária. Consulte seu contador."
+  },
+  "footer": {
+    "about": "Sou estrangeiro morando em Buenos Aires. Minha parceira Diana é designer argentina e perde dinheiro com Lemon todo mês. Por isso eu construí isto.",
+    "product": "Produto",
+    "productLinks": {
+      "how": "Como funciona",
+      "calc": "Calculadora",
+      "features": "Recursos",
+      "pricing": "Preços"
+    },
+    "company": "Companhia",
+    "companyLinks": {
+      "about": "Sobre",
+      "compliance": "Compliance",
+      "blog": "Blog · em breve",
+      "email": "hola@cryptoinvoicing.com"
+    },
+    "legal": "Legal",
+    "legalLinks": {
+      "terms": "Termos",
+      "privacy": "Privacidade",
+      "cookies": "Cookies",
+      "security": "Segurança · disclosure"
+    },
+    "bottom": {
+      "left": "© 2026 Crypto Invoicing · Buenos Aires, AR",
+      "right": "v0.4.2 · Q1 launch · concierge onboarding"
+    }
+  },
+  "signup": {
+    "title": "Crie sua conta",
+    "subtitle": "Continue com Google ou deixe seu email — enviamos um magic link. Sem senha.",
+    "googleCta": "Continuar com Google",
+    "or": "ou",
+    "emailLabel": "Email de trabalho",
+    "emailPlaceholder": "voce@email.com",
+    "submit": "Enviar magic link",
+    "submitting": "Enviando…",
+    "successTitle": "Confira sua caixa",
+    "successBody": "Enviamos um link de acesso para {email}. Clique para abrir seu dashboard.",
+    "errorTitle": "Não conseguimos enviar o link",
+    "errorBody": "Falha na rede. Tente de novo, ou escreva para hola@cryptoinvoicing.com.",
+    "back": "Voltar ao início",
+    "footnote": "Ao continuar você aceita nossos termos. Nunca compartilhamos seu email.",
+    "footnoteWithLinks": "Ao criar sua conta você aceita os nossos <terms>Termos</terms> e a <privacy>Política de Privacidade</privacy>. Nunca compartilhamos seu email."
+  },
+  "dashboard": {
+    "welcome": "Boas-vindas ao Crypto Invoicing",
+    "body": "Seu fluxo de primeira invoice fica aqui no Q1. Onboarding manual para os primeiros 50 freelancers — entramos em contato para agendar uma call de 15 min.",
+    "cta": "Solicitar a configuração da primeira fatura",
+    "ctaHint": "Modo concierge Q1: o fundador faz o onboarding manualmente. Clique para pedir uma chamada de 15 min.",
+    "signOut": "Sair",
+    "concierge": "Q1 · Concierge mode",
+    "ctaSending": "Enviando…",
+    "ctaSent": "✓ Vamos te escrever",
+    "ctaHintAfter": "Verifique seu Telegram ou e-mail nas próximas 24 h.",
+    "ctaHintError": "Não foi possível enviar a solicitação. Tente de novo ou escreva para hola@cryptoinvoicing.com.",
+    "welcomeShort": "Seu espaço concierge",
+    "loading": "Autenticando…",
+    "hero": "Preencha o formulário para solicitar sua primeira fatura. Provisionamos um endereço USDC na Base, você compartilha com seu cliente, e os reais chegam ao seu Pix em 2–4 horas úteis após o pagamento. Primeiros 50 freelancers — onboarding manual pelo fundador.",
+    "form": {
+      "title": "Solicite uma fatura",
+      "subtitle": "Provisionamos o endereço USDC e te enviamos o link em até 4 horas úteis.",
+      "clientName": "Nome do cliente",
+      "clientNamePlaceholder": "Acme Inc.",
+      "clientEmail": "E-mail do cliente",
+      "clientEmailHint": "Opcional. Se preenchido, enviamos o link de pagamento direto para o cliente.",
+      "amount": "Valor",
+      "country": "Receber em",
+      "description": "Descrição do serviço",
+      "descriptionHint": "Aparece no PDF de transações para o seu contador.",
+      "descriptionPlaceholder": "Trabalho de integração API, maio 2026",
+      "submit": "Solicitar fatura",
+      "submitSending": "Enviando…",
+      "submitOk": "✓ Solicitação recebida",
+      "footnote": "Não é uma fatura final — revisamos cada solicitação manualmente no Q1.",
+      "errClientName": "O nome do cliente é obrigatório.",
+      "errAmount": "O valor deve ser positivo.",
+      "errGeneric": "Não foi possível salvar sua solicitação. Tente de novo ou escreva para hola@cryptoinvoicing.com."
+    },
+    "list": {
+      "title": "Suas solicitações",
+      "empty": "Ainda não há solicitações. Envie uma acima e ela aparece aqui.",
+      "paymentAddress": "Endereço USDC — Base mainnet"
+    },
+    "status": {
+      "pending_setup": "Preparando",
+      "payment_link_ready": "Pronta",
+      "paid": "Paga",
+      "settled": "No seu Pix",
+      "cancelled": "Cancelada"
+    }
+  },
+  "locale": {
+    "label": "Idioma",
+    "es": "ES · AR",
+    "pt": "PT · BR",
+    "en": "EN · US"
+  },
+  "auth": {
+    "callback": {
+      "errorTitle": "Não conseguimos concluir o login",
+      "errorNoSession": "Não encontramos o código ou a sessão na URL de callback.",
+      "errorUnexpected": "Erro inesperado ao concluir o login.",
+      "tryAgain": "Tentar de novo →",
+      "signingIn": "Iniciando seu login…"
+    }
+  },
+  "cookies": {
+    "consent": {
+      "title": "Cookies e analytics",
+      "body": "Usamos cookies essenciais para o site funcionar e, se você aceitar, analytics anônimos para entender o que quebra e o que funciona. Sem trackers de terceiros.",
+      "accept": "Aceitar",
+      "reject": "Recusar"
+    }
+  },
+  "legalLanguageBanner": {
+    "title": "Apenas em inglês",
+    "body": "Estes documentos legais são publicados em inglês enquanto finalizamos a revisão jurídica argentina. Uma versão em português brasileiro será adicionada após a revisão."
+  }
+}

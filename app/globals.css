@@ -1,0 +1,793 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────────────────────
+   Design System v3 — Crypto Invoicing (rebuild stamp 2026-05-26)
+   Self-hosted Space Grotesk + Inter + JetBrains Mono from
+   /public/fonts/. Imported via the static URL so the same file
+   serves at /fonts/fonts.css too (not strictly used but kept
+   for parity with the design-system bundle).
+   ───────────────────────────────────────────────────────────── */
+
+/* ── Self-hosted fonts ── */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/inter-400-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/inter-400-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7,
+    U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF,
+    U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/inter-500-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/inter-500-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/inter-600-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/inter-600-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/inter-700-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/inter-700-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/space-grotesk-400-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/space-grotesk-400-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/space-grotesk-500-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/space-grotesk-500-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/space-grotesk-600-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/space-grotesk-600-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/space-grotesk-700-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/space-grotesk-700-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-400-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-400-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-500-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-500-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-600-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-600-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   CSS variables — mirror colors_and_type.css from the design system
+   ──────────────────────────────────────────────────────────────── */
+:root {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --surface: #0f1513;
+  --surface-dim: #0f1513;
+  --surface-bright: #353a38;
+  --surface-container-lowest: #0a0f0d;
+  --surface-container-low: #171d1b;
+  --surface-container: #1b211f;
+  --surface-container-high: #252b29;
+  --surface-container-highest: #303634;
+
+  /* Text */
+  --on-surface: #dee4e0;
+  --on-surface-variant: #bccac2;
+  --on-surface-placeholder: #87948d;
+  --inverse-surface: #dee4e0;
+  --inverse-on-surface: #2c322f;
+
+  /* Outlines */
+  --outline: #87948d;
+  --outline-variant: #3d4944;
+  --outline-hairline: rgba(255, 255, 255, 0.06);
+
+  /* Primary (Jade) */
+  --primary: #69dab6;
+  --primary-hover: #86f7d1;
+  --primary-pressed: #27a382;
+  --on-primary: #00382a;
+  --primary-container: #27a382;
+  --on-primary-container: #003024;
+  --primary-fixed: #86f7d1;
+  --primary-fixed-dim: #69dab6;
+  --primary-glow: rgba(105, 218, 182, 0.1);
+  --primary-glow-strong: rgba(105, 218, 182, 0.22);
+
+  /* Secondary */
+  --secondary: #a5d0be;
+  --on-secondary: #0d372b;
+  --secondary-container: #264e41;
+  --on-secondary-container: #94bead;
+
+  /* Tertiary (Coral) */
+  --tertiary: #ffb4a3;
+  --on-tertiary: #5b1a0b;
+  --tertiary-container: #d47761;
+  --on-tertiary-container: #521406;
+
+  /* Error */
+  --error: #ffb4ab;
+  --on-error: #690005;
+  --error-container: #93000a;
+  --on-error-container: #ffdad6;
+
+  /* Status */
+  --status-draft: #87948d;
+  --status-sent: #bccac2;
+  --status-pending: #ffb4a3;
+  --status-paid: #69dab6;
+  --status-settled: #27a382;
+  --status-error: #ffb4ab;
+  --status-draft-bg: rgba(135, 148, 141, 0.12);
+  --status-sent-bg: rgba(188, 202, 194, 0.12);
+  --status-pending-bg: rgba(255, 180, 163, 0.12);
+  --status-paid-bg: rgba(105, 218, 182, 0.12);
+  --status-settled-bg: rgba(39, 163, 130, 0.18);
+  --status-error-bg: rgba(255, 180, 171, 0.12);
+
+  /* Typography */
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Spacing */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  --gutter: 24px;
+  --margin-mobile: 16px;
+  --margin-desktop: 64px;
+  --max-width: 1440px;
+
+  /* Radius */
+  --radius-sm: 2px;
+  --radius: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-full: 9999px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-snap: cubic-bezier(0.5, 0, 0, 1);
+  --duration-instant: 80ms;
+  --duration-fast: 120ms;
+  --duration-base: 180ms;
+  --duration-medium: 240ms;
+  --duration-slow: 400ms;
+  --duration-reveal: 500ms;
+
+  /* Atmospheric */
+  --glow-jade: 0 0 40px 0 var(--primary-glow);
+  --glow-jade-strong: 0 0 56px 0 var(--primary-glow-strong);
+  --inset-well: inset 0 1px 0 rgba(0, 0, 0, 0.4);
+
+  /* Grain SVG */
+  --grain-svg: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+
+  /* Cursor spotlight default position */
+  --cursor-x: 50%;
+  --cursor-y: 50%;
+}
+
+/* ── Base body ────────────────────────────────────────── */
+html,
+body {
+  margin: 0;
+  color: var(--on-surface);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+/* Surface color lives on html so body::before (z-index 0) can paint
+   above it but below main content (z-index 1). Body must stay
+   transparent or the spotlight is buried under body bg. */
+html { background: var(--surface); }
+body { background: transparent; }
+
+/* ── Hard overrides for font utility classes ──────────────────
+   Tailwind's font-family utilities get baked at build time, so
+   if the dev server keeps a stale config we override them here. */
+.font-display,
+.font-geist {
+  font-family: var(--font-display) !important;
+}
+.font-body,
+.font-sans {
+  font-family: var(--font-body) !important;
+}
+.font-mono {
+  font-family: var(--font-mono) !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body { position: relative; }
+
+/* ── Cursor spotlight — fixed viewport overlay ─────────────────
+   Fixed-positioned pseudo-element spans the full viewport so the
+   spotlight follows the cursor (clientX/clientY are viewport
+   coords) regardless of scroll. `z-index: 0` sits ABOVE the html
+   surface color and BELOW any positioned content (header/main/
+   footer are forced `position: relative; z-index: 1`). Cards and
+   section frames have solid container colors so the spotlight
+   stays visually behind them. Disable under reduced-motion. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    520px circle at var(--cursor-x) var(--cursor-y),
+    rgba(105, 218, 182, 0.22),
+    rgba(105, 218, 182, 0.08) 35%,
+    transparent 72%
+  );
+  transition: opacity 200ms ease-out;
+  will-change: background;
+}
+
+/* Lift direct content above the spotlight overlay. Cards within
+   sections inherit a solid surface-container background from the
+   landing-v3 styles so the spotlight reads as "behind frames". */
+body > header,
+body > main,
+body > footer,
+body > nav {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before { display: none; }
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ── Grain overlay (fixed, behind content) ───────────── */
+.with-grain::before,
+.noise-overlay {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--grain-svg);
+  opacity: 0.7;
+  mix-blend-mode: overlay;
+  z-index: 1;
+}
+
+/* ── Vertical seam columns (decorative grid) ─────────── */
+.seams {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  display: grid;
+  grid-template-columns: var(--margin-desktop) 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr var(--margin-desktop);
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+.seams > span {
+  border-right: 1px solid var(--outline-hairline);
+  height: 100%;
+}
+.seams > span:first-child,
+.seams > span:last-child,
+.seams > span:nth-child(2) {
+  border-right: 1px solid rgba(255, 255, 255, 0.025);
+}
+
+/* ── Shell (centered content container) ──────────────── */
+.shell {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--margin-desktop);
+  position: relative;
+  z-index: 2;
+}
+@media (max-width: 768px) {
+  .shell {
+    padding: 0 var(--margin-mobile);
+  }
+}
+
+/* ── Mobile touch targets (WCAG 2.5.5 + Apple HIG) ────
+   On phones ≤640px, every interactive element gets
+   min-height 44px. Pointer-coarse first, fall-through to
+   any-pointer ≤640 so Chrome devtools-mobile emulation
+   without real touch also passes the audit.
+
+   Calculator segmented buttons are sized via Tailwind on
+   the component itself (`min-h-[44px] min-[480px]:min-h-0`)
+   so they wrap to two rows instead of squeezing — see
+   landing-v3/Calculator.tsx Segmented + SegBtn. */
+@media (max-width: 640px) {
+  .btn,
+  details > summary,
+  input[type="range"],
+  footer a,
+  nav a {
+    min-height: 44px;
+    /* For inline links inside footer columns, the height comes from
+       padding-y, not min-height (which doesn't apply to inline boxes). */
+    display: inline-flex;
+    align-items: center;
+  }
+  /* Footer link rows need vertical breathing room so 44-h hits don't
+     overlap each other and create accidental taps. */
+  footer ul li,
+  footer .footer-col li {
+    margin-block: 4px;
+  }
+}
+
+/* ── Eyebrow (mono `[ 01 / SECTION ]`) ───────────────── */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 24px;
+}
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 22px;
+  height: 1px;
+  background: currentColor;
+}
+
+/* ── Buttons ─────────────────────────────────────────── */
+.btn {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 14px;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 240ms var(--ease-out);
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+.btn-primary {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+.btn-primary:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 0 32px 0 var(--primary-glow-strong);
+  transform: translateY(-1px);
+}
+.btn-primary:active {
+  transform: translateY(0);
+  filter: brightness(0.95);
+}
+.btn-secondary {
+  background: transparent;
+  border-color: var(--outline-variant);
+  color: var(--on-surface);
+}
+.btn-secondary:hover {
+  border-color: var(--primary);
+  color: var(--primary-hover);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--on-surface-variant);
+}
+.btn-ghost:hover {
+  color: var(--on-surface);
+  background: rgba(255, 255, 255, 0.04);
+}
+.btn-lg {
+  font-size: 15px;
+  padding: 14px 22px;
+}
+.btn .arrow {
+  transition: transform 240ms var(--ease-out);
+  display: inline-block;
+}
+.btn:hover .arrow {
+  transform: translateX(4px);
+}
+
+/* ── Word-by-word reveal (hero) ──────────────────────── */
+.reveal-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: revealWord 600ms var(--ease-out) forwards;
+}
+@keyframes revealWord {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Scroll reveal ──────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out);
+}
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Marquee ─────────────────────────────────────────── */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  display: inline-flex;
+  gap: 56px;
+  animation: marquee 40s linear infinite;
+  white-space: nowrap;
+  padding-right: 56px;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ── Live-rate pulse ─────────────────────────────────── */
+@keyframes ci-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* ── Number-input slider (calculator) ────────────────── */
+input[type="range"].calc-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  margin-top: 14px;
+  height: 2px;
+  background: var(--outline-variant);
+  border-radius: 2px;
+  outline: none;
+}
+input[type="range"].calc-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: grab;
+  box-shadow: 0 0 12px var(--primary-glow-strong);
+  transition: transform 150ms var(--ease-out);
+}
+input[type="range"].calc-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+input[type="range"].calc-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: grab;
+  border: none;
+}
+
+/* ── FAQ details/summary ─────────────────────────────── */
+details.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+details.faq-item summary {
+  list-style: none;
+}
+details.faq-item[open] .faq-plus {
+  transform: rotate(45deg);
+  color: var(--primary);
+}
+
+/* ── Legal document prose ───────────────────────────── */
+.legal-doc {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--on-surface-variant);
+}
+.legal-doc > * + * {
+  margin-top: 14px;
+}
+.legal-doc h1 {
+  font-family: var(--font-display, "Space Grotesk", system-ui, sans-serif);
+  font-weight: 600;
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--on-surface);
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+.legal-doc h2 {
+  font-family: var(--font-display, "Space Grotesk", system-ui, sans-serif);
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--on-surface);
+  margin-top: 36px;
+  margin-bottom: 8px;
+}
+.legal-doc h3 {
+  font-family: var(--font-display, "Space Grotesk", system-ui, sans-serif);
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.35;
+  color: var(--on-surface);
+  margin-top: 28px;
+  margin-bottom: 6px;
+}
+.legal-doc h4 {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primary);
+  margin-top: 24px;
+  margin-bottom: 4px;
+}
+.legal-doc p {
+  margin: 0;
+}
+.legal-doc ul,
+.legal-doc ol {
+  margin: 8px 0 8px 0;
+  padding-left: 22px;
+}
+.legal-doc ul li,
+.legal-doc ol li {
+  margin: 4px 0;
+}
+.legal-doc a {
+  color: var(--primary);
+  text-decoration: underline;
+}
+.legal-doc a:hover {
+  color: var(--primary-hover, #87e5c4);
+}
+.legal-doc code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  background: var(--surface-container-low);
+  border: 1px solid var(--outline-variant);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+.legal-doc strong {
+  color: var(--on-surface);
+  font-weight: 600;
+}
+.legal-doc hr {
+  border: none;
+  border-top: 1px solid var(--outline-variant);
+  margin: 28px 0;
+}
+.legal-doc table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 16px 0;
+}
+.legal-doc th,
+.legal-doc td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--outline-variant);
+  vertical-align: top;
+}
+.legal-doc th {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--on-surface-placeholder);
+  background: var(--surface-container-low);
+}
+
+/* ── Reduce motion ───────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+  body {
+    background: var(--surface) !important;
+  }
+}

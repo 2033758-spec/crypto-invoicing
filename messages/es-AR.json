@@ -1,0 +1,373 @@
+{
+  "meta": {
+    "title": "Crypto Invoicing — Cobrá del exterior en USDC. Sin spreads ocultos.",
+    "description": "Tu cliente paga en USDC. Convertimos al mejor tipo de cambio del mercado y vos cobrás en tu CBU en 2–4 horas hábiles. Factura E y reporte AFIP automáticos.",
+    "ogTitle": "Cobrá del exterior. En blanco. Sin perder 4%.",
+    "ogDescription": "Cobranza USDC para freelancers LATAM. Mejor tipo de cambio, factura E, non-custodial.",
+    "twitterDescription": "Cobranza USDC para freelancers LATAM. Mejor tipo de cambio, factura E, non-custodial."
+  },
+  "nav": {
+    "how": "Cómo funciona",
+    "calculator": "Calculadora",
+    "pricing": "Precios",
+    "faq": "FAQ",
+    "trust": "Seguridad",
+    "login": "Login",
+    "cta": "Empezá ahora"
+  },
+  "hero": {
+    "eyebrow": "[ 00 / Crypto Invoicing ]",
+    "h1Line1": "Cobrá del exterior en USDC.",
+    "h1Line2": "Pagá en pesos.",
+    "subtitle": "Tu cliente paga en USDC. Convertimos al mejor tipo de cambio del mercado y vos cobrás en tu CBU en <strong>2&ndash;4 horas hábiles</strong>. La <strong>factura E</strong> y el reporte AFIP se generan solos. Tu contador te lo agradece.",
+    "primaryCta": "Empezá tu primera factura",
+    "secondaryCta": "Calculá tu pérdida",
+    "trustLine": "No-custodial · Safe multisig on Base · CNV/VASP · Sumsub KYC",
+    "rate": {
+      "label": "Tipo de cambio en vivo",
+      "source": "CriptoYa · hace 12s",
+      "from": "1 USDC =",
+      "fromBr": "1 USDC =",
+      "footerRouting": "Routing · Binance P2P → Galicia",
+      "footerSources": "Mejor de 6 fuentes"
+    }
+  },
+  "marquee": {
+    "meta": "Soportado por · powered by"
+  },
+  "problem": {
+    "eyebrow": "[ 01 / Problem ]",
+    "h2Prefix": "Cada mes perdés ",
+    "h2Accent": "3–5%",
+    "h2Suffix": " entre spreads, comisiones y trámites manuales.",
+    "lead": "Tu cliente paga en dólares. Para cuando llega a tu cuenta, son menos pesos de los que mirabas en el spreadsheet. Y todavía falta armar la factura E.",
+    "cards": [
+      {
+        "id": "[ 01.a ] Spread cambiario",
+        "title": "La diferencia que nadie te muestra.",
+        "body": "Lemon, PayPal, los bancos — cada uno se queda con su tajada en la conversión. No aparece como comisión, aparece como un tipo de cambio peor.",
+        "costLabel": "Promedio mensual",
+        "costValue": "≈ 2.5%"
+      },
+      {
+        "id": "[ 01.b ] Comisiones visibles",
+        "title": "Fees al recibir, al convertir, al transferir.",
+        "body": "PayPal cobra 4.4%. Payoneer suma su comisión al spread bancario. Cada salto en la cadena se lleva un punto.",
+        "costLabel": "PayPal típico",
+        "costValue": "≈ 4.4% + spread"
+      },
+      {
+        "id": "[ 01.c ] Trámite AFIP manual",
+        "title": "Factura E, régimen informativo, capturas de Lemon.",
+        "body": "Cada mes: vuelcás montos a una planilla, calculás el cambio, llenás el PDF, se lo mandás al contador. Una hora que repetís doce veces al año.",
+        "costLabel": "Tiempo / año",
+        "costValue": "≈ 12–14h"
+      }
+    ]
+  },
+  "how": {
+    "eyebrow": "[ 02 / Solution ]",
+    "h2Prefix": "Una sola herramienta. ",
+    "h2Accent": "Cuatro pasos.",
+    "lead": "Sin instalar wallets, sin claves privadas, sin entender de criptomonedas. Tu cliente paga por un link; vos cobrás en pesos en tu CBU.",
+    "steps": [
+      {
+        "num": "Paso 01",
+        "title": "Generás el link",
+        "body": "Cliente, monto en USD, descripción. La factura E queda pre-armada en el borrador.",
+        "time": "≈ 30 segundos"
+      },
+      {
+        "num": "Paso 02",
+        "title": "Tu cliente paga USDC",
+        "body": "Recibe el link por mail. Paga desde Coinbase, Metamask o cualquier exchange. Sin necesidad de saber qué es Base.",
+        "time": "Confirmación on-chain"
+      },
+      {
+        "num": "Paso 03",
+        "title": "Convertimos al mejor tipo de cambio",
+        "body": "Binance P2P + Bybit + 4 fuentes. Routing automático. Ves el tipo de cambio y la fuente antes de aceptar.",
+        "time": "Tipo de cambio en vivo"
+      },
+      {
+        "num": "Paso 04",
+        "title": "Pesos en tu CBU",
+        "body": "ARS en tu CBU o BRL por Pix. Factura E lista para descargar. Reporte AFIP del mes generado.",
+        "time": "2–4 horas hábiles"
+      }
+    ]
+  },
+  "calc": {
+    "eyebrow": "[ 03 / Calculator ]",
+    "h2": "¿Cuánto perdés por año con tu método actual?",
+    "lead": "Calculá la diferencia exacta entre lo que pagás hoy y lo que pagarías con Crypto Invoicing. Datos vivos de CriptoYa, sin trampa.",
+    "monthlyLabel": "Monto mensual",
+    "currency": "USD",
+    "toolLabel": "Tu método actual",
+    "countryLabel": "País",
+    "countryAR": "Argentina · ARS",
+    "countryBR": "Brasil · BRL",
+    "betaTag": "BETA",
+    "outLabel": "Pérdida anual estimada vs",
+    "lossOnLabel": "Sobre",
+    "lossOnSuffix": "/año — lo que se va en spread + fees.",
+    "spreadLabel": "Spread cambiario",
+    "feeLabel": "Comisiones / fees",
+    "oursLabel": "Con Crypto Invoicing (1%)",
+    "saveLabel": "↗ Ahorrás por año",
+    "footnote": "Spreads de CriptoYa · 24-mes promedio · No incluye costos de cambio de moneda inversa."
+  },
+  "features": {
+    "eyebrow": "[ 04 / Características ]",
+    "h2": "Todo lo que un freelancer LATAM necesita.",
+    "lead": "Una herramienta de trabajo, no una billetera. Diseñada para que la abras una vez por semana y todo esté listo.",
+    "items": [
+      {
+        "title": "Factura E automática",
+        "body": "PDF AFIP-compliant generado en cada operación. Bajalo, mandáselo al cliente, archivá."
+      },
+      {
+        "title": "Reporte régimen informativo",
+        "body": "RG 5642/2025. PDF mensual y anual. Re-generable cuando lo necesite tu contador."
+      },
+      {
+        "title": "Ruteo multi-fuente",
+        "body": "6 fuentes consultadas en cada operación. Binance P2P primario, Bybit backup, fallback automático."
+      },
+      {
+        "title": "Audit trail completo",
+        "body": "Cada estado — con timestamp, tx hash on Base, comprobante de transferencia ARS."
+      },
+      {
+        "title": "Soporte por Telegram",
+        "body": "Bot propio + ops humano. Respuesta promedio bajo 30 min en horario ART."
+      },
+      {
+        "title": "No-custodial",
+        "body": "Safe multisig on Base. Vos firmás, nosotros co-firmamos. La plata nunca pasa por nuestra cuenta."
+      }
+    ]
+  },
+  "trust": {
+    "eyebrow": "[ 05 / Trust ]",
+    "h2": "Compliance, no «trust me bro».",
+    "lead": "Las decisiones de arquitectura son aburridas a propósito. Es lo que separa una herramienta de trabajo de una promesa en Twitter.",
+    "cards": [
+      {
+        "title": "No-custodial Safe multisig",
+        "body": "Tu plata se mueve a través de un <code>Safe</code> multi-firma en Base. Auditoría on-chain pública. Nosotros nunca tenemos custodia total."
+      },
+      {
+        "title": "USDC de Circle",
+        "body": "Stablecoin auditada, reservas reportadas mensualmente. Compatible con Coinbase, Metamask, todo exchange. <code>1 USDC = 1 USD</code>."
+      },
+      {
+        "title": "Sumsub KYC · CNV registered",
+        "body": "Verificación de identidad en 5 minutos. Registrados ante la <code>CNV</code> bajo el régimen de PSAV. Tu contador puede verificar la entidad."
+      },
+      {
+        "title": "AFIP / ARCA compliant",
+        "body": "Factura E, régimen informativo <code>RG 5642/2025</code>, formato CSV/PDF que aceptan Tango, Colppy y AFIP web. Para BR, conversión-only en beta — <code>Receita ↦ 2027</code>."
+      }
+    ]
+  },
+  "pricing": {
+    "eyebrow": "[ 06 / Pricing ]",
+    "h2Prefix": "Sin sorpresas. ",
+    "h2Accent": "Sin mínimos.",
+    "lead": "Empezá gratis con comisión por transacción. Pasate a Pro cuando los reportes automáticos te ahorren más que el costo del plan.",
+    "starter": {
+      "plan": "Starter",
+      "amt": "1",
+      "unit": "% por transacción",
+      "tagline": "Sin suscripción. Sin mínimos. Pagás solo cuando cobrás.",
+      "features": [
+        "Facturas USDC ilimitadas",
+        "Conversión USDC → ARS / BRL",
+        "Factura E manual (descarga PDF)",
+        "Soporte por email"
+      ],
+      "muted": [
+        "Reporte AFIP auto-generado",
+        "Soporte Telegram prioritario"
+      ],
+      "cta": "Empezar gratis"
+    },
+    "pro": {
+      "ribbon": "RECOMENDADO",
+      "plan": "Pro",
+      "amt": "$9",
+      "unit": "/ mes",
+      "tagline": "Para quienes facturan más de USD 1,000/mes. Se paga solo en el primer mes.",
+      "features": [
+        "Todo lo de Starter",
+        "Factura E auto-generada",
+        "Reporte AFIP auto-mensual + anual",
+        "Export CSV para contador (Tango, Colppy)",
+        "Soporte Telegram < 30 min ART",
+        "Multi-cliente (hasta 25 clientes)"
+      ],
+      "cta": "Empezar con Pro",
+      "guarantee": "30 días money-back · si no ahorrás 1.5% vs Lemon te devolvemos el plan."
+    }
+  },
+  "faq": {
+    "eyebrow": "[ 07 / FAQ ]",
+    "h2": "Preguntas frecuentes.",
+    "lead": "Lo que más nos preguntan los freelancers de Sysarmy, DevsAR y Frontend Cafe. Si te falta una, escribinos.",
+    "items": [
+      {
+        "q": "¿Es legal recibir cripto en Argentina?",
+        "a": "Sí. Crypto Invoicing está registrado ante la CNV como Proveedor de Servicios de Activos Virtuales (PSAV), bajo el régimen vigente. Cada operación genera una factura E y se reporta automáticamente al régimen informativo (RG 5642/2025). Tu contador la procesa como cualquier otro ingreso del exterior."
+      },
+      {
+        "q": "¿Mi cliente necesita saber de criptomonedas?",
+        "a": "Casi nada. Le mandás un link, paga desde Coinbase, Metamask o cualquier exchange que ya use. Si nunca usó USDC, le enviamos una guía de 2 minutos. La mayoría de los clientes en EE.UU. y Europa ya tienen Coinbase."
+      },
+      {
+        "q": "¿Qué pasa si el USDC se desancla del dólar?",
+        "a": "USDC tiene reservas auditadas mensualmente por Circle, una empresa registrada en la Unión Europea y EE.UU. En el episodio de marzo 2023 (depeg breve por Silicon Valley Bank), la paridad volvió en menos de 48h. Para conversiones usamos el precio peso/USDC del momento exacto en que tu cliente paga — vos ves el tipo de cambio antes de aceptar."
+      },
+      {
+        "q": "¿Cuánto tarda en llegar la plata al CBU?",
+        "a": "Entre 2 y 4 horas hábiles desde que el USDC entra a nuestra Safe en Base. Si el pago entra fuera de horario bancario, se procesa al abrir el día siguiente. El status se ve en tiempo real en el dashboard, con timestamp de cada etapa."
+      },
+      {
+        "q": "¿Qué pasa con la factura E si soy monotributista categoría F?",
+        "a": "Generamos factura E (exportación de servicios) para todas las categorías de monotributo, así como Responsable Inscripto. El sistema valida tu situación tributaria en AFIP antes de emitir cada factura. Si estás cerca del límite de tu categoría, te avisamos."
+      },
+      {
+        "q": "¿Por qué Brasil está en beta?",
+        "a": "La conversión USDC → BRL funciona completa. Lo que está en beta es la integración con Receita Federal (NFe, DeCripto), prevista para 2027. Hoy generamos un PDF genérico de transacciones que tu contador procesa manualmente. Lanzamos beta abierta sólo si la lista de espera supera 100 freelancers."
+      }
+    ]
+  },
+  "finalCta": {
+    "eyebrow": "[ 08 / Empezá ahora ]",
+    "h2Prefix": "Tu primera factura está a ",
+    "h2Accent": "30 segundos",
+    "h2Suffix": ".",
+    "sub": "Onboarding manual con el founder en 24h. Sin lista de espera. Sin tarjeta para registrarte.",
+    "cta": "Crear cuenta gratis",
+    "disclaimer": "No es asesoramiento financiero ni fiscal. Consultá a tu contador."
+  },
+  "footer": {
+    "about": "Soy gringo, vivo en Buenos Aires. Mi pareja Diana es diseñadora argentina y pierde plata con Lemon todos los meses. Por eso lo construí.",
+    "product": "Producto",
+    "productLinks": {
+      "how": "Cómo funciona",
+      "calc": "Calculadora",
+      "features": "Características",
+      "pricing": "Precios"
+    },
+    "company": "Compañía",
+    "companyLinks": {
+      "about": "Sobre nosotros",
+      "compliance": "Compliance · CNV",
+      "blog": "Blog · soon",
+      "email": "hola@cryptoinvoicing.com"
+    },
+    "legal": "Legal",
+    "legalLinks": {
+      "terms": "Términos",
+      "privacy": "Privacidad",
+      "cookies": "Cookies",
+      "security": "Seguridad · disclosure"
+    },
+    "bottom": {
+      "left": "© 2026 Crypto Invoicing · Buenos Aires, AR",
+      "right": "v0.4.2 · Q1 launch · concierge onboarding"
+    }
+  },
+  "signup": {
+    "title": "Creá tu cuenta",
+    "subtitle": "Continuá con Google o dejá tu email — te mandamos un link mágico. Sin contraseña.",
+    "googleCta": "Continuar con Google",
+    "or": "o",
+    "emailLabel": "Email de trabajo",
+    "emailPlaceholder": "tu@email.com",
+    "submit": "Enviar link mágico",
+    "submitting": "Enviando…",
+    "successTitle": "Revisá tu casilla",
+    "successBody": "Te mandamos un link de acceso a {email}. Hacé click para abrir tu dashboard.",
+    "errorTitle": "No pudimos enviar el link",
+    "errorBody": "Algo falló en la red. Probá de nuevo, o escribinos a hola@cryptoinvoicing.com.",
+    "back": "Volver al inicio",
+    "footnote": "Al continuar aceptás nuestros términos. Nunca compartimos tu email.",
+    "footnoteWithLinks": "Al crear tu cuenta aceptás nuestros <terms>Términos</terms> y la <privacy>Política de Privacidad</privacy>. Nunca compartimos tu email."
+  },
+  "dashboard": {
+    "welcome": "Te damos la bienvenida a Crypto Invoicing",
+    "body": "Tu flujo de primera factura vive acá en Q1. Onboarding manual para los primeros 50 freelancers — te escribimos para coordinar una llamada de 15 min.",
+    "cta": "Solicitar setup de tu primera factura",
+    "ctaHint": "Modo concierge Q1: el founder te onboardea manualmente. Tocá para pedir una llamada de 15 min.",
+    "signOut": "Cerrar sesión",
+    "concierge": "Q1 · Concierge mode",
+    "ctaSending": "Enviando…",
+    "ctaSent": "✓ Te vamos a escribir",
+    "ctaHintAfter": "Revisá tu Telegram o email en las próximas 24 h.",
+    "ctaHintError": "No pudimos enviar la solicitud. Probá de nuevo o escribí a hola@cryptoinvoicing.com.",
+    "welcomeShort": "Tu espacio concierge",
+    "loading": "Autenticando…",
+    "hero": "Completá el formulario para pedir tu primera factura. Te provisionamos una dirección USDC en Base, vos la compartís con tu cliente, y los pesos llegan a tu CBU en 2–4 horas hábiles luego del pago. Primeros 50 freelancers — onboarding manual del fundador.",
+    "form": {
+      "title": "Solicitá una factura",
+      "subtitle": "Provisionamos la dirección USDC y te enviamos el link en menos de 4 horas hábiles.",
+      "clientName": "Nombre del cliente",
+      "clientNamePlaceholder": "Acme Inc.",
+      "clientEmail": "Email del cliente",
+      "clientEmailHint": "Opcional. Si lo cargás, le mandamos el link de pago directamente.",
+      "amount": "Monto",
+      "country": "Cobrá en",
+      "description": "Descripción del servicio",
+      "descriptionHint": "Aparece en el PDF de la factura E y en el régimen informativo.",
+      "descriptionPlaceholder": "Trabajo de integración API, mayo 2026",
+      "submit": "Solicitar factura",
+      "submitSending": "Enviando…",
+      "submitOk": "✓ Solicitud recibida",
+      "footnote": "No es una factura final — revisamos cada solicitud manualmente en el Q1.",
+      "errClientName": "El nombre del cliente es obligatorio.",
+      "errAmount": "El monto debe ser positivo.",
+      "errGeneric": "No pudimos guardar tu solicitud. Probá de nuevo o escribí a hola@cryptoinvoicing.com."
+    },
+    "list": {
+      "title": "Tus solicitudes",
+      "empty": "Todavía no hay solicitudes. Cargá una arriba y la vas a ver acá.",
+      "paymentAddress": "Dirección USDC — Base mainnet"
+    },
+    "status": {
+      "pending_setup": "Preparando",
+      "payment_link_ready": "Lista",
+      "paid": "Pagada",
+      "settled": "En tu CBU",
+      "cancelled": "Cancelada"
+    }
+  },
+  "locale": {
+    "label": "Idioma",
+    "es": "ES · AR",
+    "pt": "PT · BR",
+    "en": "EN · US"
+  },
+  "auth": {
+    "callback": {
+      "errorTitle": "No pudimos completar el ingreso",
+      "errorNoSession": "No encontramos el código o la sesión en la URL de callback.",
+      "errorUnexpected": "Hubo un error inesperado al completar el ingreso.",
+      "tryAgain": "Probar de nuevo →",
+      "signingIn": "Iniciando tu sesión…"
+    }
+  },
+  "cookies": {
+    "consent": {
+      "title": "Cookies y analytics",
+      "body": "Usamos cookies esenciales para que el sitio funcione y, si lo aceptás, analytics anónimos para entender qué se rompe y qué funciona. Sin trackers de terceros.",
+      "accept": "Aceptar",
+      "reject": "Rechazar"
+    }
+  },
+  "legalLanguageBanner": {
+    "title": "Solo en inglés",
+    "body": "Estos documentos legales se publican en inglés mientras finalizamos la revisión con el abogado argentino. Una versión en español (rioplatense) se sumará después de la revisión."
+  }
+}
