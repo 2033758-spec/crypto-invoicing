@@ -148,7 +148,7 @@ export default async function Image({
               CI
             </div>
             <span style={{ color: "#dee4e0", fontWeight: 500 }}>
-              cryptoinvoicing.com
+              cryptoinvoicing.co
             </span>
           </div>
           <span style={{ color: "#69dab6", letterSpacing: 2 }}>

@@ -36,7 +36,7 @@ import Footer from "./_components/landing-v3/Footer";
 //
 // ModalProvider is gone — every CTA now routes to /signup directly.
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://cryptoinvoicing.com";
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://cryptoinvoicing.co";
 
 import { fetchUsdcBrlRate } from "../lib/fx";
 

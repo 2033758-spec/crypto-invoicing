@@ -8,7 +8,7 @@ const TITLE_BY_LOCALE: Record<string, string> = {
   "en-US": "Privacy Policy · Crypto Invoicing",
 };
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://cryptoinvoicing.com";
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://cryptoinvoicing.co";
 
 export async function generateMetadata({
   params,

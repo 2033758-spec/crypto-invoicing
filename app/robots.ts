@@ -8,7 +8,7 @@ import type { MetadataRoute } from "next";
 //   - /*/auth/* — short-lived OAuth callback URLs
 //   - /monitoring — Sentry tunnel route (next.config matcher excludes it but defence-in-depth)
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://cryptoinvoicing.com";
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://cryptoinvoicing.co";
 
 export default function robots(): MetadataRoute.Robots {
   return {

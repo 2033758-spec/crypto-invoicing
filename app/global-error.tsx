@@ -73,10 +73,10 @@ export default function GlobalError({
           >
             Our team has been notified. Reload the page, or write us at{" "}
             <a
-              href="mailto:hola@cryptoinvoicing.com"
+              href="mailto:hola@cryptoinvoicing.co"
               style={{ color: "#69dab6", textDecoration: "underline" }}
             >
-              hola@cryptoinvoicing.com
+              hola@cryptoinvoicing.co
             </a>
             .
           </p>

@@ -16,7 +16,7 @@ export function generateStaticParams() {
 // Site origin — single source of truth for canonical, OG image URLs, hreflang.
 // Configured via NEXT_PUBLIC_SITE_URL in .env (Vercel: project env var). Falls
 // back to production domain so build doesn't error in fresh checkouts.
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://cryptoinvoicing.com";
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://cryptoinvoicing.co";
 
 function pathForLocale(locale: string): string {
   return locale === "es-AR" ? "" : `/${locale}`;

@@ -78,7 +78,7 @@ export default async function LegalPage({ locale, slug }: Props) {
                 ← Crypto Invoicing
               </Link>
               {" · "}
-              hola@cryptoinvoicing.com
+              hola@cryptoinvoicing.co
             </p>
           </div>
         </div>

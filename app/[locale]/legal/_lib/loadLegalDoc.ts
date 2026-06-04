@@ -56,7 +56,7 @@ export async function loadLegalDoc(
     // visible placeholder so the page still renders without a 500.
     raw =
       `# Document missing\n\nThe requested legal document is being finalised. ` +
-      `Please email hola@cryptoinvoicing.com for a copy.`;
+      `Please email hola@cryptoinvoicing.co for a copy.`;
     console.error(
       `[legal] failed to read ${filePath}:`,
       (err as Error).message,

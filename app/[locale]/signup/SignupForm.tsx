@@ -69,7 +69,7 @@ export default function SignupForm({ locale }: Props) {
       // Use explicit production domain instead of window.location.origin
       // to avoid redirect URL mismatches with www/non-www versions
       const origin = typeof window !== 'undefined' && window.location.hostname.includes('cryptoinvoicing')
-        ? 'https://www.cryptoinvoicing.co'
+        ? 'https://cryptoinvoicing.co'
         : window.location.origin;
       const redirectTo = `${origin}${callbackPath}?next=${encodeURIComponent(
         dashboardPath,
@@ -146,7 +146,7 @@ export default function SignupForm({ locale }: Props) {
     try {
       const supabase = getBrowserSupabase();
       const origin = typeof window !== 'undefined' && window.location.hostname.includes('cryptoinvoicing')
-        ? 'https://www.cryptoinvoicing.co'
+        ? 'https://cryptoinvoicing.co'
         : window.location.origin;
       const redirectTo = `${origin}${callbackPath}?next=${encodeURIComponent(
         dashboardPath,

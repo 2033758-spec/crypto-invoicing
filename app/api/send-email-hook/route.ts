@@ -84,7 +84,7 @@ export async function POST(req: Request) {
 
   try {
     // Build magic-link with URL-encoded token
-    const magicLink = `https://www.cryptoinvoicing.co/auth/callback?token_hash=${encodeURIComponent(token)}&type=${encodeURIComponent(payload.type || 'email')}`;
+    const magicLink = `https://cryptoinvoicing.co/auth/callback?token_hash=${encodeURIComponent(token)}&type=${encodeURIComponent(payload.type || 'email')}`;
 
     const emailPayload = JSON.stringify({
       from: 'hola@cryptoinvoicing.co',

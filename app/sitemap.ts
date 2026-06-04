@@ -8,7 +8,7 @@ import { locales } from "../i18n";
 // these to dedupe cross-locale variants. /dashboard and /auth/* are noindex,
 // so they don't belong here (also blocked in robots.ts as belt-and-braces).
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://cryptoinvoicing.com";
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://cryptoinvoicing.co";
 
 // Public routes (relative paths, no locale prefix). Locale prefix is added per
 // row below — es-AR has no prefix (default), pt-BR → /pt-BR, en-US → /en-US.
