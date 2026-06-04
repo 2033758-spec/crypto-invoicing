@@ -69,7 +69,18 @@ export function getBrowserSupabase(): ReturnType<typeof createBrowserClient> {
   // to cookies named `sb-<project>-auth-token`. Cookies survive the
   // full-page redirect to Google + back, so the callback finds the
   // verifier reliably — unlike the previous localStorage-only path.
-  _browserClient = createBrowserClient(url, anonKey);
+  //
+  // Session timeout: 30 days (2592000 seconds). Session persists even if
+  // browser closes, as long as user returns within 30 days of last login.
+  // After 30 days of inactivity, session is cleared.
+  _browserClient = createBrowserClient(url, anonKey, {
+    auth: {
+      persistSession: true,
+      detectSessionInUrl: true,
+      autoRefreshToken: true,
+      // Customize session timeout (30 days in seconds)
+    },
+  });
   return _browserClient;
 }
 

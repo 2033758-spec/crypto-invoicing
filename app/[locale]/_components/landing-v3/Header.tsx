@@ -76,26 +76,40 @@ export default function Header({ locale, user }: Props) {
             <LocaleDropdown current={locale} />
 
             {user ? (
-              // User is logged in — show email + dashboard + logout
-              <>
-                <span className="text-[13px] text-on-surface-variant hidden sm:inline">
-                  {user.email}
-                </span>
+              // User is logged in — show compact profile icon + email + dropdown
+              <div className="flex items-center gap-3 ml-2">
+                {/* Profile icon + email (acts as menu button) */}
                 <Link
                   href={dashboardHref}
-                  className="btn btn-ghost hidden sm:inline-flex"
-                  onClick={() => track("cta_clicked", { cta: "dashboard" })}
+                  className="flex items-center gap-2 px-3 py-2 rounded hover:bg-white/[0.04] transition-colors"
+                  title={user.email}
                 >
-                  {t("dashboard") || "Dashboard"}
+                  {/* Avatar circle with first letter */}
+                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary text-[12px] font-semibold">
+                    {user.email?.[0]?.toUpperCase() || "U"}
+                  </div>
+                  {/* Email (hidden on mobile) */}
+                  <span className="text-[13px] text-on-surface hidden sm:inline truncate max-w-[150px]">
+                    {user.email}
+                  </span>
                 </Link>
-                <Link
-                  href={logoutHref}
-                  className="btn btn-primary"
-                  onClick={() => track("cta_clicked", { cta: "logout" })}
-                >
-                  {t("logout") || "Cerrar sesión"}
-                </Link>
-              </>
+
+                {/* Logout dropdown button */}
+                <details className="relative">
+                  <summary className="btn btn-ghost list-none cursor-pointer flex items-center justify-center">
+                    ⋮
+                  </summary>
+                  <div className="absolute right-0 top-full mt-1 rounded border border-outline-variant bg-surface-container-high shadow-lg z-10">
+                    <Link
+                      href={logoutHref}
+                      className="block px-4 py-2 text-[13px] text-on-surface hover:bg-white/[0.04] rounded-t transition-colors"
+                      onClick={() => track("cta_clicked", { cta: "logout" })}
+                    >
+                      {t("logout") || "Cerrar sesión"}
+                    </Link>
+                  </div>
+                </details>
+              </div>
             ) : (
               // User is not logged in — show login + get started
               <>
