@@ -105,17 +105,29 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Fire-and-forget Telegram alert to founder.
-  void notifyFounder(
+  // Notify founder with timeout + error handling
+  const notifyMessage =
     `*🧾 New invoice request*\n\n` +
-      `From: \`${user.email}\` (user \`${user.id}\`)\n` +
-      `Client: \`${client_name}\`${client_email ? ` <\`${client_email}\`>` : ""}\n` +
-      `Amount: \`USD ${amount_usd.toFixed(2)}\`\n` +
-      `Country: \`${country}\`\n` +
-      (description ? `\nDescription:\n${description}\n` : "") +
-      `\nRequest ID: \`${inserted.id}\`\n` +
-      `Next: provision Safe address, mark \`payment_link_ready\`.`,
-  );
+    `From: \`${user.email}\` (user \`${user.id}\`)\n` +
+    `Client: \`${client_name}\`${client_email ? ` <\`${client_email}\`>` : ""}\n` +
+    `Amount: \`USD ${amount_usd.toFixed(2)}\`\n` +
+    `Country: \`${country}\`\n` +
+    (description ? `\nDescription:\n${description}\n` : "") +
+    `\nRequest ID: \`${inserted.id}\`\n` +
+    `Next: provision Safe address, mark \`payment_link_ready\`.`;
+
+  try {
+    // Await with 5s timeout so we don't block response indefinitely
+    const notifyPromise = notifyFounder(notifyMessage);
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Telegram timeout")), 5000)
+    );
+    await Promise.race([notifyPromise, timeoutPromise]);
+  } catch (err) {
+    // Log but don't fail request — invoice is already saved
+    console.error("[invoice/create] Telegram notification failed:", err instanceof Error ? err.message : String(err));
+    // TODO: Queue to notification_queue table for retry worker (W8+)
+  }
 
   return NextResponse.json({ ok: true, request: inserted }, { status: 200 });
 }

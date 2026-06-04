@@ -1,6 +1,6 @@
 // /api/send-email-hook — Supabase Auth Hook for magic-link emails
 // Called by Supabase Auth when an email needs to be sent (magic-link, password reset, etc.)
-// Forwards to Resend API for delivery
+// Forwards to Resend API for delivery with exponential backoff retry
 
 import { NextResponse } from 'next/server';
 
@@ -11,9 +11,49 @@ interface AuthEmailPayload {
   type?: string;
 }
 
+// Retry with exponential backoff for transient failures
+async function sendWithRetry(payload: any, resendKey: string, maxAttempts = 3): Promise<Response> {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    try {
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${resendKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: payload,
+      });
+
+      // Success
+      if (res.ok) return res;
+
+      // Permanent failure (4xx except 429)
+      if (res.status >= 400 && res.status < 500 && res.status !== 429) {
+        return res;
+      }
+
+      // Transient failure (429, 5xx) — retry with backoff
+      if (attempt < maxAttempts - 1) {
+        const delay = Math.min(1000 * Math.pow(2, attempt), 5000);
+        await new Promise(r => setTimeout(r, delay));
+        continue;
+      }
+
+      return res;
+    } catch (err) {
+      if (attempt < maxAttempts - 1) {
+        const delay = Math.min(1000 * Math.pow(2, attempt), 5000);
+        await new Promise(r => setTimeout(r, delay));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error('Max retries exceeded');
+}
+
 export async function POST(req: Request) {
-  console.log('[send-email-hook] Received request');
-  console.log('[send-email-hook] Headers:', Object.fromEntries(req.headers));
+  console.log('[send-email-hook] Processing magic-link request');
 
   const resendKey = process.env.RESEND_API_KEY;
   if (!resendKey) {
@@ -39,32 +79,36 @@ export async function POST(req: Request) {
   }
 
   try {
-    // Build magic-link
-    const magicLink = `https://www.cryptoinvoicing.co/auth/callback?token_hash=${token}&type=${payload.type || 'email'}`;
+    // Build magic-link with URL-encoded token
+    const magicLink = `https://www.cryptoinvoicing.co/auth/callback?token_hash=${encodeURIComponent(token)}&type=${encodeURIComponent(payload.type || 'email')}`;
 
-    // Send via Resend
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${resendKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: 'hola@cryptoinvoicing.co',
-        to: userEmail,
-        subject: 'Tu link mágico para Crypto Invoicing',
-        html: `<h2>Bienvenido a Crypto Invoicing</h2><p><a href="${magicLink}">Confirmar email</a></p>`,
-      }),
+    const emailPayload = JSON.stringify({
+      from: 'hola@cryptoinvoicing.co',
+      to: userEmail,
+      subject: 'Tu link mágico para Crypto Invoicing',
+      html: `<h2>Bienvenido a Crypto Invoicing</h2><p><a href="${magicLink}">Confirmar email</a></p>`,
     });
 
+    // Send via Resend with retry logic
+    const res = await sendWithRetry(emailPayload, resendKey);
+
     if (!res.ok) {
-      console.error('[send-email-hook] Resend error:', res.status);
-      return NextResponse.json({ error: 'Email failed' }, { status: 500 });
+      const status = res.status;
+      console.error('[send-email-hook] Resend error:', status, await res.text());
+
+      // Return 503 for transient errors so Supabase retries
+      if (status === 429 || status >= 500) {
+        return NextResponse.json({ error: 'Service temporarily unavailable' }, { status: 503 });
+      }
+
+      // Return 400 for permanent errors
+      return NextResponse.json({ error: 'Invalid email or configuration' }, { status: 400 });
     }
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error('[send-email-hook] Error:', err);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    console.error('[send-email-hook] Fatal error:', err instanceof Error ? err.message : String(err));
+    // Transient error — Supabase will retry
+    return NextResponse.json({ error: 'Temporary failure' }, { status: 503 });
   }
 }
