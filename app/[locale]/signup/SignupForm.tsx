@@ -11,9 +11,14 @@ interface Props {
   locale: string;
 }
 
-type Status = "idle" | "submitting" | "ok" | "error";
+type Status = "idle" | "submitting" | "ok" | "error" | "rate_limited";
+type ErrorType = "validation" | "rate_limit" | "network" | null;
 
-const EMAIL_RE = /^\S+@\S+\.\S+$/;
+// RFC 5321 compliant email validation (stricter than /^\S+@\S+\.\S+$/)
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MAX_EMAIL_LENGTH = 254; // RFC 5321 standard
+const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
+const MAX_ATTEMPTS_PER_WINDOW = 3;
 
 /**
  * Sign-up form — Design System v3.
@@ -32,7 +37,10 @@ export default function SignupForm({ locale }: Props) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [errorType, setErrorType] = useState<ErrorType>(null);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [rateLimitRetryIn, setRateLimitRetryIn] = useState<number | null>(null);
+  const [submitAttempts, setSubmitAttempts] = useState<number[]>([]); // timestamps of attempts
 
   const homeHref = locale === "es-AR" ? "/" : `/${locale}`;
   const termsHref =
@@ -87,18 +95,55 @@ export default function SignupForm({ locale }: Props) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const trimmed = email.trim().toLowerCase();
-    if (!EMAIL_RE.test(trimmed)) {
+
+    // 1. Email validation (RFC 5321)
+    if (!EMAIL_RE.test(trimmed) || trimmed.length > MAX_EMAIL_LENGTH) {
       setStatus("error");
-      setErrorMsg(t("errorBody"));
+      setErrorType("validation");
+      setErrorMsg("Email address format is invalid or too long");
+      return;
+    }
+
+    // 2. Client-side rate limiting (max 3 attempts per minute)
+    const now = Date.now();
+    const recentAttempts = submitAttempts.filter(ts => now - ts < RATE_LIMIT_WINDOW_MS);
+
+    if (recentAttempts.length >= MAX_ATTEMPTS_PER_WINDOW) {
+      const oldestAttempt = Math.min(...recentAttempts);
+      const retryAfterMs = RATE_LIMIT_WINDOW_MS - (now - oldestAttempt);
+      const retryAfterSec = Math.ceil(retryAfterMs / 1000);
+
+      setStatus("rate_limited");
+      setErrorType("rate_limit");
+      setRateLimitRetryIn(retryAfterSec);
+      setErrorMsg(`Too many attempts. Please try again in ${retryAfterSec}s`);
+
+      // Decrement counter every second
+      const interval = setInterval(() => {
+        setRateLimitRetryIn((prev) => {
+          const next = prev ? prev - 1 : 0;
+          if (next <= 0) {
+            clearInterval(interval);
+            setStatus("idle");
+            setErrorMsg(null);
+            setErrorType(null);
+            return null;
+          }
+          setErrorMsg(`Too many attempts. Please try again in ${next}s`);
+          return next;
+        });
+      }, 1000);
       return;
     }
 
     setStatus("submitting");
     setErrorMsg(null);
+    setErrorType(null);
+    setSubmitAttempts([...recentAttempts, now]);
     track("signup_method_chosen", { method: "email" });
+
     try {
       const supabase = getBrowserSupabase();
-      // Match Google OAuth origin for consistent PKCE flow
       const origin = typeof window !== 'undefined' && window.location.hostname.includes('cryptoinvoicing')
         ? 'https://www.cryptoinvoicing.co'
         : window.location.origin;
@@ -113,17 +158,30 @@ export default function SignupForm({ locale }: Props) {
           shouldCreateUser: true,
         },
       });
+
       if (error) {
         console.error("[signup] signInWithOtp failed", error);
         setStatus("error");
-        setErrorMsg(error.message || t("errorBody"));
+        setErrorType("network");
+
+        // 3. Differentiate error types
+        if (error.message?.includes("429") || error.message?.includes("rate")) {
+          setErrorType("rate_limit");
+          setErrorMsg("Email service temporarily unavailable. Please try again in a few moments.");
+        } else if (error.message?.includes("network") || error.message?.includes("fetch")) {
+          setErrorType("network");
+          setErrorMsg("Network error. Please check your connection and try again.");
+        } else {
+          setErrorMsg(error.message || "An error occurred. Please try again.");
+        }
         return;
       }
       setStatus("ok");
     } catch (err) {
       console.error("[signup] unexpected error", err);
       setStatus("error");
-      setErrorMsg(t("errorBody"));
+      setErrorType("network");
+      setErrorMsg("An unexpected error occurred. Please try again.");
     }
   };
 
@@ -210,23 +268,35 @@ export default function SignupForm({ locale }: Props) {
                     autoComplete="email"
                     placeholder={t("emailPlaceholder")}
                     value={email}
+                    maxLength={MAX_EMAIL_LENGTH}
+                    disabled={status === "rate_limited" || googleLoading}
                     onChange={(e) => {
                       setEmail(e.target.value);
                       if (status === "error") setStatus("idle");
                     }}
                     aria-invalid={status === "error"}
-                    className="w-full rounded-md border border-outline-variant bg-surface-container px-3 py-2.5 text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors duration-200"
+                    className="w-full rounded-md border border-outline-variant bg-surface-container px-3 py-2.5 text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
 
-                {status === "error" && errorMsg && (
-                  <div className="flex items-start gap-2 rounded-md border border-tertiary/30 bg-tertiary/5 p-3">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-tertiary mt-0.5 flex-shrink-0">
-                      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z M12 9v4 M12 17h.01" />
+                {(status === "error" || status === "rate_limited") && errorMsg && (
+                  <div className={`flex items-start gap-2 rounded-md border p-3 ${
+                    errorType === "rate_limit" ? "border-amber-500/30 bg-amber-500/5" : "border-tertiary/30 bg-tertiary/5"
+                  }`}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`mt-0.5 flex-shrink-0 ${
+                      errorType === "rate_limit" ? "text-amber-500" : "text-tertiary"
+                    }`}>
+                      {errorType === "rate_limit" ? (
+                        <path d="M12 6v6m0 4v2M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z" />
+                      ) : (
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z M12 9v4 M12 17h.01" />
+                      )}
                     </svg>
                     <div>
-                      <div className="font-mono text-[10px] uppercase tracking-widest text-tertiary mb-0.5">
-                        {t("errorTitle")}
+                      <div className={`font-mono text-[10px] uppercase tracking-widest mb-0.5 ${
+                        errorType === "rate_limit" ? "text-amber-500" : "text-tertiary"
+                      }`}>
+                        {errorType === "rate_limit" ? "Rate Limited" : "Error"}
                       </div>
                       <p className="font-mono text-[12px] text-on-surface-variant">{errorMsg}</p>
                     </div>
@@ -235,11 +305,17 @@ export default function SignupForm({ locale }: Props) {
 
                 <button
                   type="submit"
-                  disabled={status === "submitting" || googleLoading}
+                  disabled={status === "submitting" || status === "rate_limited" || googleLoading}
                   className="btn btn-primary btn-lg w-full justify-center"
                 >
-                  {status === "submitting" ? t("submitting") : t("submit")}
-                  {status !== "submitting" && <span className="arrow">→</span>}
+                  {status === "submitting" && t("submitting")}
+                  {status === "rate_limited" && `Retry in ${rateLimitRetryIn}s`}
+                  {status !== "submitting" && status !== "rate_limited" && (
+                    <>
+                      {t("submit")}
+                      <span className="arrow">→</span>
+                    </>
+                  )}
                 </button>
 
                 <p className="font-mono text-[12px] text-on-surface-placeholder text-center">
