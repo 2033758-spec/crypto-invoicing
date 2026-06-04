@@ -13,14 +13,24 @@ export function isSupportedLocale(locale: unknown): locale is Locale {
 }
 
 // next-intl 3.26 request config — async function that returns messages.
-// Middleware has already determined the locale; we just provide all bundles.
-export default async function getRequestConfig() {
+// getRequestConfig is called with { locale } parameter indicating the current locale.
+export default async function getRequestConfig({
+  locale,
+}: {
+  locale: string;
+}) {
+  // Load only the messages for the current locale
+  const messages =
+    locale === "es-AR"
+      ? (await import("./messages/es-AR.json")).default
+      : locale === "pt-BR"
+        ? (await import("./messages/pt-BR.json")).default
+        : locale === "en-US"
+          ? (await import("./messages/en-US.json")).default
+          : {};
+
   return {
-    messages: {
-      "es-AR": (await import("./messages/es-AR.json")).default,
-      "pt-BR": (await import("./messages/pt-BR.json")).default,
-      "en-US": (await import("./messages/en-US.json")).default,
-    },
+    messages,
     timeZone: "America/Argentina/Buenos_Aires",
   };
 }

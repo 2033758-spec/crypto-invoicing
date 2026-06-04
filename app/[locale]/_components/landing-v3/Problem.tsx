@@ -1,3 +1,5 @@
+"use client";
+
 import { useTranslations } from "next-intl";
 import Reveal from "./Reveal";
 
@@ -27,7 +29,8 @@ const ICONS = [
 
 export default function Problem() {
   const t = useTranslations("problem");
-  const cards = t.raw("cards") as Card[];
+  const cardsRaw = t.raw("cards");
+  const cards = Array.isArray(cardsRaw) ? cardsRaw : [];
 
   return (
     <section

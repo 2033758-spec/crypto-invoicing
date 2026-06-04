@@ -1,3 +1,5 @@
+"use client";
+
 import { useTranslations } from "next-intl";
 import Reveal from "./Reveal";
 
@@ -30,7 +32,8 @@ const ICONS = [
 
 export default function How() {
   const t = useTranslations("how");
-  const steps = t.raw("steps") as Step[];
+  const stepsRaw = t.raw("steps");
+  const steps = Array.isArray(stepsRaw) ? stepsRaw : [];
 
   return (
     <section

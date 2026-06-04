@@ -57,7 +57,11 @@ export default function SignupForm({ locale }: Props) {
     track("signup_method_chosen", { method: "google" });
     try {
       const supabase = getBrowserSupabase();
-      const origin = window.location.origin;
+      // Use explicit production domain instead of window.location.origin
+      // to avoid redirect URL mismatches with www/non-www versions
+      const origin = typeof window !== 'undefined' && window.location.hostname.includes('cryptoinvoicing')
+        ? 'https://www.cryptoinvoicing.co'
+        : window.location.origin;
       const redirectTo = `${origin}${callbackPath}?next=${encodeURIComponent(
         dashboardPath,
       )}`;

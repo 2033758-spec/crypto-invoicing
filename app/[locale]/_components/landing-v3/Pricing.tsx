@@ -23,24 +23,26 @@ const X = () => (
 export default function Pricing({ locale }: Props) {
   const t = useTranslations("pricing");
   const signupHref = locale === "es-AR" ? "/signup" : `/${locale}/signup`;
-  const starter = t.raw("starter") as {
-    plan: string;
-    amt: string;
-    unit: string;
-    tagline: string;
-    features: string[];
-    muted: string[];
-    cta: string;
+  const starterRaw = t.raw("starter") as any;
+  const starter = {
+    plan: starterRaw?.plan ?? "",
+    amt: starterRaw?.amt ?? "",
+    unit: starterRaw?.unit ?? "",
+    tagline: starterRaw?.tagline ?? "",
+    features: Array.isArray(starterRaw?.features) ? starterRaw.features : [],
+    muted: Array.isArray(starterRaw?.muted) ? starterRaw.muted : [],
+    cta: starterRaw?.cta ?? "",
   };
-  const pro = t.raw("pro") as {
-    ribbon: string;
-    plan: string;
-    amt: string;
-    unit: string;
-    tagline: string;
-    features: string[];
-    cta: string;
-    guarantee: string;
+  const proRaw = t.raw("pro") as any;
+  const pro = {
+    ribbon: proRaw?.ribbon ?? "",
+    plan: proRaw?.plan ?? "",
+    amt: proRaw?.amt ?? "",
+    unit: proRaw?.unit ?? "",
+    tagline: proRaw?.tagline ?? "",
+    features: Array.isArray(proRaw?.features) ? proRaw.features : [],
+    cta: proRaw?.cta ?? "",
+    guarantee: proRaw?.guarantee ?? "",
   };
 
   return (
@@ -96,7 +98,7 @@ export default function Pricing({ locale }: Props) {
               {starter.tagline}
             </p>
             <ul className="list-none p-0 m-0 mb-7 border-t border-outline-variant pt-[22px]">
-              {starter.features.map((f, i) => (
+              {starter.features.map((f: string, i: number) => (
                 <li
                   key={i}
                   className="text-on-surface py-[7px] flex items-center gap-2.5"
@@ -108,7 +110,7 @@ export default function Pricing({ locale }: Props) {
                   {f}
                 </li>
               ))}
-              {starter.muted.map((f, i) => (
+              {starter.muted.map((f: string, i: number) => (
                 <li
                   key={`m${i}`}
                   className="text-on-surface-placeholder py-[7px] flex items-center gap-2.5"
@@ -179,7 +181,7 @@ export default function Pricing({ locale }: Props) {
               {pro.tagline}
             </p>
             <ul className="list-none p-0 m-0 mb-7 border-t border-outline-variant pt-[22px]">
-              {pro.features.map((f, i) => (
+              {pro.features.map((f: string, i: number) => (
                 <li
                   key={i}
                   className="text-on-surface py-[7px] flex items-center gap-2.5"

@@ -1,3 +1,5 @@
+"use client";
+
 import { useTranslations } from "next-intl";
 import Reveal from "./Reveal";
 import FaqClickTracker from "./FaqClickTracker";
@@ -9,7 +11,8 @@ interface Item {
 
 export default function FAQ() {
   const t = useTranslations("faq");
-  const items = t.raw("items") as Item[];
+  const itemsRaw = t.raw("items");
+  const items = Array.isArray(itemsRaw) ? itemsRaw : [];
 
   // FAQPage JSON-LD — eligible for SERP rich-result (expanded accordions).
   // Built from the same i18n strings rendered visually below, so it stays in
