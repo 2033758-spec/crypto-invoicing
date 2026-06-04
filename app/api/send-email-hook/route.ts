@@ -29,56 +29,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
   }
 
-  // Get signature header — can be svix-signature or x-webhook-secret
-  const svixSig = req.headers.get('svix-signature');
-  const xWebhookSig = req.headers.get('x-webhook-secret');
-  const signature = svixSig || xWebhookSig;
-
-  if (!signature) {
-    console.error('[send-email-hook] No signature header found');
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
+  // Get body (no signature validation — Supabase sends emails via SMTP)
+  // This endpoint is kept for future custom email handling if needed
   const bodyText = await req.text();
-
-  // Validate signature using Standard Webhooks format (v1,<sig>)
-  let isValid = false;
-
-  try {
-    const parts = signature.split(',');
-    if (parts.length === 2) {
-      const [version, providedSig] = parts;
-
-      if (version === 'v1') {
-        // Extract base64 secret (remove v1,whsec_ prefix)
-        const secretBase64 = secret.startsWith('v1,whsec_')
-          ? secret.slice(9)
-          : secret;
-
-        const secretBytes = Buffer.from(secretBase64, 'base64');
-        const expectedSig = crypto
-          .createHmac('sha256', secretBytes)
-          .update(bodyText, 'utf8')
-          .digest('base64');
-
-        isValid = crypto.timingSafeEqual(
-          Buffer.from(providedSig),
-          Buffer.from(expectedSig)
-        );
-      }
-    }
-  } catch (e) {
-    console.error('[send-email-hook] Signature validation error:', e);
-  }
-
-  if (!isValid) {
-    console.error('[send-email-hook] Signature validation failed', {
-      hasSignature: !!signature,
-      signatureStart: signature?.slice(0, 20),
-      secretStart: secret.slice(0, 30)
-    });
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
 
   let body: SendEmailPayload;
   try {
