@@ -145,15 +145,10 @@ export default function DashboardClient({ locale }: Props) {
         return;
       }
       setFormStatus("ok");
-      // Reset form
-      setClientName("");
-      setClientEmail("");
-      setAmountUsd("");
-      setDescription("");
       // Refresh list to show new request
       loadRequests();
-      // Reset status after brief moment so form is usable again
-      setTimeout(() => setFormStatus("idle"), 2000);
+      // SUCCESS STATE PERSISTS - user sees confirmation until manual action
+      // To create another invoice, they click the success message or navigate
     } catch (err) {
       console.error("[dashboard] submit failed", err);
       setFormError(t("form.errGeneric"));

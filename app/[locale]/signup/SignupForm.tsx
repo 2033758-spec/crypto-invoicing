@@ -101,7 +101,7 @@ export default function SignupForm({ locale }: Props) {
     if (!EMAIL_RE.test(trimmed) || trimmed.length > MAX_EMAIL_LENGTH) {
       setStatus("error");
       setErrorType("validation");
-      setErrorMsg("Email address format is invalid or too long");
+      setErrorMsg(t("errorEmailFormat") || "Email address format is invalid or too long");
       return;
     }
 
@@ -165,15 +165,15 @@ export default function SignupForm({ locale }: Props) {
         setStatus("error");
         setErrorType("network");
 
-        // 3. Differentiate error types
+        // 3. Differentiate error types with i18n
         if (error.message?.includes("429") || error.message?.includes("rate")) {
           setErrorType("rate_limit");
-          setErrorMsg("Email service temporarily unavailable. Please try again in a few moments.");
+          setErrorMsg(t("errorEmailServiceUnavailable") || "Email service temporarily unavailable. Please try again in a few moments.");
         } else if (error.message?.includes("network") || error.message?.includes("fetch")) {
           setErrorType("network");
-          setErrorMsg("Network error. Please check your connection and try again.");
+          setErrorMsg(t("errorNetwork") || "Network error. Please check your connection and try again.");
         } else {
-          setErrorMsg(error.message || "An error occurred. Please try again.");
+          setErrorMsg(error.message || t("errorGeneric") || "An error occurred. Please try again.");
         }
         return;
       }
