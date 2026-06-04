@@ -38,6 +38,9 @@ export default function DashboardClient({ locale }: Props) {
   const [checking, setChecking] = useState(true);
   const [requests, setRequests] = useState<InvoiceRequest[]>([]);
   const [loadingList, setLoadingList] = useState(false);
+  const [paginationOffset, setPaginationOffset] = useState(0);
+  const [paginationTotal, setPaginationTotal] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
 
   // Form state
   const [clientName, setClientName] = useState("");
@@ -51,13 +54,20 @@ export default function DashboardClient({ locale }: Props) {
   const signupHref = locale === "es-AR" ? "/signup" : `/${locale}/signup`;
   const homeHref = locale === "es-AR" ? "/" : `/${locale}`;
 
-  const loadRequests = useCallback(async () => {
+  const loadRequests = useCallback(async (offset: number = 0) => {
     setLoadingList(true);
     try {
-      const res = await fetch("/api/invoice/list", { cache: "no-store" });
+      const url = new URL("/api/invoice/list", window.location.origin);
+      url.searchParams.set("offset", String(offset));
+      url.searchParams.set("limit", "50");
+
+      const res = await fetch(url.toString(), { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
         setRequests(data.requests ?? []);
+        setPaginationOffset(offset);
+        setPaginationTotal(data.pagination?.total ?? 0);
+        setHasMore(data.pagination?.hasMore ?? false);
       }
     } catch (err) {
       console.error("[dashboard] list fetch failed", err);
@@ -396,8 +406,9 @@ export default function DashboardClient({ locale }: Props) {
                 </p>
               </div>
             ) : (
-              <ul className="space-y-3">
-                {requests.map((r) => (
+              <>
+                <ul className="space-y-3">
+                  {requests.map((r) => (
                   <li
                     key={r.id}
                     className="rounded border border-outline-variant bg-surface px-4 py-3"
@@ -428,7 +439,26 @@ export default function DashboardClient({ locale }: Props) {
                     )}
                   </li>
                 ))}
-              </ul>
+                </ul>
+
+                {/* Load more button if more invoices exist */}
+                {hasMore && (
+                  <button
+                    onClick={() => loadRequests(paginationOffset + 50)}
+                    disabled={loadingList}
+                    className="w-full mt-4 px-4 py-2 rounded border border-outline-variant text-[13px] text-on-surface-variant hover:text-on-surface hover:border-primary transition-colors disabled:opacity-50"
+                  >
+                    {loadingList ? "Loading..." : `Load more (${paginationTotal - (paginationOffset + 50)} remaining)`}
+                  </button>
+                )}
+
+                {/* Show total count */}
+                {paginationTotal > 0 && (
+                  <p className="mt-3 text-[11px] text-on-surface-placeholder text-center">
+                    Showing {Math.min(paginationOffset + 50, paginationTotal)} of {paginationTotal}
+                  </p>
+                )}
+              </>
             )}
           </section>
         </div>
