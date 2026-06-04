@@ -78,6 +78,16 @@ export default function DashboardClient({ locale }: Props) {
           return;
         }
         setEmail(data.user.email ?? null);
+
+        // Autofill from Google profile
+        // Google OAuth provides user.user_metadata with name, picture, etc.
+        if (data.user.user_metadata?.name) {
+          setClientName(data.user.user_metadata.name);
+        }
+        if (data.user.email) {
+          setClientEmail(data.user.email);
+        }
+
         setChecking(false);
         loadRequests();
       } catch (err) {
