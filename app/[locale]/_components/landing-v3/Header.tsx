@@ -13,12 +13,13 @@ interface Props {
 
 /**
  * Header — sticky top bar, frosted blur, brand + nav + locale + login + CTA.
- * If user is logged in, show email + logout instead of login CTA.
+ * If user is logged in, show email + dashboard + logout instead of login CTA.
  */
 export default function Header({ locale, user }: Props) {
   const t = useTranslations("nav");
   const signupHref = locale === "es-AR" ? "/signup" : `/${locale}/signup`;
   const dashboardHref = locale === "es-AR" ? "/dashboard" : `/${locale}/dashboard`;
+  const logoutHref = locale === "es-AR" ? "/auth/logout" : `/${locale}/auth/logout`;
 
   return (
     <header
@@ -88,7 +89,7 @@ export default function Header({ locale, user }: Props) {
                   {t("dashboard") || "Dashboard"}
                 </Link>
                 <Link
-                  href={signupHref}
+                  href={logoutHref}
                   className="btn btn-primary"
                   onClick={() => track("cta_clicked", { cta: "logout" })}
                 >
