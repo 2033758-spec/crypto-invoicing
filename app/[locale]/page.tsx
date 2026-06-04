@@ -1,7 +1,7 @@
 import { unstable_setRequestLocale } from "next-intl/server";
 import { cookies } from "next/headers";
+import { createServerClient } from "@supabase/ssr";
 import { fetchUsdcArsRate } from "../lib/fx";
-import { getServerActionSupabase } from "../lib/supabase";
 
 import Seams from "./_components/landing-v3/Seams";
 import CursorSpotlight from "./_components/landing-v3/CursorSpotlight";
@@ -49,7 +49,26 @@ export default async function LandingPage({
 
   // Check if user is authenticated (for Header to show correct nav)
   const cookieStore = cookies();
-  const supabase = getServerActionSupabase(cookieStore);
+
+  // Create a proper cookie adapter for Supabase
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value || undefined;
+        },
+        set(name: string, value: string, options: any) {
+          // Server Components can't set cookies, but reading works
+        },
+        remove(name: string, options: any) {
+          // Server Components can't remove cookies
+        },
+      },
+    }
+  );
+
   const { data: { user } } = await supabase.auth.getUser();
 
   // Live USDC→ARS + USDC→BRL rates from CriptoYa (cached 60s on the edge).
