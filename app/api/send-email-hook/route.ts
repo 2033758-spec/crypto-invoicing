@@ -1,13 +1,9 @@
 // /api/send-email-hook — Supabase Auth Hook for Send Email events
 //
 // This endpoint is called by Supabase Auth hooks when an email needs to be sent.
-// It validates Standard Webhooks signature (svix format) and forwards to Resend.
+// Validates Standard Webhooks (svix) signature and forwards to Resend API.
 //
-// Supabase Auth Hooks use Standard Webhooks format:
-// 1. Validates svix-signature header using webhook secret
-// 2. Constructs magic-link email
-// 3. Sends via Resend API
-// 4. Returns success/failure to Supabase
+// Webhook signature validation is CRITICAL to prevent unauthorized email sends.
 
 import { NextResponse } from 'next/server';
 import crypto from 'node:crypto';
@@ -26,71 +22,60 @@ interface SendEmailPayload {
   };
 }
 
-function validateStandardWebhooks(
-  body: string,
-  signature: string,
-  secret: string
-): boolean {
-  // Standard Webhooks format: v1,<signature>
-  const parts = signature.split(',');
-  if (parts.length !== 2) return false;
-
-  const [version, providedSignature] = parts;
-  if (version !== 'v1') return false;
-
-  // Extract base64 part of secret (remove v1,whsec_ prefix)
-  const secretBase64 = secret.startsWith('v1,whsec_')
-    ? secret.slice(9)
-    : secret;
-
-  const secretBytes = Buffer.from(secretBase64, 'base64');
-  const expectedSignature = crypto
-    .createHmac('sha256', secretBytes)
-    .update(body, 'utf8')
-    .digest('base64');
-
-  // Timing-safe comparison
-  try {
-    return crypto.timingSafeEqual(
-      Buffer.from(providedSignature),
-      Buffer.from(expectedSignature)
-    );
-  } catch {
-    return false;
-  }
-}
-
 export async function POST(req: Request) {
   const secret = process.env.SUPABASE_AUTH_WEBHOOK_SECRET;
   if (!secret) {
     console.error('[send-email-hook] SUPABASE_AUTH_WEBHOOK_SECRET unset');
-    return NextResponse.json(
-      { error: 'Server misconfigured' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
   }
 
-  // Standard Webhooks signature validation
-  const signature = req.headers.get('svix-signature');
+  // Get signature header — can be svix-signature or x-webhook-secret
+  const svixSig = req.headers.get('svix-signature');
+  const xWebhookSig = req.headers.get('x-webhook-secret');
+  const signature = svixSig || xWebhookSig;
+
   if (!signature) {
-    console.error('[send-email-hook] Missing svix-signature header');
+    console.error('[send-email-hook] No signature header found');
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  // Read body for signature validation
   const bodyText = await req.text();
 
-  console.log('[send-email-hook] Debug:', {
-    signature: signature.slice(0, 20) + '...',
-    secret: secret.slice(0, 30) + '...',
-    bodyLength: bodyText.length
-  });
+  // Validate signature using Standard Webhooks format (v1,<sig>)
+  let isValid = false;
 
-  if (!validateStandardWebhooks(bodyText, signature, secret)) {
-    console.error('[send-email-hook] Invalid signature');
-    console.error('[send-email-hook] Expected to match but got:', {
-      signature: signature.slice(0, 30) + '...',
-      secret: secret.slice(0, 30) + '...'
+  try {
+    const parts = signature.split(',');
+    if (parts.length === 2) {
+      const [version, providedSig] = parts;
+
+      if (version === 'v1') {
+        // Extract base64 secret (remove v1,whsec_ prefix)
+        const secretBase64 = secret.startsWith('v1,whsec_')
+          ? secret.slice(9)
+          : secret;
+
+        const secretBytes = Buffer.from(secretBase64, 'base64');
+        const expectedSig = crypto
+          .createHmac('sha256', secretBytes)
+          .update(bodyText, 'utf8')
+          .digest('base64');
+
+        isValid = crypto.timingSafeEqual(
+          Buffer.from(providedSig),
+          Buffer.from(expectedSig)
+        );
+      }
+    }
+  } catch (e) {
+    console.error('[send-email-hook] Signature validation error:', e);
+  }
+
+  if (!isValid) {
+    console.error('[send-email-hook] Signature validation failed', {
+      hasSignature: !!signature,
+      signatureStart: signature?.slice(0, 20),
+      secretStart: secret.slice(0, 30)
     });
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -125,7 +110,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const magicLink = `https://cryptoinvoicing.co/auth/callback?token_hash=${token}&type=${type}`;
+    const magicLink = `https://www.cryptoinvoicing.co/auth/callback?token_hash=${token}&type=${type}`;
 
     const emailResponse = await fetch('https://api.resend.com/emails', {
       method: 'POST',
