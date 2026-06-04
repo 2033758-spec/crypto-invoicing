@@ -19,7 +19,7 @@
 // existing error UI in page.tsx renders.
 
 import { NextResponse, type NextRequest } from "next/server";
-import { cookies } from "next/headers";
+import { cookies as getCookies } from "next/headers";
 import { getServerActionSupabase } from "../../../lib/supabase";
 
 const ALLOWED_NEXT_PREFIXES = [
@@ -76,7 +76,7 @@ export async function GET(
     return NextResponse.redirect(new URL(signupPath, origin));
   }
 
-  const cookieStore = cookies();
+  const cookieStore = getCookies();
   const supabase = getServerActionSupabase(cookieStore);
 
   // Exchange PKCE code for session with timeout + AbortSignal
@@ -97,6 +97,9 @@ export async function GET(
       return NextResponse.redirect(u);
     }
 
+    // Session successfully exchanged! Cookies are now set by Supabase
+    // in the Next.js cookie store via the adapter in createServerClient.
+    // The redirect response will include these cookies automatically.
     return NextResponse.redirect(new URL(next, origin));
   } catch (err) {
     clearTimeout(timeoutId);
