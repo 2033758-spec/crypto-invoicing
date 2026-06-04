@@ -1,5 +1,7 @@
 import { unstable_setRequestLocale } from "next-intl/server";
+import { cookies } from "next/headers";
 import { fetchUsdcArsRate } from "../lib/fx";
+import { getServerActionSupabase } from "../lib/supabase";
 
 import Seams from "./_components/landing-v3/Seams";
 import CursorSpotlight from "./_components/landing-v3/CursorSpotlight";
@@ -44,6 +46,11 @@ export default async function LandingPage({
   params: { locale: string };
 }) {
   unstable_setRequestLocale(params.locale);
+
+  // Check if user is authenticated (for Header to show correct nav)
+  const cookieStore = cookies();
+  const supabase = getServerActionSupabase(cookieStore);
+  const { data: { user } } = await supabase.auth.getUser();
 
   // Live USDC→ARS + USDC→BRL rates from CriptoYa (cached 60s on the edge).
   // Both fall back to sensible snapshots if the API is down. Both feed the
@@ -93,7 +100,7 @@ export default async function LandingPage({
       {/* Cursor-aware spotlight (updates CSS vars on body) */}
       <CursorSpotlight />
 
-      <Header locale={params.locale} />
+      <Header locale={params.locale} user={user} />
 
       <main className="relative isolate">
         <Hero

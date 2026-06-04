@@ -8,15 +8,17 @@ import { track } from "../../../lib/analytics";
 
 interface Props {
   locale: string;
+  user?: any; // Supabase User object, passed from server
 }
 
 /**
  * Header — sticky top bar, frosted blur, brand + nav + locale + login + CTA.
- * Matches `.header` / `.row` / `.brand` / `.nav` / `.actions` in landing.css.
+ * If user is logged in, show email + logout instead of login CTA.
  */
-export default function Header({ locale }: Props) {
+export default function Header({ locale, user }: Props) {
   const t = useTranslations("nav");
   const signupHref = locale === "es-AR" ? "/signup" : `/${locale}/signup`;
+  const dashboardHref = locale === "es-AR" ? "/dashboard" : `/${locale}/dashboard`;
 
   return (
     <header
@@ -71,20 +73,47 @@ export default function Header({ locale }: Props) {
 
           <div className="flex items-center gap-2">
             <LocaleDropdown current={locale} />
-            <Link
-              href={signupHref}
-              className="btn btn-ghost hidden sm:inline-flex"
-              onClick={() => track("cta_clicked", { cta: "login" })}
-            >
-              {t("login")}
-            </Link>
-            <Link
-              href={signupHref}
-              className="btn btn-primary"
-              onClick={() => track("cta_clicked", { cta: "get_started" })}
-            >
-              {t("cta")} <span className="arrow">→</span>
-            </Link>
+
+            {user ? (
+              // User is logged in — show email + dashboard + logout
+              <>
+                <span className="text-[13px] text-on-surface-variant hidden sm:inline">
+                  {user.email}
+                </span>
+                <Link
+                  href={dashboardHref}
+                  className="btn btn-ghost hidden sm:inline-flex"
+                  onClick={() => track("cta_clicked", { cta: "dashboard" })}
+                >
+                  {t("dashboard") || "Dashboard"}
+                </Link>
+                <Link
+                  href={signupHref}
+                  className="btn btn-primary"
+                  onClick={() => track("cta_clicked", { cta: "logout" })}
+                >
+                  {t("logout") || "Cerrar sesión"}
+                </Link>
+              </>
+            ) : (
+              // User is not logged in — show login + get started
+              <>
+                <Link
+                  href={signupHref}
+                  className="btn btn-ghost hidden sm:inline-flex"
+                  onClick={() => track("cta_clicked", { cta: "login" })}
+                >
+                  {t("login")}
+                </Link>
+                <Link
+                  href={signupHref}
+                  className="btn btn-primary"
+                  onClick={() => track("cta_clicked", { cta: "get_started" })}
+                >
+                  {t("cta")} <span className="arrow">→</span>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
