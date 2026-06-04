@@ -56,11 +56,6 @@ async function ensureInit(): Promise<unknown> {
       // module-specifier resolution (incident 2026-05-28 step-4-PostHog).
       const mod = await import("posthog-js");
       const posthog: any = mod.default ?? mod; // eslint-disable-line @typescript-eslint/no-explicit-any
-      // In dev, expose posthog instance on window for browser-console smoke tests.
-      // Production never sees this branch.
-      if (process.env.NODE_ENV !== "production" && typeof window !== "undefined") {
-        (window as unknown as { posthog: unknown }).posthog = posthog;
-      }
       posthog.init(key, {
         api_host: host,
         // We gate ourselves via `ci_consent` cookie above; PostHog's own

@@ -276,7 +276,10 @@ export default function DashboardClient({ locale }: Props) {
               <div className="grid sm:grid-cols-2 gap-4">
                 <Field label={t("form.amount")} htmlFor="amount_usd">
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-[12px] text-on-surface-placeholder">
+                    <span
+                      id="amount-unit"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-[12px] text-on-surface-placeholder"
+                    >
                       USD
                     </span>
                     <input
@@ -288,6 +291,7 @@ export default function DashboardClient({ locale }: Props) {
                       value={amountUsd}
                       onChange={(e) => setAmountUsd(e.target.value)}
                       placeholder="2500"
+                      aria-describedby="amount-unit"
                       className="w-full rounded border border-outline-variant bg-surface pl-12 pr-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150"
                     />
                   </div>

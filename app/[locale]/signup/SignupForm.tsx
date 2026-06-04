@@ -192,7 +192,7 @@ export default function SignupForm({ locale }: Props) {
       <div className="relative z-10 max-w-shell mx-auto w-full">
         <Link
           href={homeHref}
-          className="inline-flex items-center gap-2 font-mono text-[13px] text-on-surface-variant hover:text-on-surface transition-colors duration-150"
+          className="inline-flex items-center gap-2 font-mono text-[13px] text-on-surface-variant hover:text-on-surface transition-colors duration-150 min-h-[44px] min-w-[44px] px-2 py-2"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M19 12H5M12 19l-7-7 7-7" />
