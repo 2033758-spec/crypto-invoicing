@@ -14,8 +14,9 @@ interface Props {
 type Status = "idle" | "submitting" | "ok" | "error" | "rate_limited";
 type ErrorType = "validation" | "rate_limit" | "network" | null;
 
-// RFC 5321 compliant email validation (stricter than /^\S+@\S+\.\S+$/)
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// RFC 5321 compliant email validation
+// Requires: local@domain.tld format with reasonable length (min 3 chars after @, min 2 after TLD)
+const EMAIL_RE = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 const MAX_EMAIL_LENGTH = 254; // RFC 5321 standard
 const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
 const MAX_ATTEMPTS_PER_WINDOW = 3;
