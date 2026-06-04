@@ -50,7 +50,7 @@ export async function POST(req: Request) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'hola@cryptoinvoicing.com',
+        from: 'hola@cryptoinvoicing.co',
         to: userEmail,
         subject: 'Tu link mágico para Crypto Invoicing',
         html: `<h2>Bienvenido a Crypto Invoicing</h2><p><a href="${magicLink}">Confirmar email</a></p>`,
