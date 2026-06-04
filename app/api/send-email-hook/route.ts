@@ -12,6 +12,9 @@ interface AuthEmailPayload {
 }
 
 export async function POST(req: Request) {
+  console.log('[send-email-hook] Received request');
+  console.log('[send-email-hook] Headers:', Object.fromEntries(req.headers));
+
   const resendKey = process.env.RESEND_API_KEY;
   if (!resendKey) {
     console.error('[send-email-hook] RESEND_API_KEY not set');
@@ -21,7 +24,9 @@ export async function POST(req: Request) {
   let payload: AuthEmailPayload;
   try {
     payload = await req.json();
-  } catch {
+    console.log('[send-email-hook] Payload:', { email: payload.email || payload.user?.email });
+  } catch (err) {
+    console.error('[send-email-hook] JSON parse error:', err);
     return NextResponse.json({ error: 'Bad request' }, { status: 400 });
   }
 
