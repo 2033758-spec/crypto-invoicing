@@ -80,8 +80,18 @@ export async function POST(req: Request) {
   // Read body for signature validation
   const bodyText = await req.text();
 
+  console.log('[send-email-hook] Debug:', {
+    signature: signature.slice(0, 20) + '...',
+    secret: secret.slice(0, 30) + '...',
+    bodyLength: bodyText.length
+  });
+
   if (!validateStandardWebhooks(bodyText, signature, secret)) {
     console.error('[send-email-hook] Invalid signature');
+    console.error('[send-email-hook] Expected to match but got:', {
+      signature: signature.slice(0, 30) + '...',
+      secret: secret.slice(0, 30) + '...'
+    });
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
