@@ -50,6 +50,7 @@ export default function DashboardClient({ locale }: Props) {
   const [country, setCountry] = useState<"AR" | "BR">("AR");
   const [formStatus, setFormStatus] = useState<FormStatus>("idle");
   const [formError, setFormError] = useState<string | null>(null);
+  const [spoofingWarning, setSpoofingWarning] = useState<string | null>(null);
 
   const signupHref = locale === "es-AR" ? "/signup" : `/${locale}/signup`;
   const homeHref = locale === "es-AR" ? "/" : `/${locale}`;
@@ -272,11 +273,26 @@ export default function DashboardClient({ locale }: Props) {
                   id="client_email"
                   type="email"
                   value={clientEmail}
-                  onChange={(e) => setClientEmail(e.target.value)}
+                  onChange={(e) => {
+                    const email = e.target.value;
+                    setClientEmail(email);
+                    // Check for spoofing: if client_email domain matches our domain
+                    if (email && email.endsWith("@cryptoinvoicing.co")) {
+                      setSpoofingWarning("⚠️ This email matches our domain — make sure it's intentional!");
+                    } else {
+                      setSpoofingWarning(null);
+                    }
+                  }}
                   placeholder="client@example.com or jane@her-company.com"
                   className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150"
                 />
               </Field>
+
+              {spoofingWarning && (
+                <div className="rounded border border-tertiary bg-tertiary/10 px-3 py-2 text-[13px] text-tertiary">
+                  {spoofingWarning}
+                </div>
+              )}
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <Field label={t("form.amount")} htmlFor="amount_usd">
