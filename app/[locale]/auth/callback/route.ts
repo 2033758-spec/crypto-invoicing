@@ -79,26 +79,40 @@ export async function GET(
   const cookieStore = cookies();
   const supabase = getServerActionSupabase(cookieStore);
 
-  // Wrap exchange in timeout (10 seconds) to prevent hanging on slow Supabase
-  const exchangePromise = supabase.auth.exchangeCodeForSession(code);
-  const timeoutPromise = new Promise<{ error: Error }>((resolve) =>
-    setTimeout(
-      () =>
-        resolve({
-          error: new Error("Code exchange timeout after 10s. Try signing in again."),
-        }),
-      10000,
-    ),
-  );
+  // Exchange PKCE code for session with timeout + AbortSignal
+  // AbortController cancels the fetch so stale session promises don't silently complete
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout (Vercel cold start + network)
 
-  const { error } = await Promise.race([exchangePromise, timeoutPromise]);
-  if (error) {
-    console.error("[auth/callback] exchangeCodeForSession failed", error);
+  try {
+    // Supabase SDK may not support AbortSignal yet, but we try; if it throws abort error, we catch it
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    clearTimeout(timeoutId);
+
+    if (error) {
+      console.error("[auth/callback] exchangeCodeForSession failed", error);
+      const u = new URL(errorPath, origin);
+      u.searchParams.set("reason", "exchange_failed");
+      u.searchParams.set("desc", error.message);
+      return NextResponse.redirect(u);
+    }
+
+    return NextResponse.redirect(new URL(next, origin));
+  } catch (err) {
+    clearTimeout(timeoutId);
+
+    if (err instanceof Error && err.name === "AbortError") {
+      console.error("[auth/callback] Code exchange timeout (15s exceeded)");
+      const u = new URL(errorPath, origin);
+      u.searchParams.set("reason", "exchange_timeout");
+      u.searchParams.set("desc", "Authentication took too long. Please try again.");
+      return NextResponse.redirect(u);
+    }
+
+    console.error("[auth/callback] Unexpected error", err);
     const u = new URL(errorPath, origin);
-    u.searchParams.set("reason", "exchange_failed");
-    u.searchParams.set("desc", error.message);
+    u.searchParams.set("reason", "exchange_error");
+    u.searchParams.set("desc", "An error occurred during authentication. Please try again.");
     return NextResponse.redirect(u);
   }
-
-  return NextResponse.redirect(new URL(next, origin));
 }

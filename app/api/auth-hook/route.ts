@@ -15,6 +15,7 @@
 import { NextResponse } from "next/server";
 import crypto from "node:crypto";
 import { notifyFounder } from "../../lib/telegram";
+import { checkRateLimit, getClientIp } from "../../lib/rate-limit";
 
 interface SupabaseWebhookPayload {
   type?: string;
@@ -42,6 +43,17 @@ function secretsMatch(provided: string, expected: string): boolean {
 }
 
 export async function POST(req: Request) {
+  // Rate limit: max 50 signups per hour per IP (prevents spam/DoS)
+  const clientIp = getClientIp(req);
+  const rateLimit = checkRateLimit(clientIp, "/api/auth-hook", 50, 3600000);
+  if (!rateLimit.allowed) {
+    console.warn(`[auth-hook] Rate limit exceeded for IP ${clientIp}`);
+    return NextResponse.json(
+      { error: "Too many signups. Please try again later." },
+      { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSec || 60) } },
+    );
+  }
+
   const expected = process.env.SUPABASE_AUTH_WEBHOOK_SECRET;
   if (!expected) {
     // Misconfigured server — fail closed (don't silently accept).

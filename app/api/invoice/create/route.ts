@@ -13,6 +13,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { getServerActionSupabase } from "../../../lib/supabase";
 import { notifyFounder } from "../../../lib/telegram";
+import { checkRateLimit, getClientIp } from "../../../lib/rate-limit";
 
 interface Body {
   client_name?: string;
@@ -71,7 +72,7 @@ export async function POST(req: NextRequest) {
       ? body.description.trim().slice(0, 500)
       : null;
 
-  // Auth + insert
+  // Auth + rate limit
   const cookieStore = cookies();
   const supabase = getServerActionSupabase(cookieStore);
   const {
@@ -80,6 +81,17 @@ export async function POST(req: NextRequest) {
   } = await supabase.auth.getUser();
   if (authError || !user) {
     return NextResponse.json({ error: "Unauthenticated" }, { status: 401 });
+  }
+
+  // Rate limit: max 10 invoices per hour per user (prevents spam/DoS)
+  // Use user.id as the rate limit key instead of IP (authenticated users)
+  const rateLimit = checkRateLimit(user.id, "/api/invoice/create", 10, 3600000);
+  if (!rateLimit.allowed) {
+    console.warn(`[invoice/create] Rate limit exceeded for user ${user.id}`);
+    return NextResponse.json(
+      { error: "Too many invoice requests. Please try again later." },
+      { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSec || 60) } },
+    );
   }
 
   const { data: inserted, error: insertError } = await supabase
