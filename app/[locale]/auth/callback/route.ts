@@ -58,6 +58,8 @@ export async function GET(
     locale === "es-AR" ? "/auth/error" : `/${locale}/auth/error`;
 
   const code = searchParams.get("code");
+  const tokenHash = searchParams.get("token_hash");
+  const type = searchParams.get("type") || "email";
   const next = sanitizeNext(searchParams.get("next"), defaultNext);
   const providerError = searchParams.get("error");
   const providerErrorDesc = searchParams.get("error_description");
@@ -69,24 +71,37 @@ export async function GET(
     return NextResponse.redirect(u);
   }
 
-  if (!code) {
-    // No code, no error — likely a stale visit. Push to signup so the flow
-    // restarts cleanly.
+  if (!code && !tokenHash) {
+    // No code AND no token_hash — likely a stale visit. Push to signup so the flow restarts cleanly.
     const signupPath = locale === "es-AR" ? "/signup" : `/${locale}/signup`;
     return NextResponse.redirect(new URL(signupPath, origin));
   }
 
   const cookieStore = getCookies();
   const supabase = getServerActionSupabase(cookieStore);
-
-  // Exchange PKCE code for session with timeout + AbortSignal
-  // AbortController cancels the fetch so stale session promises don't silently complete
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout (Vercel cold start + network)
 
   try {
-    // Supabase SDK may not support AbortSignal yet, but we try; if it throws abort error, we catch it
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    let error;
+
+    // Magic-link flow: token_hash (OTP verification)
+    if (tokenHash && type === "email") {
+      const { error: otpError } = await supabase.auth.verifyOtp({
+        token_hash: tokenHash,
+        type: "email",
+      });
+      error = otpError;
+    }
+    // OAuth flow: code (PKCE exchange)
+    else if (code) {
+      const { error: codeError } = await supabase.auth.exchangeCodeForSession(code);
+      error = codeError;
+    } else {
+      error = new Error("No authentication method provided");
+    }
+
+    clearTimeout(timeoutId);
     clearTimeout(timeoutId);
 
     if (error) {
