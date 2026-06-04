@@ -11,6 +11,7 @@
 
 import { NextResponse, type NextRequest } from "next/server";
 import { cookies } from "next/headers";
+import * as Sentry from "@sentry/nextjs";
 import { getServerActionSupabase } from "../../../lib/supabase";
 import { notifyFounder } from "../../../lib/telegram";
 import { checkRateLimit, getClientIp } from "../../../lib/rate-limit";
@@ -94,10 +95,31 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Get user's organization for multi-tenant scoping
+  const { data: userData, error: userDataError } = await supabase
+    .from("users")
+    .select("org_id")
+    .eq("id", user.id)
+    .single();
+
+  if (userDataError || !userData?.org_id) {
+    console.error("[invoice/create] Failed to get user org_id", userDataError);
+    Sentry.captureException(userDataError || new Error("User org_id missing"), {
+      tags: { endpoint: "invoice/create", type: "org_id_fetch" },
+      extra: { userId: user.id },
+      level: "error",
+    });
+    return NextResponse.json(
+      { error: "Organization not configured" },
+      { status: 500 },
+    );
+  }
+
   const { data: inserted, error: insertError } = await supabase
     .from("invoice_requests")
     .insert({
       user_id: user.id,
+      org_id: userData.org_id,
       client_name,
       client_email: client_email || null,
       amount_usd,
@@ -111,6 +133,11 @@ export async function POST(req: NextRequest) {
 
   if (insertError || !inserted) {
     console.error("[invoice/create] insert failed", insertError);
+    Sentry.captureException(insertError || new Error("Invoice insert failed"), {
+      tags: { endpoint: "invoice/create", type: "insert" },
+      extra: { userId: user.id, orgId: userData.org_id },
+      level: "error",
+    });
     return NextResponse.json(
       { error: "Could not save your invoice request" },
       { status: 500 },
