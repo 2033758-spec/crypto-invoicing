@@ -266,14 +266,14 @@ export default function DashboardClient({ locale }: Props) {
               <Field
                 label={t("form.clientEmail")}
                 htmlFor="client_email"
-                hint={t("form.clientEmailHint")}
+                hint={t("form.clientEmailHint") || "Optional — personal or work email, we'll send payment link"}
               >
                 <input
                   id="client_email"
                   type="email"
                   value={clientEmail}
                   onChange={(e) => setClientEmail(e.target.value)}
-                  placeholder="client@company.com"
+                  placeholder="client@example.com or jane@her-company.com"
                   className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150"
                 />
               </Field>
