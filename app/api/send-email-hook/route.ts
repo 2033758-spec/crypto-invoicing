@@ -3,6 +3,7 @@
 // Forwards to Resend API for delivery with exponential backoff retry
 
 import { NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 
 interface AuthEmailPayload {
   user?: { email?: string; id?: string };
@@ -57,6 +58,8 @@ export async function POST(req: Request) {
 
   const resendKey = process.env.RESEND_API_KEY;
   if (!resendKey) {
+    const err = new Error('RESEND_API_KEY not configured');
+    Sentry.captureException(err, { tags: { endpoint: 'send-email-hook' } });
     console.error('[send-email-hook] RESEND_API_KEY not set');
     return NextResponse.json({ error: 'Not configured' }, { status: 500 });
   }
@@ -67,6 +70,7 @@ export async function POST(req: Request) {
     console.log('[send-email-hook] Payload:', { email: payload.email || payload.user?.email });
   } catch (err) {
     console.error('[send-email-hook] JSON parse error:', err);
+    Sentry.captureException(err, { tags: { endpoint: 'send-email-hook', type: 'parse' } });
     return NextResponse.json({ error: 'Bad request' }, { status: 400 });
   }
 
