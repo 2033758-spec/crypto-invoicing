@@ -30,12 +30,14 @@ export async function middleware(request: NextRequest) {
             return request.cookies.get(name)?.value;
           },
           set(name: string, value: string, options: any) {
+            // secure: false on localhost (http://), true on production (https://)
+            const isSecure = process.env.NODE_ENV === 'production' || request.headers.get('x-forwarded-proto') === 'https';
             response.cookies.set({
               name,
               value,
               ...options,
               sameSite: "lax", // Allow cross-tab cookies
-              secure: true, // HTTPS only
+              secure: isSecure, // HTTPS in prod, allow HTTP on localhost
               httpOnly: true, // Not accessible from JS
             });
           },

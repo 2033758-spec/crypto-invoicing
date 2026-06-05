@@ -108,7 +108,7 @@ export async function GET(
       console.error("[auth/callback] exchangeCodeForSession failed", error);
       const u = new URL(errorPath, origin);
       u.searchParams.set("reason", "exchange_failed");
-      u.searchParams.set("desc", error.message);
+      u.searchParams.set("desc", "Registration error. Please try again.");
       return NextResponse.redirect(u);
     }
 
