@@ -791,3 +791,20 @@ details.faq-item[open] .faq-plus {
     background: var(--surface) !important;
   }
 }
+
+/* Global keyboard focus ring (WCAG 2.4.7). Keyboard-only via :focus-visible —
+   no rings on mouse click. :where() keeps specificity 0 so component-specific
+   focus styles can still override. Covers the logged-in header controls
+   (avatar chip, account menu, logout) and every other interactive element. */
+:where(a, button, summary, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Account-menu summary: kill the native iOS Safari disclosure marker (▶).
+   Tailwind `list-none` (list-style:none) alone doesn't suppress the WebKit
+   pseudo-element, so it renders a stray arrow next to the ⋮ on iPhone. */
+.account-menu-summary::-webkit-details-marker {
+  display: none;
+}

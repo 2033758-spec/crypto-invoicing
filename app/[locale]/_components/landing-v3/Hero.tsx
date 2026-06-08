@@ -11,6 +11,8 @@ interface Props {
   liveSource: string;
   liveBrlRate: number;
   liveBrlSource: string;
+  /** When true, the user already has a session — primary CTA points to the dashboard, not signup. */
+  isAuthenticated?: boolean;
 }
 
 /**
@@ -30,9 +32,12 @@ export default function Hero({
   liveSource,
   liveBrlRate,
   liveBrlSource,
+  isAuthenticated = false,
 }: Props) {
   const t = useTranslations("hero");
+  const tn = useTranslations("nav");
   const signupHref = locale === "es-AR" ? "/signup" : `/${locale}/signup`;
+  const dashboardHref = locale === "es-AR" ? "/dashboard" : `/${locale}/dashboard`;
 
   return (
     <section className="relative pt-32 pb-24">
@@ -58,11 +63,16 @@ export default function Hero({
             />
             <div className="flex gap-3 items-center flex-wrap">
               <Link
-                href={signupHref}
+                href={isAuthenticated ? dashboardHref : signupHref}
                 className="btn btn-primary btn-lg"
-                onClick={() => track("cta_clicked", { cta: "start_now_hero" })}
+                onClick={() =>
+                  track("cta_clicked", {
+                    cta: isAuthenticated ? "go_dashboard_hero" : "start_now_hero",
+                  })
+                }
               >
-                {t("primaryCta")} <span className="arrow">→</span>
+                {isAuthenticated ? tn("dashboard") : t("primaryCta")}{" "}
+                <span className="arrow">→</span>
               </Link>
               <a
                 href="#calc"

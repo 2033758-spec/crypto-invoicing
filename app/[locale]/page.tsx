@@ -128,6 +128,7 @@ export default async function LandingPage({
           liveSource={arsFx.source}
           liveBrlRate={brlFx.rate}
           liveBrlSource={brlFx.source}
+          isAuthenticated={!!user}
         />
         <Marquee />
         <Problem />
@@ -135,9 +136,9 @@ export default async function LandingPage({
         <Calculator />
         <Features />
         <Trust />
-        <Pricing locale={params.locale} />
+        <Pricing locale={params.locale} isAuthenticated={!!user} />
         <FAQ />
-        <FinalCta locale={params.locale} />
+        <FinalCta locale={params.locale} isAuthenticated={!!user} />
       </main>
 
       <Footer locale={params.locale} />

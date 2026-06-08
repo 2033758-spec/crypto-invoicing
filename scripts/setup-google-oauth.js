@@ -8,12 +8,21 @@
 
 const https = require('https');
 
-const SUPABASE_URL = 'https://wthatxtjzagprunjnzoh.supabase.co';
-const SERVICE_ROLE_KEY = 'sb_secret_ROTATED__see_1Password';
+// Secrets come from the environment only — NEVER hardcode (this script used to
+// leak the live service-role key + Google client secret in plaintext). Run with:
+//   SUPABASE_SERVICE_ROLE_KEY=... NEXT_PUBLIC_GOOGLE_CLIENT_ID=... GOOGLE_CLIENT_SECRET=... \
+//   node scripts/setup-google-oauth.js
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://wthatxtjzagprunjnzoh.supabase.co';
+const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-const GOOGLE_CLIENT_ID = '273625522480-h0ijtipgbbst4bv6ieat0bppor7mupdq.apps.googleusercontent.com';
-const GOOGLE_CLIENT_SECRET = 'GOCSPX-ROTATED__see_1Password';
-const GOOGLE_REDIRECT_URI = 'https://wthatxtjzagprunjnzoh.supabase.co/auth/v1/callback';
+const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+const GOOGLE_REDIRECT_URI = `${SUPABASE_URL}/auth/v1/callback`;
+
+if (!SERVICE_ROLE_KEY || !GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
+  console.error('❌ Missing env vars. Set SUPABASE_SERVICE_ROLE_KEY, NEXT_PUBLIC_GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET (see .env).');
+  process.exit(1);
+}
 
 async function makeRequest(method, path, body = null) {
   return new Promise((resolve, reject) => {
@@ -95,7 +104,7 @@ async function setup() {
     console.error('\n⚠️  If this fails, you may need to manually add credentials to Supabase dashboard:');
     console.error('  Path: Auth → Providers → Google');
     console.error('  Client ID:', GOOGLE_CLIENT_ID);
-    console.error('  Client Secret:', GOOGLE_CLIENT_SECRET);
+    console.error('  Client Secret: (see your .env / 1Password — not printed)');
     process.exit(1);
   }
 }

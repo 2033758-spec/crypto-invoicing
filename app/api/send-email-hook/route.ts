@@ -4,6 +4,7 @@
 
 import { NextResponse } from 'next/server';
 import * as Sentry from '@sentry/nextjs';
+import { checkRateLimit } from '../../lib/rate-limit';
 
 interface AuthEmailPayload {
   user?: { email?: string; id?: string };
@@ -80,6 +81,19 @@ export async function POST(req: Request) {
   if (!userEmail || !token) {
     console.warn('[send-email-hook] Missing email or token');
     return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+  }
+
+  // Abuse guard. This endpoint sends a branded magic-link email from our verified
+  // Resend domain — unthrottled it can email-bomb arbitrary victims or burn the
+  // Resend quota. Requests arrive from Supabase's IP (not the end user), so a
+  // per-caller-IP limit is useless; we cap per-target-email + a global backstop.
+  // Follow-up (tracked): also verify the Supabase Send-Email-Hook Standard-Webhooks
+  // signature for full origin auth — rate-limiting is the immediate mitigation.
+  const perEmail = checkRateLimit(userEmail.toLowerCase(), 'send-email-hook:email', 3, 10 * 60 * 1000);
+  const globalCap = checkRateLimit('all', 'send-email-hook:global', 60, 60 * 1000);
+  if (!perEmail.allowed || !globalCap.allowed) {
+    console.warn('[send-email-hook] rate limit hit', { perEmail: !perEmail.allowed, global: !globalCap.allowed });
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
 
   try {

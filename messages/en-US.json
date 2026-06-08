@@ -13,7 +13,10 @@
     "faq": "FAQ",
     "trust": "Security",
     "login": "Login",
-    "cta": "Start now"
+    "cta": "Start now",
+    "dashboard": "Go to dashboard",
+    "logout": "Log out",
+    "accountMenu": "Account menu"
   },
   "hero": {
     "eyebrow": "[ 00 / Crypto Invoicing ]",

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import Logo from "./Logo";
 import LocaleDropdown from "./LocaleDropdown";
@@ -20,6 +21,26 @@ export default function Header({ locale, user }: Props) {
   const signupHref = locale === "es-AR" ? "/signup" : `/${locale}/signup`;
   const dashboardHref = locale === "es-AR" ? "/dashboard" : `/${locale}/dashboard`;
   const logoutHref = locale === "es-AR" ? "/auth/logout" : `/${locale}/auth/logout`;
+
+  // Native <details> doesn't close on outside tap or Escape (feels broken on
+  // iPhone Safari). Close the account menu on Escape + pointer-down outside it.
+  const accountMenuRef = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    if (!user) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && accountMenuRef.current) accountMenuRef.current.open = false;
+    };
+    const onPointer = (e: PointerEvent) => {
+      const el = accountMenuRef.current;
+      if (el?.open && !el.contains(e.target as Node)) el.open = false;
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointer);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointer);
+    };
+  }, [user]);
 
   return (
     <header
@@ -83,9 +104,10 @@ export default function Header({ locale, user }: Props) {
                   href={dashboardHref}
                   className="flex items-center gap-2 px-3 py-2 rounded hover:bg-white/[0.04] transition-colors"
                   title={user.email}
+                  aria-label={`${t("dashboard")} — ${user.email}`}
                 >
-                  {/* Avatar circle with first letter */}
-                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary text-[12px] font-semibold">
+                  {/* Avatar circle with first letter (decorative — Link carries the label) */}
+                  <div aria-hidden="true" className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-on text-[12px] font-semibold">
                     {user.email?.[0]?.toUpperCase() || "U"}
                   </div>
                   {/* Email (hidden on mobile) */}
@@ -95,8 +117,8 @@ export default function Header({ locale, user }: Props) {
                 </Link>
 
                 {/* Logout dropdown button */}
-                <details className="relative">
-                  <summary className="btn btn-ghost list-none cursor-pointer flex items-center justify-center">
+                <details ref={accountMenuRef} className="relative">
+                  <summary aria-label={t("accountMenu")} className="account-menu-summary btn btn-ghost list-none cursor-pointer flex items-center justify-center">
                     ⋮
                   </summary>
                   <div className="absolute right-0 top-full mt-1 rounded border border-outline-variant bg-surface-container-high shadow-lg z-10">

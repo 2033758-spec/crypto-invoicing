@@ -7,6 +7,8 @@ import { track } from "../../../lib/analytics";
 
 interface Props {
   locale: string;
+  /** When true, plan CTAs point to the dashboard instead of signup (no dead-end for logged-in users). */
+  isAuthenticated?: boolean;
 }
 
 const Check = () => (
@@ -20,9 +22,13 @@ const X = () => (
   </svg>
 );
 
-export default function Pricing({ locale }: Props) {
+export default function Pricing({ locale, isAuthenticated = false }: Props) {
   const t = useTranslations("pricing");
+  const tn = useTranslations("nav");
   const signupHref = locale === "es-AR" ? "/signup" : `/${locale}/signup`;
+  const dashboardHref = locale === "es-AR" ? "/dashboard" : `/${locale}/dashboard`;
+  // Logged-in users can't "start free / start Pro" again — route plan CTAs to the dashboard.
+  const ctaHref = isAuthenticated ? dashboardHref : signupHref;
   const starterRaw = t.raw("starter") as any;
   const starter = {
     plan: starterRaw?.plan ?? "",
@@ -124,14 +130,18 @@ export default function Pricing({ locale }: Props) {
               ))}
             </ul>
             <Link
-              href={signupHref}
+              href={ctaHref}
               className="btn btn-secondary btn-lg"
               style={{ width: "100%", justifyContent: "center" }}
               onClick={() =>
-                track("cta_clicked", { cta: "start_now_pricing_starter" })
+                track("cta_clicked", {
+                  cta: isAuthenticated
+                    ? "go_dashboard_pricing_starter"
+                    : "start_now_pricing_starter",
+                })
               }
             >
-              {starter.cta}
+              {isAuthenticated ? tn("dashboard") : starter.cta}
             </Link>
           </div>
 
@@ -195,14 +205,18 @@ export default function Pricing({ locale }: Props) {
               ))}
             </ul>
             <Link
-              href={signupHref}
+              href={ctaHref}
               className="btn btn-primary btn-lg"
               style={{ width: "100%", justifyContent: "center" }}
               onClick={() =>
-                track("cta_clicked", { cta: "start_now_pricing_pro" })
+                track("cta_clicked", {
+                  cta: isAuthenticated
+                    ? "go_dashboard_pricing_pro"
+                    : "start_now_pricing_pro",
+                })
               }
             >
-              {pro.cta} <span className="arrow">→</span>
+              {isAuthenticated ? tn("dashboard") : pro.cta} <span className="arrow">→</span>
             </Link>
             <div
               className="font-mono text-[11px] text-on-surface-placeholder mt-3.5 pt-3.5 border-t border-outline-variant"

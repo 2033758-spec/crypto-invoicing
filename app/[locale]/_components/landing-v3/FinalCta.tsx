@@ -6,11 +6,15 @@ import { track } from "../../../lib/analytics";
 
 interface Props {
   locale: string;
+  /** When true, the user already has a session — CTA points to the dashboard, not signup. */
+  isAuthenticated?: boolean;
 }
 
-export default function FinalCta({ locale }: Props) {
+export default function FinalCta({ locale, isAuthenticated = false }: Props) {
   const t = useTranslations("finalCta");
+  const tn = useTranslations("nav");
   const signupHref = locale === "es-AR" ? "/signup" : `/${locale}/signup`;
+  const dashboardHref = locale === "es-AR" ? "/dashboard" : `/${locale}/dashboard`;
 
   return (
     <section
@@ -39,11 +43,16 @@ export default function FinalCta({ locale }: Props) {
           {t("sub")}
         </p>
         <Link
-          href={signupHref}
+          href={isAuthenticated ? dashboardHref : signupHref}
           className="btn btn-primary btn-lg inline-flex"
-          onClick={() => track("cta_clicked", { cta: "start_now_final" })}
+          onClick={() =>
+            track("cta_clicked", {
+              cta: isAuthenticated ? "go_dashboard_final" : "start_now_final",
+            })
+          }
         >
-          {t("cta")} <span className="arrow">→</span>
+          {isAuthenticated ? tn("dashboard") : t("cta")}{" "}
+          <span className="arrow">→</span>
         </Link>
         <div
           className="mt-6 font-mono text-[11px] text-on-surface-placeholder"

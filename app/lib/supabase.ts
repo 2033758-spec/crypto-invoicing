@@ -24,6 +24,11 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { createBrowserClient, createServerClient } from "@supabase/ssr";
 import type { CookieOptions } from "@supabase/ssr";
+import { SESSION_MAX_AGE, SESSION_COOKIE_OPTIONS } from "./session-config";
+
+// 30-day session-cookie policy lives in ./session-config (dependency-free so
+// the Edge middleware can import it without pulling in @supabase/supabase-js).
+export { SESSION_MAX_AGE, SESSION_COOKIE_OPTIONS };
 
 // ---------------------------------------------------------------------------
 // 1. Server (service-role) — bypasses RLS. NEVER use in client components.
@@ -70,15 +75,18 @@ export function getBrowserSupabase(): ReturnType<typeof createBrowserClient> {
   // full-page redirect to Google + back, so the callback finds the
   // verifier reliably — unlike the previous localStorage-only path.
   //
-  // Session timeout: 30 days (2592000 seconds). Session persists even if
-  // browser closes, as long as user returns within 30 days of last login.
-  // After 30 days of inactivity, session is cleared.
+  // Session persists across browser restarts (no longer a session-cookie).
+  // NB: @supabase/ssr's browser client ignores cookieOptions.maxAge and uses
+  // its own (~400d) default when it rewrites the auth cookie on autoRefresh;
+  // the real 30-day cap is enforced server-side via the Supabase session-timebox
+  // setting (see session-config.ts). cookieOptions here still controls
+  // path / sameSite / secure on the browser write path.
   _browserClient = createBrowserClient(url, anonKey, {
+    cookieOptions: SESSION_COOKIE_OPTIONS,
     auth: {
       persistSession: true,
       detectSessionInUrl: true,
       autoRefreshToken: true,
-      // Customize session timeout (30 days in seconds)
     },
   });
   return _browserClient;
@@ -103,13 +111,14 @@ export function getServerActionSupabase(cookieStore: CookieAdapter) {
   }
 
   return createServerClient(url, anonKey, {
+    cookieOptions: SESSION_COOKIE_OPTIONS,
     cookies: {
       get(name: string) {
         return cookieStore.get(name)?.value;
       },
       set(name: string, value: string, options: CookieOptions) {
         try {
-          cookieStore.set(name, value, options);
+          cookieStore.set(name, value, { ...options, maxAge: SESSION_MAX_AGE });
         } catch {
           // Server Components can't set cookies — caller must use a route
           // handler or Server Action. Swallow per Supabase pattern.

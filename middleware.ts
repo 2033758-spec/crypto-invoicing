@@ -6,6 +6,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
 import { defaultLocale, locales } from "./i18n";
 import { createServerClient } from "@supabase/ssr";
+import { SESSION_MAX_AGE } from "./app/lib/session-config";
 
 const intlMiddleware = createMiddleware({
   locales: [...locales],
@@ -36,6 +37,7 @@ export async function middleware(request: NextRequest) {
               name,
               value,
               ...options,
+              maxAge: SESSION_MAX_AGE, // 30-day persistence (refreshed cookies keep the long expiry)
               sameSite: "lax", // Allow cross-tab cookies
               secure: isSecure, // HTTPS in prod, allow HTTP on localhost
               httpOnly: true, // Not accessible from JS
@@ -53,11 +55,16 @@ export async function middleware(request: NextRequest) {
       }
     );
 
-    // Refresh session to keep it valid
-    await supabase.auth.refreshSession();
+    // Canonical @supabase/ssr pattern: getUser() validates the session and
+    // refreshes the access token *only when needed*, writing the refreshed
+    // cookies onto `response`. The previous code called refreshSession() on
+    // EVERY request, which — with refresh-token rotation on — let one tab
+    // invalidate another tab's token ("refresh token already used") and
+    // logged the user out across tabs. getUser() is idempotent and safe.
+    await supabase.auth.getUser();
   } catch (error) {
-    // Session refresh failed, but that's OK — user will re-auth if needed
-    console.debug("[middleware] Session refresh skipped (not authenticated)");
+    // Not authenticated (or transient) — fine, anonymous users hit this too.
+    console.debug("[middleware] No active session to refresh");
   }
 
   return response;

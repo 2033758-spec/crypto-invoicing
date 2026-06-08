@@ -79,47 +79,50 @@ export async function GET(
 
   const cookieStore = getCookies();
   const supabase = getServerActionSupabase(cookieStore);
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout (Vercel cold start + network)
 
-  try {
-    let error;
+  // Real 15s timeout. supabase-js doesn't accept an abort signal on
+  // verifyOtp/exchangeCodeForSession, so we race the auth call against a timer.
+  // (The previous AbortController was never wired to the supabase calls, so the
+  // timeout silently did nothing — a hung exchange on a slow LATAM connection
+  // would have hung the request.)
+  const TIMEOUT_MS = 15000;
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error("exchange_timeout")), TIMEOUT_MS);
+  });
 
+  const doAuth = async (): Promise<Error | null> => {
     // Magic-link flow: token_hash (OTP verification)
     if (tokenHash && type === "email") {
-      const { error: otpError } = await supabase.auth.verifyOtp({
-        token_hash: tokenHash,
-        type: "email",
-      });
-      error = otpError;
+      const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: "email" });
+      return error;
     }
     // OAuth flow: code (PKCE exchange)
-    else if (code) {
-      const { error: codeError } = await supabase.auth.exchangeCodeForSession(code);
-      error = codeError;
-    } else {
-      error = new Error("No authentication method provided");
+    if (code) {
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      return error;
     }
+    return new Error("No authentication method provided");
+  };
 
-    clearTimeout(timeoutId);
-    clearTimeout(timeoutId);
+  try {
+    const error = await Promise.race([doAuth(), timeout]);
 
     if (error) {
-      console.error("[auth/callback] exchangeCodeForSession failed", error);
+      console.error("[auth/callback] exchange failed", error);
       const u = new URL(errorPath, origin);
       u.searchParams.set("reason", "exchange_failed");
       u.searchParams.set("desc", "Registration error. Please try again.");
       return NextResponse.redirect(u);
     }
 
-    // Session successfully exchanged! Cookies are now set by Supabase
-    // in the Next.js cookie store via the adapter in createServerClient.
-    // The redirect response will include these cookies automatically.
+    // Session successfully exchanged! Cookies are now set by Supabase in the
+    // Next.js cookie store via the adapter in createServerClient (with the
+    // 30-day maxAge from SESSION_COOKIE_OPTIONS). The redirect response carries
+    // these cookies automatically.
     return NextResponse.redirect(new URL(next, origin));
   } catch (err) {
-    clearTimeout(timeoutId);
-
-    if (err instanceof Error && err.name === "AbortError") {
+    if (err instanceof Error && err.message === "exchange_timeout") {
       console.error("[auth/callback] Code exchange timeout (15s exceeded)");
       const u = new URL(errorPath, origin);
       u.searchParams.set("reason", "exchange_timeout");
@@ -132,5 +135,7 @@ export async function GET(
     u.searchParams.set("reason", "exchange_error");
     u.searchParams.set("desc", "An error occurred during authentication. Please try again.");
     return NextResponse.redirect(u);
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
