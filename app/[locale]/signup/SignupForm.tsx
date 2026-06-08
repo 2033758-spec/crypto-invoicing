@@ -66,11 +66,13 @@ export default function SignupForm({ locale }: Props) {
     track("signup_method_chosen", { method: "google" });
     try {
       const supabase = getBrowserSupabase();
-      // Use explicit production domain instead of window.location.origin
-      // to avoid redirect URL mismatches with www/non-www versions
-      const origin = typeof window !== 'undefined' && window.location.hostname.includes('cryptoinvoicing')
-        ? 'https://cryptoinvoicing.co'
-        : window.location.origin;
+      // Use the current origin so the OAuth/magic-link return stays on the SAME
+      // host the user is actually on (www on prod, localhost in dev). Forcing the
+      // apex here created a www→apex→www hop that lost the PKCE verifier cookie
+      // and broke login on production (localhost worked only because there the
+      // hostname check is false, so origin was used).
+      const origin =
+        typeof window !== "undefined" ? window.location.origin : "https://cryptoinvoicing.co";
       const redirectTo = `${origin}${callbackPath}?next=${encodeURIComponent(
         dashboardPath,
       )}`;
@@ -145,9 +147,8 @@ export default function SignupForm({ locale }: Props) {
 
     try {
       const supabase = getBrowserSupabase();
-      const origin = typeof window !== 'undefined' && window.location.hostname.includes('cryptoinvoicing')
-        ? 'https://cryptoinvoicing.co'
-        : window.location.origin;
+      const origin =
+        typeof window !== "undefined" ? window.location.origin : "https://cryptoinvoicing.co";
       const redirectTo = `${origin}${callbackPath}?next=${encodeURIComponent(
         dashboardPath,
       )}`;
