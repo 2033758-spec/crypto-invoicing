@@ -318,10 +318,6 @@
 
   /* Grain SVG */
   --grain-svg: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-
-  /* Cursor spotlight default position */
-  --cursor-x: 50%;
-  --cursor-y: 50%;
 }
 
 /* ── Base body ────────────────────────────────────────── */
@@ -363,29 +359,11 @@ html {
 
 body { position: relative; }
 
-/* ── Cursor spotlight — fixed viewport overlay ─────────────────
-   Fixed-positioned pseudo-element spans the full viewport so the
-   spotlight follows the cursor (clientX/clientY are viewport
-   coords) regardless of scroll. `z-index: 0` sits ABOVE the html
-   surface color and BELOW any positioned content (header/main/
-   footer are forced `position: relative; z-index: 1`). Cards and
-   section frames have solid container colors so the spotlight
-   stays visually behind them. Disable under reduced-motion. */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background: radial-gradient(
-    520px circle at var(--cursor-x) var(--cursor-y),
-    rgba(105, 218, 182, 0.22),
-    rgba(105, 218, 182, 0.08) 35%,
-    transparent 72%
-  );
-  transition: opacity 200ms ease-out;
-  will-change: background;
-}
+/* ── Cursor spotlight REMOVED (v1.0.1) ─────────────────────────
+   Cursor-tracked spotlight is forbidden by the design spec
+   (.design-system v3 / CLAUDE.md). The JS consumer + body::before
+   overlay were removed. `html` paints --surface directly, so the
+   content-lift rule below is now inert but harmless. */
 
 /* Lift direct content above the spotlight overlay. Cards within
    sections inherit a solid surface-container background from the
@@ -398,9 +376,6 @@ body > nav {
   z-index: 1;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  body::before { display: none; }
-}
 
 a {
   color: inherit;

@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { unstable_setRequestLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
+
+// Auth failure surface — never index.
+export const metadata: Metadata = {
+  robots: { index: false, follow: false, noarchive: true, nosnippet: true },
+};
 
 interface Props {
   params: { locale: string };

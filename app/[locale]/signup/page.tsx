@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { unstable_setRequestLocale } from "next-intl/server";
 import SignupForm from "./SignupForm";
+
+// Gated auth surface — never index (parity with /dashboard).
+export const metadata: Metadata = {
+  robots: { index: false, follow: false, noarchive: true, nosnippet: true },
+};
 
 // /[locale]/signup — passwordless email magic-link sign-up.
 //

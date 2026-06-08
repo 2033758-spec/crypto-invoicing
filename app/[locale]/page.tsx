@@ -4,7 +4,6 @@ import { createServerClient } from "@supabase/ssr";
 import { fetchUsdcArsRate } from "../lib/fx";
 
 import Seams from "./_components/landing-v3/Seams";
-import CursorSpotlight from "./_components/landing-v3/CursorSpotlight";
 import Header from "./_components/landing-v3/Header";
 import Hero from "./_components/landing-v3/Hero";
 import Marquee from "./_components/landing-v3/Marquee";
@@ -116,8 +115,6 @@ export default async function LandingPage({
 
       {/* Decorative grid seams behind everything */}
       <Seams />
-      {/* Cursor-aware spotlight (updates CSS vars on body) */}
-      <CursorSpotlight />
 
       <Header locale={params.locale} user={user} />
 

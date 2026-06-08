@@ -72,7 +72,7 @@
     "eyebrow": "[ 02 / Solution ]",
     "h2Prefix": "Una sola herramienta. ",
     "h2Accent": "Cuatro pasos.",
-    "lead": "Sin instalar wallets, sin claves privadas, sin entender de criptomonedas. Tu cliente paga por un link; vos cobrás en pesos en tu CBU.",
+    "lead": "Sin instalar wallets, sin claves privadas, sin saber de cripto. Tu cliente paga por un link; vos cobrás en pesos en tu CBU.",
     "steps": [
       {
         "num": "Paso 01",
@@ -224,7 +224,7 @@
         "a": "Sí. Crypto Invoicing está registrado ante la CNV como Proveedor de Servicios de Activos Virtuales (PSAV), bajo el régimen vigente. Cada operación genera una factura E y se reporta automáticamente al régimen informativo (RG 5642/2025). Tu contador la procesa como cualquier otro ingreso del exterior."
       },
       {
-        "q": "¿Mi cliente necesita saber de criptomonedas?",
+        "q": "¿Mi cliente necesita saber de cripto?",
         "a": "Casi nada. Le mandás un link, paga desde Coinbase, Metamask o cualquier exchange que ya use. Si nunca usó USDC, le enviamos una guía de 2 minutos. La mayoría de los clientes en EE.UU. y Europa ya tienen Coinbase."
       },
       {
