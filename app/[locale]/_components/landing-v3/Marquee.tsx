@@ -1,8 +1,8 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
-const RAILS = [
+const BASE_RAILS = [
   { dot: "#2775CA", label: "USDC · Circle" },
   { dot: "#0052FF", label: "Base · Coinbase L2" },
   { dot: "#F0B90B", label: "Binance P2P" },
@@ -10,8 +10,17 @@ const RAILS = [
   { dot: "#0073e6", label: "CriptoYa" },
   { dot: "#86f7d1", label: "Safe Multisig" },
   { dot: "#fa6400", label: "Sumsub KYC" },
-  { dot: "#bccac2", label: "AFIP · ARCA" },
 ];
+
+// B19: the tax-rail is locale-specific. AFIP/ARCA is Argentina; on /pt-BR
+// (conversion-only beta) it's irrelevant and misleading — show the Pix rail.
+function railsFor(locale: string) {
+  const taxRail =
+    locale === "pt-BR"
+      ? { dot: "#32BCAD", label: "Pix · BCB" }
+      : { dot: "#bccac2", label: "AFIP · ARCA" };
+  return [...BASE_RAILS, taxRail];
+}
 
 /**
  * Marquee — endless horizontal rail of payment-stack logos with colored dots.
@@ -20,6 +29,8 @@ const RAILS = [
  */
 export default function Marquee() {
   const t = useTranslations("marquee");
+  const locale = useLocale();
+  const RAILS = railsFor(locale);
 
   return (
     <section

@@ -25,14 +25,32 @@ export default function Header({ locale, user }: Props) {
   // Native <details> doesn't close on outside tap or Escape (feels broken on
   // iPhone Safari). Close the account menu on Escape + pointer-down outside it.
   const accountMenuRef = useRef<HTMLDetailsElement>(null);
+  // B18: mobile nav drawer (<lg, where the inline nav is hidden).
+  const mobileNavRef = useRef<HTMLDetailsElement>(null);
+  const closeMobileNav = () => {
+    if (mobileNavRef.current) mobileNavRef.current.open = false;
+  };
+
+  // In-page section links — shared by the desktop nav and the mobile drawer so
+  // they never drift apart.
+  const NAV_LINKS = [
+    { href: "#how", key: "how" },
+    { href: "#calc", key: "calculator" },
+    { href: "#pricing", key: "pricing" },
+    { href: "#faq", key: "faq" },
+    { href: "#trust", key: "trust" },
+  ] as const;
+
   useEffect(() => {
-    if (!user) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && accountMenuRef.current) accountMenuRef.current.open = false;
+      if (e.key !== "Escape") return;
+      if (accountMenuRef.current) accountMenuRef.current.open = false;
+      if (mobileNavRef.current) mobileNavRef.current.open = false;
     };
     const onPointer = (e: PointerEvent) => {
-      const el = accountMenuRef.current;
-      if (el?.open && !el.contains(e.target as Node)) el.open = false;
+      for (const el of [accountMenuRef.current, mobileNavRef.current]) {
+        if (el?.open && !el.contains(e.target as Node)) el.open = false;
+      }
     };
     document.addEventListener("keydown", onKey);
     document.addEventListener("pointerdown", onPointer);
@@ -40,7 +58,7 @@ export default function Header({ locale, user }: Props) {
       document.removeEventListener("keydown", onKey);
       document.removeEventListener("pointerdown", onPointer);
     };
-  }, [user]);
+  }, []);
 
   return (
     <header
@@ -61,39 +79,42 @@ export default function Header({ locale, user }: Props) {
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1">
-            <a
-              href="#how"
-              className="text-[13px] text-on-surface-variant hover:text-on-surface hover:bg-white/[0.04] px-3.5 py-2 rounded-[4px] transition-colors duration-150"
-            >
-              {t("how")}
-            </a>
-            <a
-              href="#calc"
-              className="text-[13px] text-on-surface-variant hover:text-on-surface hover:bg-white/[0.04] px-3.5 py-2 rounded-[4px] transition-colors duration-150"
-            >
-              {t("calculator")}
-            </a>
-            <a
-              href="#pricing"
-              className="text-[13px] text-on-surface-variant hover:text-on-surface hover:bg-white/[0.04] px-3.5 py-2 rounded-[4px] transition-colors duration-150"
-            >
-              {t("pricing")}
-            </a>
-            <a
-              href="#faq"
-              className="text-[13px] text-on-surface-variant hover:text-on-surface hover:bg-white/[0.04] px-3.5 py-2 rounded-[4px] transition-colors duration-150"
-            >
-              {t("faq")}
-            </a>
-            <a
-              href="#trust"
-              className="text-[13px] text-on-surface-variant hover:text-on-surface hover:bg-white/[0.04] px-3.5 py-2 rounded-[4px] transition-colors duration-150"
-            >
-              {t("trust")}
-            </a>
+            {NAV_LINKS.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                className="text-[13px] text-on-surface-variant hover:text-on-surface hover:bg-white/[0.04] px-3.5 py-2 rounded-[4px] transition-colors duration-150"
+              >
+                {t(l.key)}
+              </a>
+            ))}
           </nav>
 
           <div className="flex items-center gap-2">
+            {/* B18: mobile nav — hamburger drawer, only <lg where inline nav is hidden */}
+            <details ref={mobileNavRef} className="relative lg:hidden">
+              <summary
+                aria-label={t("menu")}
+                className="list-none cursor-pointer flex items-center justify-center w-11 h-11 rounded hover:bg-white/[0.04] transition-colors"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden className="text-on-surface">
+                  <path d="M3 6h18M3 12h18M3 18h18" />
+                </svg>
+              </summary>
+              <div className="absolute left-0 top-full mt-1 min-w-[200px] rounded border border-outline-variant bg-surface-container-high shadow-lg z-10 py-1">
+                {NAV_LINKS.map((l) => (
+                  <a
+                    key={l.href}
+                    href={l.href}
+                    onClick={closeMobileNav}
+                    className="block px-4 py-3 text-[14px] text-on-surface-variant hover:text-on-surface hover:bg-white/[0.04] transition-colors"
+                  >
+                    {t(l.key)}
+                  </a>
+                ))}
+              </div>
+            </details>
+
             <LocaleDropdown current={locale} />
 
             {user ? (

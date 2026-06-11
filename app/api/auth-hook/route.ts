@@ -14,7 +14,7 @@
 
 import { NextResponse } from "next/server";
 import crypto from "node:crypto";
-import { notifyFounder } from "../../lib/telegram";
+import { notifyFounder, tgEscape } from "../../lib/telegram";
 import { checkRateLimit, getClientIp } from "../../lib/rate-limit";
 
 interface SupabaseWebhookPayload {
@@ -99,10 +99,10 @@ export async function POST(req: Request) {
   // Fire-and-forget Telegram alert. If the bot is down, we still return 200
   // so Supabase doesn't keep retrying (the signup itself already succeeded).
   void notifyFounder(
-    `*🆕 New signup*\n\n` +
-      `Email: \`${email}\`\n` +
-      `Provider: \`${provider}\`\n` +
-      `At: \`${createdAt}\``,
+    `<b>🆕 New signup</b>\n\n` +
+      `Email: <code>${tgEscape(email)}</code>\n` +
+      `Provider: <code>${tgEscape(provider)}</code>\n` +
+      `At: <code>${tgEscape(createdAt)}</code>`,
   );
 
   return NextResponse.json({ ok: true }, { status: 200 });

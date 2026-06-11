@@ -7,6 +7,18 @@
 
 import * as Sentry from "@sentry/nextjs";
 
+// Escape user-controlled text for Telegram HTML parse_mode. HTML mode is far
+// safer than Markdown: only these three chars are special, with no quirky
+// code-span/backtick rules that user input can break out of (B10). ALWAYS wrap
+// any user-provided value (email, client name, free-text note) in this before
+// interpolating into a notifyFounder() message.
+export function tgEscape(value: unknown): string {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
 export async function notifyFounder(message: string): Promise<{ success: boolean; error?: string }> {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_FOUNDER_CHAT_ID;
@@ -28,7 +40,7 @@ export async function notifyFounder(message: string): Promise<{ success: boolean
       body: JSON.stringify({
         chat_id: chatId,
         text: message,
-        parse_mode: "Markdown",
+        parse_mode: "HTML",
       }),
     });
 

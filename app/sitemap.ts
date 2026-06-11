@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { locales } from "../i18n";
+import { getArticle, getArticles, localesWithArticles } from "./[locale]/recursos/_content/articles";
 
 // Next.js 14 App Router convention — served at /sitemap.xml.
 //
@@ -28,7 +29,7 @@ function urlFor(locale: string, path: string): string {
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
-  return PUBLIC_ROUTES.flatMap((route) =>
+  const staticRoutes: MetadataRoute.Sitemap = PUBLIC_ROUTES.flatMap((route) =>
     locales.map((locale) => ({
       url: urlFor(locale, route.path),
       lastModified: now,
@@ -42,4 +43,37 @@ export default function sitemap(): MetadataRoute.Sitemap {
       },
     })),
   );
+
+  // /recursos listing — only for locales that actually have articles, with
+  // hreflang across those same locales (avoid advertising empty translations).
+  const contentLocales = localesWithArticles();
+  const resourcesIndex: MetadataRoute.Sitemap = contentLocales.map((locale) => ({
+    url: urlFor(locale, "/recursos"),
+    lastModified: now,
+    changeFrequency: "weekly",
+    priority: 0.7,
+    alternates:
+      contentLocales.length > 1
+        ? { languages: Object.fromEntries(contentLocales.map((l) => [l, urlFor(l, "/recursos")] as const)) }
+        : undefined,
+  }));
+
+  // Individual articles — hreflang only across locales that have the same slug.
+  const articleRoutes: MetadataRoute.Sitemap = contentLocales.flatMap((locale) =>
+    getArticles(locale).map((a) => {
+      const translated = locales.filter((l) => getArticle(l, a.slug));
+      return {
+        url: urlFor(locale, `/recursos/${a.slug}`),
+        lastModified: new Date(a.dateModified),
+        changeFrequency: "monthly" as const,
+        priority: a.kind === "pillar" ? 0.8 : 0.6,
+        alternates:
+          translated.length > 1
+            ? { languages: Object.fromEntries(translated.map((l) => [l, urlFor(l, `/recursos/${a.slug}`)] as const)) }
+            : undefined,
+      };
+    }),
+  );
+
+  return [...staticRoutes, ...resourcesIndex, ...articleRoutes];
 }

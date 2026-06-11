@@ -1,0 +1,27 @@
+# Crypto Invoicing
+
+> Non-custodial USDC invoicing for LATAM freelancers. Your client pays in USDC; we convert at the best market rate and you receive funds in your local bank (ARS via CBU, BRL via Pix) in 2–4 business hours. Tax-ready invoices (Factura E / AFIP RG 5642/2025) are generated automatically.
+
+Crypto Invoicing is operated from Buenos Aires, Argentina. It is registered with the CNV as a Virtual Asset Service Provider (PSAV). Funds flow through a non-custodial Safe multisig on Base (Coinbase L2); the company never holds full custody. KYC is handled by Sumsub. Pricing: Starter at 1% per transaction (no subscription), Pro at USD $9/month (auto AFIP reports, CSV export for Tango/Colppy, multi-client). Argentina is fully supported; Brazil conversion is in beta (Receita Federal / NFe integration planned for 2027).
+
+## Primary pages
+- [Home (Spanish · Argentina)](https://cryptoinvoicing.co): Main landing — how it works, calculator, pricing, FAQ.
+- [Home (English)](https://cryptoinvoicing.co/en-US): English version for international clients.
+- [Home (Portuguese · Brazil)](https://cryptoinvoicing.co/pt-BR): Brazilian Portuguese version (conversion beta).
+- [Sign up](https://cryptoinvoicing.co/signup): Create a free account; manual concierge onboarding within 24h.
+- [Resources / guides](https://cryptoinvoicing.co/recursos): Practical guides on getting paid from abroad, Factura E, and USDC-to-pesos for LATAM freelancers.
+
+## Key facts
+- Settlement time: 2–4 business hours after USDC arrives in the Safe on Base.
+- FX routing: 6 sources queried per operation (Binance P2P primary, Bybit backup) via CriptoYa data.
+- Custody: non-custodial Safe multisig on Base; USDC by Circle (1 USDC = 1 USD).
+- Compliance (AR): Factura E for every Monotributo category and Responsable Inscripto; monthly AFIP filing RG 5642/2025.
+- Compliance (BR): conversion-only beta; Receita Federal integration targeted for 2027.
+
+## Legal
+- [Terms](https://cryptoinvoicing.co/legal/terms)
+- [Privacy](https://cryptoinvoicing.co/legal/privacy)
+- [Cookies](https://cryptoinvoicing.co/legal/cookies)
+
+## Contact
+- Email: hola@cryptoinvoicing.co

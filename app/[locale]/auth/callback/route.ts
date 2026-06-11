@@ -65,9 +65,11 @@ export async function GET(
   const providerErrorDesc = searchParams.get("error_description");
 
   if (providerError) {
+    // B22: don't reflect the provider's raw error_description into the URL
+    // (reflection/oracle risk). Log it server-side; show a generic reason.
+    console.error("[auth/callback] provider error", { providerError, providerErrorDesc });
     const u = new URL(errorPath, origin);
-    u.searchParams.set("reason", providerError);
-    if (providerErrorDesc) u.searchParams.set("desc", providerErrorDesc);
+    u.searchParams.set("reason", "provider_error");
     return NextResponse.redirect(u);
   }
 

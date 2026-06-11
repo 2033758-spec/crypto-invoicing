@@ -88,21 +88,31 @@ export default async function LandingPage({
     applicationCategory: "BusinessApplication",
     operatingSystem: "Web",
     url: SITE,
+    // B19: offers are locale-aware. BR is a conversion-only beta — no Pro tier
+    // and no Factura E / AFIP (that's Argentina). Advertising AFIP on /pt-BR was
+    // factually wrong; only es-AR / en-US carry the Pro AR offer.
     offers: [
       {
         "@type": "Offer",
         name: "Starter",
         price: "0",
         priceCurrency: "USD",
-        description: "1% commission per transaction, cap $50/invoice",
+        description:
+          params.locale === "pt-BR"
+            ? "1% por transação (cap US$50/fatura), conversão USDC→BRL"
+            : "1% commission per transaction, cap $50/invoice",
       },
-      {
-        "@type": "Offer",
-        name: "Pro AR",
-        price: "9.00",
-        priceCurrency: "USD",
-        description: "Unlimited invoices + factura E + AFIP auto-PDF",
-      },
+      ...(params.locale === "pt-BR"
+        ? []
+        : [
+            {
+              "@type": "Offer",
+              name: "Pro AR",
+              price: "9.00",
+              priceCurrency: "USD",
+              description: "Unlimited invoices + factura E + AFIP auto-PDF",
+            },
+          ]),
     ],
   };
 

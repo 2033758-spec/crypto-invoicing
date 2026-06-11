@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, unstable_setRequestLocale } from "next-intl/server";
@@ -108,14 +107,23 @@ export default async function LocaleLayout({
   unstable_setRequestLocale(params.locale);
   const messages = await getMessages();
 
-  // Organization JSON-LD — emitted on every page (Knowledge Graph eligibility).
+  // Organization JSON-LD — emitted on every page (Knowledge Graph + AI-engine
+  // entity resolution). Stable @id so SoftwareApplication/other nodes can link
+  // to it later. Rendered server-side (inline <script>) so it lives in the
+  // initial HTML — afterInteractive injection is invisible to non-JS crawlers
+  // and fragile for AI scrapers (ChatGPT/Perplexity).
   const orgJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": `${SITE}/#organization`,
     name: "Crypto Invoicing",
     url: SITE,
     logo: `${SITE}/logo.svg`,
+    description:
+      "Non-custodial USDC invoicing for LATAM freelancers: best-rate FX to ARS/BRL, tax-ready invoices (Factura E / AFIP RG 5642/2025), settlement in 2–4 business hours.",
+    email: "hola@cryptoinvoicing.co",
     sameAs: ["https://twitter.com/cryptoinvoicing"],
+    areaServed: ["AR", "BR"],
     foundingLocation: {
       "@type": "Place",
       name: "Buenos Aires, Argentina",
@@ -125,10 +133,8 @@ export default async function LocaleLayout({
   return (
     <html lang={params.locale} className="dark">
       <body className="min-h-screen text-on-surface antialiased font-body">
-        <Script
-          id="ld-organization"
+        <script
           type="application/ld+json"
-          strategy="afterInteractive"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
         />
         <NextIntlClientProvider locale={params.locale} messages={messages}>

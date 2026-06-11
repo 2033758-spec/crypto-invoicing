@@ -16,7 +16,8 @@
     "cta": "Empezá ahora",
     "dashboard": "Ir al dashboard",
     "logout": "Cerrar sesión",
-    "accountMenu": "Menú de cuenta"
+    "accountMenu": "Menú de cuenta",
+    "menu": "Menú"
   },
   "hero": {
     "eyebrow": "[ 00 / Crypto Invoicing ]",
@@ -268,7 +269,7 @@
       "about": "Sobre nosotros",
       "compliance": "Compliance · CNV",
       "blog": "Blog · soon",
-      "email": "hola@cryptoinvoicing.com"
+      "email": "hola@cryptoinvoicing.co"
     },
     "legal": "Legal",
     "legalLinks": {
@@ -294,10 +295,19 @@
     "successTitle": "Revisá tu casilla",
     "successBody": "Te mandamos un link de acceso a {email}. Hacé click para abrir tu dashboard.",
     "errorTitle": "No pudimos enviar el link",
-    "errorBody": "Algo falló en la red. Probá de nuevo, o escribinos a hola@cryptoinvoicing.com.",
+    "errorBody": "Algo falló en la red. Probá de nuevo, o escribinos a hola@cryptoinvoicing.co.",
     "back": "Volver al inicio",
     "footnote": "Al continuar aceptás nuestros términos. Nunca compartimos tu email.",
-    "footnoteWithLinks": "Al crear tu cuenta aceptás nuestros <terms>Términos</terms> y la <privacy>Política de Privacidad</privacy>. Nunca compartimos tu email."
+    "footnoteWithLinks": "Al crear tu cuenta aceptás nuestros <terms>Términos</terms> y la <privacy>Política de Privacidad</privacy>. Nunca compartimos tu email.",
+    "errorEmailFormat": "El email parece inválido o demasiado largo. Revisalo.",
+    "errorEmailServiceUnavailable": "El servicio de email está saturado. Probá de nuevo en unos minutos.",
+    "errorNetwork": "Error de red. Revisá tu conexión y probá de nuevo.",
+    "errorGeneric": "Ocurrió un error. Probá de nuevo.",
+    "errorUnexpected": "Ocurrió un error inesperado. Probá de nuevo.",
+    "rateLimitedLabel": "Demasiados intentos",
+    "errorLabel": "Error",
+    "tooManyAttempts": "Demasiados intentos. Probá de nuevo en {seconds}s.",
+    "retryIn": "Reintentá en {seconds}s"
   },
   "dashboard": {
     "welcome": "Te damos la bienvenida a Crypto Invoicing",
@@ -309,7 +319,7 @@
     "ctaSending": "Enviando…",
     "ctaSent": "✓ Te vamos a escribir",
     "ctaHintAfter": "Revisá tu Telegram o email en las próximas 24 h.",
-    "ctaHintError": "No pudimos enviar la solicitud. Probá de nuevo o escribí a hola@cryptoinvoicing.com.",
+    "ctaHintError": "No pudimos enviar la solicitud. Probá de nuevo o escribí a hola@cryptoinvoicing.co.",
     "welcomeShort": "Tu espacio concierge",
     "loading": "Autenticando…",
     "hero": "Completá el formulario para pedir tu primera factura. Te provisionamos una dirección USDC en Base, vos la compartís con tu cliente, y los pesos llegan a tu CBU en 2–4 horas hábiles luego del pago. Primeros 50 freelancers — onboarding manual del fundador.",
@@ -331,12 +341,20 @@
       "footnote": "No es una factura final — revisamos cada solicitud manualmente en el Q1.",
       "errClientName": "El nombre del cliente es obligatorio.",
       "errAmount": "El monto debe ser positivo.",
-      "errGeneric": "No pudimos guardar tu solicitud. Probá de nuevo o escribí a hola@cryptoinvoicing.com."
+      "errGeneric": "No pudimos guardar tu solicitud. Probá de nuevo o escribí a hola@cryptoinvoicing.co.",
+      "errAmountMax": "El monto no puede superar US$ 1.000.000.",
+      "spoofingWarning": "Ese email usa nuestro dominio. Asegurate de que sea intencional.",
+      "clientEmailPlaceholder": "cliente@empresa.com"
     },
     "list": {
       "title": "Tus solicitudes",
       "empty": "Todavía no hay solicitudes. Cargá una arriba y la vas a ver acá.",
-      "paymentAddress": "Dirección USDC — Base mainnet"
+      "paymentAddress": "Dirección USDC — Base mainnet",
+      "error": "No pudimos cargar tus solicitudes. Probá de nuevo.",
+      "retry": "Reintentar",
+      "loading": "Cargando…",
+      "loadMore": "Cargar más ({count} restantes)",
+      "showing": "Mostrando {shown} de {total}"
     },
     "status": {
       "pending_setup": "Preparando",
@@ -344,6 +362,36 @@
       "paid": "Pagada",
       "settled": "En tu CBU",
       "cancelled": "Cancelada"
+    },
+    "profile": {
+      "title": "Tu perfil de cobro",
+      "subtitle": "Necesitamos estos datos para poder liquidarte los pesos. Se guardan en tu cuenta y no se comparten con tu cliente.",
+      "fullName": "Nombre y apellido",
+      "fullNamePlaceholder": "Juana Pérez",
+      "country": "País de cobro",
+      "taxId": "CUIT / CPF",
+      "taxIdPlaceholder": "20-12345678-9",
+      "payoutAR": "CBU / CVU / alias",
+      "payoutBR": "Clave Pix",
+      "payoutPlaceholder": "Donde recibís los pesos (CBU, CVU o alias)",
+      "taxStatus": "Condición fiscal",
+      "taxStatusPlaceholder": "Ej.: Monotributo C, Responsable Inscripto",
+      "telegram": "Telegram (opcional)",
+      "telegramPlaceholder": "@tuusuario",
+      "save": "Guardar perfil",
+      "saving": "Guardando…",
+      "saved": "✓ Perfil guardado",
+      "errSave": "No pudimos guardar el perfil. Probá de nuevo.",
+      "incomplete": "Completá tu perfil de cobro para que podamos liquidarte la primera factura.",
+      "complete": "Perfil completo",
+      "payoutHint": "Acá te liquidamos los pesos: tu CBU (banco), CVU (MercadoPago/billetera) o alias.",
+      "taxIdHint": "CUIT con guiones (ej. 20-12345678-9).",
+      "errRequired": "Completá este campo.",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "firstNamePlaceholder": "Juana",
+      "lastNamePlaceholder": "Pérez",
+      "errTelegram": "Usá el formato @usuario (mínimo 4 caracteres)."
     }
   },
   "locale": {

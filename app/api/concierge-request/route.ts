@@ -12,7 +12,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { getServerActionSupabase } from "../../lib/supabase";
-import { notifyFounder } from "../../lib/telegram";
+import { notifyFounder, tgEscape } from "../../lib/telegram";
 
 interface Body {
   note?: string;
@@ -45,12 +45,12 @@ export async function POST(req: NextRequest) {
 
   // Fire-and-forget Telegram. We don't block the response on it.
   void notifyFounder(
-    `*📞 Concierge request*\n\n` +
+    `<b>📞 Concierge request</b>\n\n` +
       `User clicked «Set up first invoice» in dashboard.\n\n` +
-      `Email: \`${email}\`\n` +
-      `Provider: \`${provider}\`\n` +
-      `User ID: \`${userId}\`\n` +
-      (note ? `\nNote from user:\n${note}\n` : "") +
+      `Email: <code>${tgEscape(email)}</code>\n` +
+      `Provider: <code>${tgEscape(provider)}</code>\n` +
+      `User ID: <code>${tgEscape(userId)}</code>\n` +
+      (note ? `\nNote from user:\n${tgEscape(note)}\n` : "") +
       `\nDM them to schedule a 15-min call.`,
   );
 

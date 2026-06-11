@@ -103,7 +103,7 @@ export default function SignupForm({ locale }: Props) {
     if (!EMAIL_RE.test(trimmed) || trimmed.length > MAX_EMAIL_LENGTH) {
       setStatus("error");
       setErrorType("validation");
-      setErrorMsg(t("errorEmailFormat") || "Email address format is invalid or too long");
+      setErrorMsg(t("errorEmailFormat"));
       return;
     }
 
@@ -119,7 +119,7 @@ export default function SignupForm({ locale }: Props) {
       setStatus("rate_limited");
       setErrorType("rate_limit");
       setRateLimitRetryIn(retryAfterSec);
-      setErrorMsg(`Too many attempts. Please try again in ${retryAfterSec}s`);
+      setErrorMsg(t("tooManyAttempts", { seconds: retryAfterSec }));
 
       // Decrement counter every second
       const interval = setInterval(() => {
@@ -132,7 +132,7 @@ export default function SignupForm({ locale }: Props) {
             setErrorType(null);
             return null;
           }
-          setErrorMsg(`Too many attempts. Please try again in ${next}s`);
+          setErrorMsg(t("tooManyAttempts", { seconds: next }));
           return next;
         });
       }, 1000);
@@ -169,12 +169,13 @@ export default function SignupForm({ locale }: Props) {
         // 3. Differentiate error types with i18n
         if (error.message?.includes("429") || error.message?.includes("rate")) {
           setErrorType("rate_limit");
-          setErrorMsg(t("errorEmailServiceUnavailable") || "Email service temporarily unavailable. Please try again in a few moments.");
+          setErrorMsg(t("errorEmailServiceUnavailable"));
         } else if (error.message?.includes("network") || error.message?.includes("fetch")) {
           setErrorType("network");
-          setErrorMsg(t("errorNetwork") || "Network error. Please check your connection and try again.");
+          setErrorMsg(t("errorNetwork"));
         } else {
-          setErrorMsg(error.message || t("errorGeneric") || "An error occurred. Please try again.");
+          // Don't surface raw provider strings (English/technical) — B16.
+          setErrorMsg(t("errorGeneric"));
         }
         return;
       }
@@ -183,7 +184,7 @@ export default function SignupForm({ locale }: Props) {
       console.error("[signup] unexpected error", err);
       setStatus("error");
       setErrorType("network");
-      setErrorMsg("An unexpected error occurred. Please try again.");
+      setErrorMsg(t("errorUnexpected"));
     }
   };
 
@@ -298,7 +299,7 @@ export default function SignupForm({ locale }: Props) {
                       <div className={`font-mono text-[10px] uppercase tracking-widest mb-0.5 ${
                         errorType === "rate_limit" ? "text-amber-500" : "text-tertiary"
                       }`}>
-                        {errorType === "rate_limit" ? "Rate Limited" : "Error"}
+                        {errorType === "rate_limit" ? t("rateLimitedLabel") : t("errorLabel")}
                       </div>
                       <p className="font-mono text-[12px] text-on-surface-variant">{errorMsg}</p>
                     </div>
@@ -311,7 +312,7 @@ export default function SignupForm({ locale }: Props) {
                   className="btn btn-primary btn-lg w-full justify-center"
                 >
                   {status === "submitting" && t("submitting")}
-                  {status === "rate_limited" && `Retry in ${rateLimitRetryIn}s`}
+                  {status === "rate_limited" && t("retryIn", { seconds: rateLimitRetryIn ?? 0 })}
                   {status !== "submitting" && status !== "rate_limited" && (
                     <>
                       {t("submit")}

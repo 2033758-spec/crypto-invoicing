@@ -68,7 +68,8 @@ export async function POST(req: Request) {
   let payload: AuthEmailPayload;
   try {
     payload = await req.json();
-    console.log('[send-email-hook] Payload:', { email: payload.email || payload.user?.email });
+    // B22: don't log the user's email (PII) in plaintext — log presence only.
+    console.log('[send-email-hook] payload received', { hasEmail: Boolean(payload.email || payload.user?.email) });
   } catch (err) {
     console.error('[send-email-hook] JSON parse error:', err);
     Sentry.captureException(err, { tags: { endpoint: 'send-email-hook', type: 'parse' } });
@@ -112,7 +113,10 @@ export async function POST(req: Request) {
 
     if (!res.ok) {
       const status = res.status;
-      console.error('[send-email-hook] Resend error:', status, await res.text());
+      // B22: log status only; full body (may contain PII) goes to Sentry, not console.
+      const body = await res.text();
+      console.error('[send-email-hook] Resend error status', status);
+      Sentry.captureMessage('send-email-hook Resend error', { level: 'warning', extra: { status, body } });
 
       // Return 503 for transient errors so Supabase retries
       if (status === 429 || status >= 500) {

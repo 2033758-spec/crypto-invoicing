@@ -16,7 +16,8 @@
     "cta": "Começar agora",
     "dashboard": "Ir ao dashboard",
     "logout": "Sair",
-    "accountMenu": "Menu da conta"
+    "accountMenu": "Menu da conta",
+    "menu": "Menu"
   },
   "hero": {
     "eyebrow": "[ 00 / Crypto Invoicing ]",
@@ -268,7 +269,7 @@
       "about": "Sobre",
       "compliance": "Compliance",
       "blog": "Blog · em breve",
-      "email": "hola@cryptoinvoicing.com"
+      "email": "hola@cryptoinvoicing.co"
     },
     "legal": "Legal",
     "legalLinks": {
@@ -294,10 +295,19 @@
     "successTitle": "Confira sua caixa",
     "successBody": "Enviamos um link de acesso para {email}. Clique para abrir seu dashboard.",
     "errorTitle": "Não conseguimos enviar o link",
-    "errorBody": "Falha na rede. Tente de novo, ou escreva para hola@cryptoinvoicing.com.",
+    "errorBody": "Falha na rede. Tente de novo, ou escreva para hola@cryptoinvoicing.co.",
     "back": "Voltar ao início",
     "footnote": "Ao continuar você aceita nossos termos. Nunca compartilhamos seu email.",
-    "footnoteWithLinks": "Ao criar sua conta você aceita os nossos <terms>Termos</terms> e a <privacy>Política de Privacidade</privacy>. Nunca compartilhamos seu email."
+    "footnoteWithLinks": "Ao criar sua conta você aceita os nossos <terms>Termos</terms> e a <privacy>Política de Privacidade</privacy>. Nunca compartilhamos seu email.",
+    "errorEmailFormat": "O email parece inválido ou longo demais. Confere.",
+    "errorEmailServiceUnavailable": "O serviço de email está sobrecarregado. Tenta de novo em alguns minutos.",
+    "errorNetwork": "Erro de conexão. Confere sua internet e tenta de novo.",
+    "errorGeneric": "Deu algum erro. Tenta de novo.",
+    "errorUnexpected": "Deu um erro inesperado. Tenta de novo.",
+    "rateLimitedLabel": "Tentativas demais",
+    "errorLabel": "Erro",
+    "tooManyAttempts": "Tentativas demais. Tenta de novo em {seconds}s.",
+    "retryIn": "Tenta em {seconds}s"
   },
   "dashboard": {
     "welcome": "Boas-vindas ao Crypto Invoicing",
@@ -309,7 +319,7 @@
     "ctaSending": "Enviando…",
     "ctaSent": "✓ Vamos te escrever",
     "ctaHintAfter": "Verifique seu Telegram ou e-mail nas próximas 24 h.",
-    "ctaHintError": "Não foi possível enviar a solicitação. Tente de novo ou escreva para hola@cryptoinvoicing.com.",
+    "ctaHintError": "Não foi possível enviar a solicitação. Tente de novo ou escreva para hola@cryptoinvoicing.co.",
     "welcomeShort": "Seu espaço concierge",
     "loading": "Autenticando…",
     "hero": "Preencha o formulário para solicitar sua primeira fatura. Provisionamos um endereço USDC na Base, você compartilha com seu cliente, e os reais chegam ao seu Pix em 2–4 horas úteis após o pagamento. Primeiros 50 freelancers — onboarding manual pelo fundador.",
@@ -331,12 +341,20 @@
       "footnote": "Não é uma fatura final — revisamos cada solicitação manualmente no Q1.",
       "errClientName": "O nome do cliente é obrigatório.",
       "errAmount": "O valor deve ser positivo.",
-      "errGeneric": "Não foi possível salvar sua solicitação. Tente de novo ou escreva para hola@cryptoinvoicing.com."
+      "errGeneric": "Não foi possível salvar sua solicitação. Tente de novo ou escreva para hola@cryptoinvoicing.co.",
+      "errAmountMax": "O valor não pode passar de US$ 1.000.000.",
+      "spoofingWarning": "Esse email usa nosso domínio. Confirma se é intencional.",
+      "clientEmailPlaceholder": "cliente@empresa.com"
     },
     "list": {
       "title": "Suas solicitações",
       "empty": "Ainda não há solicitações. Envie uma acima e ela aparece aqui.",
-      "paymentAddress": "Endereço USDC — Base mainnet"
+      "paymentAddress": "Endereço USDC — Base mainnet",
+      "error": "Não conseguimos carregar suas solicitações. Tenta de novo.",
+      "retry": "Tentar de novo",
+      "loading": "Carregando…",
+      "loadMore": "Carregar mais ({count} restantes)",
+      "showing": "Mostrando {shown} de {total}"
     },
     "status": {
       "pending_setup": "Preparando",
@@ -344,6 +362,36 @@
       "paid": "Paga",
       "settled": "No seu Pix",
       "cancelled": "Cancelada"
+    },
+    "profile": {
+      "title": "Seu perfil de recebimento",
+      "subtitle": "Precisamos desses dados para liquidar os reais pra você. Ficam na sua conta e não são compartilhados com o cliente.",
+      "fullName": "Nome completo",
+      "fullNamePlaceholder": "João Silva",
+      "country": "País de recebimento",
+      "taxId": "CUIT / CPF",
+      "taxIdPlaceholder": "123.456.789-00",
+      "payoutAR": "Pix / chave",
+      "payoutBR": "Chave Pix",
+      "payoutPlaceholder": "Sua chave Pix (onde você recebe os reais)",
+      "taxStatus": "Situação fiscal",
+      "taxStatusPlaceholder": "Ex.: CPF, MEI, CNPJ",
+      "telegram": "Telegram (opcional)",
+      "telegramPlaceholder": "@seuusuario",
+      "save": "Salvar perfil",
+      "saving": "Salvando…",
+      "saved": "✓ Perfil salvo",
+      "errSave": "Não foi possível salvar o perfil. Tenta de novo.",
+      "incomplete": "Complete seu perfil de recebimento pra gente liquidar a primeira fatura.",
+      "complete": "Perfil completo",
+      "payoutHint": "É onde a gente liquida os reais: sua chave Pix.",
+      "taxIdHint": "CPF com pontos e traço (ex. 123.456.789-00).",
+      "errRequired": "Preencha este campo.",
+      "firstName": "Nome",
+      "lastName": "Sobrenome",
+      "firstNamePlaceholder": "João",
+      "lastNamePlaceholder": "Silva",
+      "errTelegram": "Use o formato @usuario (mínimo 4 caracteres)."
     }
   },
   "locale": {

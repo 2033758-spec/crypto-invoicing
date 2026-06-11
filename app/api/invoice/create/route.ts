@@ -12,8 +12,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import * as Sentry from "@sentry/nextjs";
-import { getServerActionSupabase } from "../../../lib/supabase";
-import { notifyFounder } from "../../../lib/telegram";
+import { getServerActionSupabase, getServerSupabase } from "../../../lib/supabase";
+import { ensureUserOrg } from "../../../lib/provision";
+import { notifyFounder, tgEscape } from "../../../lib/telegram";
 import { checkRateLimit, getClientIp } from "../../../lib/rate-limit";
 
 interface Body {
@@ -95,31 +96,33 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Get user's organization for multi-tenant scoping
-  const { data: userData, error: userDataError } = await supabase
-    .from("users")
-    .select("org_id")
-    .eq("id", user.id)
-    .single();
-
-  if (userDataError || !userData?.org_id) {
-    console.error("[invoice/create] Failed to get user org_id", userDataError);
-    Sentry.captureException(userDataError || new Error("User org_id missing"), {
-      tags: { endpoint: "invoice/create", type: "org_id_fetch" },
+  // Get user's organization for multi-tenant scoping. Use a service-role lookup
+  // (bypasses RLS) that self-heals a missing user/org row, so this can never
+  // fail with "Organization not configured" again.
+  const service = getServerSupabase();
+  let orgId: string;
+  try {
+    orgId = await ensureUserOrg(service, user.id, user.email ?? null, country);
+  } catch (err) {
+    console.error("[invoice/create] ensureUserOrg failed", err);
+    Sentry.captureException(err, {
+      tags: { endpoint: "invoice/create", type: "org_provision" },
       extra: { userId: user.id },
       level: "error",
     });
     return NextResponse.json(
-      { error: "Organization not configured" },
+      { error: "Could not set up your account. Please try again." },
       { status: 500 },
     );
   }
 
-  const { data: inserted, error: insertError } = await supabase
+  // Insert via service-role (bypasses RLS, incl. the RETURNING select) so a
+  // policy quirk can't reject a legitimate, already-authenticated write.
+  const { data: inserted, error: insertError } = await service
     .from("invoice_requests")
     .insert({
       user_id: user.id,
-      org_id: userData.org_id,
+      org_id: orgId,
       client_name,
       client_email: client_email || null,
       amount_usd,
@@ -135,7 +138,7 @@ export async function POST(req: NextRequest) {
     console.error("[invoice/create] insert failed", insertError);
     Sentry.captureException(insertError || new Error("Invoice insert failed"), {
       tags: { endpoint: "invoice/create", type: "insert" },
-      extra: { userId: user.id, orgId: userData.org_id },
+      extra: { userId: user.id, orgId },
       level: "error",
     });
     return NextResponse.json(
@@ -146,14 +149,14 @@ export async function POST(req: NextRequest) {
 
   // Notify founder with timeout + error handling
   const notifyMessage =
-    `*🧾 New invoice request*\n\n` +
-    `From: \`${user.email}\` (user \`${user.id}\`)\n` +
-    `Client: \`${client_name}\`${client_email ? ` <\`${client_email}\`>` : ""}\n` +
-    `Amount: \`USD ${amount_usd.toFixed(2)}\`\n` +
-    `Country: \`${country}\`\n` +
-    (description ? `\nDescription:\n${description}\n` : "") +
-    `\nRequest ID: \`${inserted.id}\`\n` +
-    `Next: provision Safe address, mark \`payment_link_ready\`.`;
+    `<b>🧾 New invoice request</b>\n\n` +
+    `From: <code>${tgEscape(user.email)}</code> (user <code>${tgEscape(user.id)}</code>)\n` +
+    `Client: <code>${tgEscape(client_name)}</code>${client_email ? ` &lt;<code>${tgEscape(client_email)}</code>&gt;` : ""}\n` +
+    `Amount: <code>USD ${amount_usd.toFixed(2)}</code>\n` +
+    `Country: <code>${tgEscape(country)}</code>\n` +
+    (description ? `\nDescription:\n${tgEscape(description)}\n` : "") +
+    `\nRequest ID: <code>${tgEscape(inserted.id)}</code>\n` +
+    `Next: provision Safe address, mark <code>payment_link_ready</code>.`;
 
   try {
     // Await with 5s timeout so we don't block response indefinitely

@@ -16,7 +16,8 @@
     "cta": "Start now",
     "dashboard": "Go to dashboard",
     "logout": "Log out",
-    "accountMenu": "Account menu"
+    "accountMenu": "Account menu",
+    "menu": "Menu"
   },
   "hero": {
     "eyebrow": "[ 00 / Crypto Invoicing ]",
@@ -268,7 +269,7 @@
       "about": "About",
       "compliance": "Compliance · CNV",
       "blog": "Blog · soon",
-      "email": "hola@cryptoinvoicing.com"
+      "email": "hola@cryptoinvoicing.co"
     },
     "legal": "Legal",
     "legalLinks": {
@@ -294,10 +295,19 @@
     "successTitle": "Check your inbox",
     "successBody": "We sent an access link to {email}. Click it to open your dashboard.",
     "errorTitle": "We couldn't send the link",
-    "errorBody": "Network failed. Try again, or write hola@cryptoinvoicing.com.",
+    "errorBody": "Network failed. Try again, or write hola@cryptoinvoicing.co.",
     "back": "Back to home",
     "footnote": "By continuing you accept our terms. We never share your email.",
-    "footnoteWithLinks": "By creating your account you agree to our <terms>Terms</terms> and <privacy>Privacy Policy</privacy>. We never share your email."
+    "footnoteWithLinks": "By creating your account you agree to our <terms>Terms</terms> and <privacy>Privacy Policy</privacy>. We never share your email.",
+    "errorEmailFormat": "That email looks invalid or too long. Double-check it.",
+    "errorEmailServiceUnavailable": "Email service is busy. Try again in a few minutes.",
+    "errorNetwork": "Network error. Check your connection and try again.",
+    "errorGeneric": "Something went wrong. Try again.",
+    "errorUnexpected": "Something unexpected went wrong. Try again.",
+    "rateLimitedLabel": "Too many attempts",
+    "errorLabel": "Error",
+    "tooManyAttempts": "Too many attempts. Try again in {seconds}s.",
+    "retryIn": "Retry in {seconds}s"
   },
   "dashboard": {
     "welcome": "Welcome to Crypto Invoicing",
@@ -309,7 +319,7 @@
     "ctaSending": "Sending…",
     "ctaSent": "✓ We will reach out",
     "ctaHintAfter": "Check your Telegram or email within 24h.",
-    "ctaHintError": "Couldn't send the request. Try again or email hola@cryptoinvoicing.com.",
+    "ctaHintError": "Couldn't send the request. Try again or email hola@cryptoinvoicing.co.",
     "welcomeShort": "Your concierge workspace",
     "loading": "Authenticating…",
     "hero": "Fill the form to request your first invoice. We provision a USDC payment address on Base mainnet, you share it with your client, and pesos / reais land on your bank within 2–4 business hours after payment. First 50 freelancers — manual onboarding by the founder.",
@@ -331,12 +341,20 @@
       "footnote": "Not a final invoice — we review every request manually during Q1.",
       "errClientName": "Client name is required.",
       "errAmount": "Amount must be a positive number.",
-      "errGeneric": "We could not save your request. Try again or email hola@cryptoinvoicing.com."
+      "errGeneric": "We could not save your request. Try again or email hola@cryptoinvoicing.co.",
+      "errAmountMax": "Amount can't exceed US$1,000,000.",
+      "spoofingWarning": "That email uses our domain. Make sure it's intentional.",
+      "clientEmailPlaceholder": "client@company.com"
     },
     "list": {
       "title": "Your requests",
       "empty": "No invoice requests yet. Submit one above and it will appear here.",
-      "paymentAddress": "USDC address — Base mainnet"
+      "paymentAddress": "USDC address — Base mainnet",
+      "error": "We couldn't load your requests. Try again.",
+      "retry": "Retry",
+      "loading": "Loading…",
+      "loadMore": "Load more ({count} remaining)",
+      "showing": "Showing {shown} of {total}"
     },
     "status": {
       "pending_setup": "Setting up",
@@ -344,6 +362,36 @@
       "paid": "Paid",
       "settled": "Settled to bank",
       "cancelled": "Cancelled"
+    },
+    "profile": {
+      "title": "Your payout profile",
+      "subtitle": "We need this to settle your local currency. It is stored on your account and never shared with your client.",
+      "fullName": "Full name",
+      "fullNamePlaceholder": "Jane Doe",
+      "country": "Payout country",
+      "taxId": "Tax ID (CUIT / CPF)",
+      "taxIdPlaceholder": "20-12345678-9",
+      "payoutAR": "CBU / CVU / alias",
+      "payoutBR": "Pix key",
+      "payoutPlaceholder": "Where you receive pesos (CBU, CVU or alias)",
+      "taxStatus": "Tax status",
+      "taxStatusPlaceholder": "e.g. Monotributo, Responsable Inscripto",
+      "telegram": "Telegram (optional)",
+      "telegramPlaceholder": "@yourhandle",
+      "save": "Save profile",
+      "saving": "Saving…",
+      "saved": "✓ Profile saved",
+      "errSave": "We couldn't save your profile. Try again.",
+      "incomplete": "Complete your payout profile so we can settle your first invoice.",
+      "complete": "Profile complete",
+      "payoutHint": "Where we settle your local currency: bank CBU, wallet CVU (MercadoPago) or alias.",
+      "taxIdHint": "Tax ID with separators (e.g. 20-12345678-9).",
+      "errRequired": "Please fill in this field.",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "firstNamePlaceholder": "Jane",
+      "lastNamePlaceholder": "Doe",
+      "errTelegram": "Use the @handle format (min 4 characters)."
     }
   },
   "locale": {
