@@ -15,6 +15,7 @@ import Trust from "./_components/landing-v3/Trust";
 import Pricing from "./_components/landing-v3/Pricing";
 import FAQ from "./_components/landing-v3/FAQ";
 import FinalCta from "./_components/landing-v3/FinalCta";
+import LatestGuides from "./_components/landing-v3/LatestGuides";
 import Footer from "./_components/landing-v3/Footer";
 
 // /[locale]/ — Design System v3 landing.
@@ -146,6 +147,7 @@ export default async function LandingPage({
         <Pricing locale={params.locale} isAuthenticated={!!user} />
         <FAQ />
         <FinalCta locale={params.locale} isAuthenticated={!!user} />
+        <LatestGuides locale={params.locale} />
       </main>
 
       <Footer locale={params.locale} />

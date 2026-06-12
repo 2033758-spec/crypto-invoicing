@@ -17,7 +17,8 @@
     "dashboard": "Ir ao dashboard",
     "logout": "Sair",
     "accountMenu": "Menu da conta",
-    "menu": "Menu"
+    "menu": "Menu",
+    "resources": "Recursos"
   },
   "hero": {
     "eyebrow": "[ 00 / Crypto Invoicing ]",
@@ -268,7 +269,7 @@
     "companyLinks": {
       "about": "Sobre",
       "compliance": "Compliance",
-      "blog": "Blog · em breve",
+      "blog": "Recursos",
       "email": "hola@cryptoinvoicing.co"
     },
     "legal": "Legal",

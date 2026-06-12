@@ -15,6 +15,7 @@ export default function Footer({ locale }: Props) {
   const termsHref = `${prefix}/legal/terms`;
   const privacyHref = `${prefix}/legal/privacy`;
   const cookiesHref = `${prefix}/legal/cookies`;
+  const resourcesHref = `${prefix}/recursos`;
   const productLinks = t.raw("productLinks") as Record<string, string>;
   const companyLinks = t.raw("companyLinks") as Record<string, string>;
   const legalLinks = t.raw("legalLinks") as Record<string, string>;
@@ -53,7 +54,7 @@ export default function Footer({ locale }: Props) {
           <FooterCol heading={t("company")}>
             <ComingSoonLink>{companyLinks.about}</ComingSoonLink>
             <a href="#trust">{companyLinks.compliance}</a>
-            <ComingSoonLink>{companyLinks.blog}</ComingSoonLink>
+            <Link href={resourcesHref}>{companyLinks.blog}</Link>
             <a href={`mailto:${companyLinks.email}`}>{companyLinks.email}</a>
           </FooterCol>
 

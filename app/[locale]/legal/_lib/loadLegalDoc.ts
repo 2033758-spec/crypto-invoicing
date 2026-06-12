@@ -1,38 +1,34 @@
-import { promises as fs } from "fs";
-import path from "path";
 import { renderMarkdown } from "../../../lib/markdown";
+import termsDoc from "../_content/terms_of_service";
+import privacyDoc from "../_content/privacy_policy";
+import cookiesDoc from "../_content/cookies";
 
-// Loads a draft legal markdown file from /06_legal/draft/ relative to the
-// repo root and converts it to HTML at request time.
+// Renders a legal document to HTML at request time.
+//
+// The markdown now ships as bundled module strings (app/[locale]/legal/_content/*),
+// NOT read from the parent repo's /06_legal/draft via fs. Reason: the Vercel
+// deploy only includes the `code/calculadora` app directory, so the parent
+// repo's legal files were absent in prod → fs.readFile threw → every legal page
+// rendered a "Document missing" placeholder. On a YMYL fintech domain claiming
+// CNV/PSAV registration, 9 placeholder legal pages in the index is a sitewide
+// low-quality signal (SEO audit 2026-06-11, finding #4). Bundling the text
+// guarantees real content in every environment.
 //
 // LANGUAGE POLICY (founder decision 2026-05-27):
 //   Legal docs are published in English ONLY until the AR-lawyer redline (W11).
-//   ES + PT versions were dropped because:
-//     1. Untranslated drafts created mis-claim risk (Terms in Spanish saying
-//        things the English source no longer says after Tier-1 edits).
-//     2. Spanish translations require lawyer redline in two languages, not one.
-//     3. Most AR/BR ICP users have working English (mid-senior devs / designers).
-//   For es-AR + pt-BR users, the calling page renders an "English only" banner
-//   so users understand why the body is in English.
+//   ES + PT versions were dropped because untranslated drafts created mis-claim
+//   risk and need a lawyer redline in two languages, not one. For es-AR + pt-BR
+//   users the calling page renders an "English only" banner.
 //
 // Slug values: "terms_of_service" | "privacy_policy" | "cookies".
 
 export type LegalSlug = "terms_of_service" | "privacy_policy" | "cookies";
 
-const REPO_ROOT_FROM_APP = path.resolve(
-  process.cwd(),
-  "..",
-  "..",
-  "06_legal",
-  "draft",
-);
-
-function fileFor(slug: LegalSlug): string {
-  if (slug === "cookies") {
-    return path.join(REPO_ROOT_FROM_APP, "cookies_v1.md");
-  }
-  return path.join(REPO_ROOT_FROM_APP, `${slug}_v1_en.md`);
-}
+const DOC_BY_SLUG: Record<LegalSlug, string> = {
+  terms_of_service: termsDoc,
+  privacy_policy: privacyDoc,
+  cookies: cookiesDoc,
+};
 
 export interface LegalDoc {
   html: string;
@@ -47,24 +43,11 @@ export async function loadLegalDoc(
   locale: string,
 ): Promise<LegalDoc> {
   const englishOnlyFallback = locale !== "en-US";
-  const filePath = fileFor(slug);
-  let raw = "";
-  try {
-    raw = await fs.readFile(filePath, "utf8");
-  } catch (err) {
-    // Defensive: legal docs MUST exist by launch. If missing, return a
-    // visible placeholder so the page still renders without a 500.
-    raw =
-      `# Document missing\n\nThe requested legal document is being finalised. ` +
-      `Please email hola@cryptoinvoicing.co for a copy.`;
-    console.error(
-      `[legal] failed to read ${filePath}:`,
-      (err as Error).message,
-    );
-  }
+  const raw = DOC_BY_SLUG[slug] ?? DOC_BY_SLUG.terms_of_service;
   return {
     html: renderMarkdown(raw),
-    englishOnlyFallback,
+    // Cookies is bilingual (EN + ES-AR), so no English-only banner for it.
+    englishOnlyFallback: slug === "cookies" ? false : englishOnlyFallback,
     isCookies: slug === "cookies",
   };
 }

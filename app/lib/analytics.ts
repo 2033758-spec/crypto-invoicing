@@ -87,10 +87,30 @@ async function ensureInit(): Promise<unknown> {
   return initPromise;
 }
 
+const YM_ID = process.env.NEXT_PUBLIC_YM_ID || "109803222";
+
+/**
+ * Mirror an event to Yandex Metrika as a goal (reachGoal). YM is consent-gated
+ * via the YandexMetrika component (window.ym only exists after consent), and
+ * this runs only after track()'s own consent check — so it never fires without
+ * consent. Safe no-op if YM isn't loaded.
+ */
+function ymReachGoal(event: string, props?: PHCapturePayload): void {
+  try {
+    const ym = (window as any).ym; // eslint-disable-line @typescript-eslint/no-explicit-any
+    if (YM_ID && typeof ym === "function") {
+      ym(Number(YM_ID), "reachGoal", event, props);
+    }
+  } catch {
+    /* swallow — analytics must never break UX */
+  }
+}
+
 /** Capture a custom event. Drops silently if consent not granted or PostHog unconfigured. */
 export function track(event: string, props?: PHCapturePayload): void {
   if (typeof window === "undefined") return;
   if (!consentGranted()) return;
+  ymReachGoal(event, props);
   void (async () => {
     const ph: any = await ensureInit(); // eslint-disable-line @typescript-eslint/no-explicit-any
     if (!ph) return;

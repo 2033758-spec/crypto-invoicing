@@ -4,8 +4,10 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import "../globals.css";
 import { isSupportedLocale, locales } from "../../i18n";
+import { ogImageUrl } from "../lib/og";
 import Analytics from "./_components/Analytics";
 import CookieConsent from "./_components/CookieConsent";
+import YandexMetrika from "./_components/YandexMetrika";
 
 // Pre-render all supported locales at build time.
 export function generateStaticParams() {
@@ -35,6 +37,9 @@ export async function generateMetadata({
   const t = await getTranslations({ locale: params.locale, namespace: "meta" });
   const path = pathForLocale(params.locale);
   const canonical = `${SITE}${path}`;
+  // Single absolute OG image at the root route (200, no redirect, og==twitter).
+  // See app/lib/og.ts for why we don't do per-locale OG images.
+  const ogImage = ogImageUrl(SITE, params.locale);
 
   // Absolute hreflang URLs per Google guidance (relative URLs cause indexing
   // confusion across subdomains/locales). x-default points at es-AR — primary
@@ -68,7 +73,7 @@ export async function generateMetadata({
       locale: params.locale.replace("-", "_"),
       images: [
         {
-          url: "/opengraph-image",
+          url: ogImage,
           width: 1200,
           height: 630,
           alt: "Crypto Invoicing — USDC invoicing for LATAM freelancers",
@@ -79,11 +84,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: t("ogTitle"),
       description: t("twitterDescription"),
-      // Absolute, per-locale URL so Twitter / X / Slack / LinkedIn previews
-      // resolve correctly. The implicit /opengraph-image route lives under
-      // `app/[locale]/`, so it MUST be prefixed with the locale segment for
-      // non-default locales (es-AR has no prefix per next-intl as-needed).
-      images: [`${canonical}/opengraph-image`],
+      images: [ogImage],
     },
     robots: { index: true, follow: true },
     // Verification — paste GSC token into NEXT_PUBLIC_GSC_VERIFICATION
@@ -132,6 +133,28 @@ export default async function LocaleLayout({
 
   return (
     <html lang={params.locale} className="dark">
+      <head>
+        {/* Preload the two above-the-fold webfonts so the hero H1 (LCP) doesn't
+            wait on the CSS→font request waterfall (audit 2026-06-11, #16/M7).
+            Space Grotesk 700 = hero H1 (`font-display font-bold`); Inter 400 =
+            body. latin subset covers es-AR/pt-BR accents. crossOrigin required —
+            fonts are always fetched in CORS mode, must match to reuse the
+            preload. */}
+        <link
+          rel="preload"
+          href="/fonts/space-grotesk-700-latin.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/inter-400-latin.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className="min-h-screen text-on-surface antialiased font-body">
         <script
           type="application/ld+json"
@@ -140,6 +163,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider locale={params.locale} messages={messages}>
           {children}
           <Analytics />
+          <YandexMetrika />
           <CookieConsent locale={params.locale} />
         </NextIntlClientProvider>
       </body>

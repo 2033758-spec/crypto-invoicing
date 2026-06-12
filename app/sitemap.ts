@@ -13,9 +13,11 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://cryptoinvoicing.co";
 
 // Public routes (relative paths, no locale prefix). Locale prefix is added per
 // row below — es-AR has no prefix (default), pt-BR → /pt-BR, en-US → /en-US.
+//
+// /signup is intentionally absent: it's noindex + canonical→home, so listing it
+// in the sitemap sends Google contradictory signals (audit 2026-06-11, #6/H1).
 const PUBLIC_ROUTES: { path: string; priority: number; changeFrequency: "weekly" | "monthly" }[] = [
   { path: "", priority: 1.0, changeFrequency: "weekly" },
-  { path: "/signup", priority: 0.8, changeFrequency: "monthly" },
   { path: "/legal/terms", priority: 0.4, changeFrequency: "monthly" },
   { path: "/legal/privacy", priority: 0.4, changeFrequency: "monthly" },
   { path: "/legal/cookies", priority: 0.3, changeFrequency: "monthly" },

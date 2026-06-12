@@ -17,7 +17,8 @@
     "dashboard": "Ir al dashboard",
     "logout": "Cerrar sesión",
     "accountMenu": "Menú de cuenta",
-    "menu": "Menú"
+    "menu": "Menú",
+    "resources": "Recursos"
   },
   "hero": {
     "eyebrow": "[ 00 / Crypto Invoicing ]",
@@ -268,7 +269,7 @@
     "companyLinks": {
       "about": "Sobre nosotros",
       "compliance": "Compliance · CNV",
-      "blog": "Blog · soon",
+      "blog": "Recursos",
       "email": "hola@cryptoinvoicing.co"
     },
     "legal": "Legal",

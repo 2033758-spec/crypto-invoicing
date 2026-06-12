@@ -45,6 +45,14 @@ export default function CookieConsent({ locale: _locale }: Props) {
   const handleAccept = () => {
     writeConsent("granted");
     setShow(false);
+    // Signal consent-gated analytics to start now (banner sets the cookie
+    // without a reload). YandexMetrika listens for this; PostHog picks it up
+    // lazily on the next track() call.
+    try {
+      window.dispatchEvent(new Event("ci-consent-granted"));
+    } catch {
+      /* no-op */
+    }
   };
   const handleReject = () => {
     writeConsent("denied");

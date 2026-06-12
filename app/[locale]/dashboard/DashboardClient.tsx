@@ -375,7 +375,9 @@ export default function DashboardClient({ locale }: Props) {
               <p className="text-on-surface-variant text-[14px] mb-5" style={{ lineHeight: 1.55 }}>
                 {t("profile.subtitle")}
               </p>
-              <form onSubmit={handleSaveProfile} className="space-y-4">
+              {/* ym-hide-content: name / CUIT / CBU-CVU-alias / Telegram must never
+                  enter Yandex Webvisor session recordings (PII + financial). */}
+              <form onSubmit={handleSaveProfile} className="space-y-4 ym-hide-content">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Field label={t("profile.firstName")} htmlFor="p_first">
                     <input id="p_first" type="text" value={pFirstName} onChange={(e) => { setPFirstName(e.target.value); if (profileFieldError === "first_name") setProfileFieldError(null); }} placeholder={t("profile.firstNamePlaceholder")} aria-invalid={profileFieldError === "first_name"} className={`w-full rounded border ${profileFieldError === "first_name" ? "border-tertiary" : "border-outline-variant"} bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150`} />
@@ -454,7 +456,8 @@ export default function DashboardClient({ locale }: Props) {
               {t("form.subtitle")}
             </p>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            {/* ym-hide-content: invoice client names / amounts out of Webvisor. */}
+            <form onSubmit={handleSubmit} className="space-y-4 ym-hide-content">
               <Field label={t("form.clientName")} htmlFor="client_name">
                 <input
                   id="client_name"

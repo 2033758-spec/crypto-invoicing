@@ -21,6 +21,10 @@ export default function Header({ locale, user }: Props) {
   const signupHref = locale === "es-AR" ? "/signup" : `/${locale}/signup`;
   const dashboardHref = locale === "es-AR" ? "/dashboard" : `/${locale}/dashboard`;
   const logoutHref = locale === "es-AR" ? "/auth/logout" : `/${locale}/auth/logout`;
+  // /recursos is a real route (blog/guides hub), not an in-page anchor — kept
+  // separate from NAV_LINKS so the homepage actually links to it (SEO audit
+  // 2026-06-11, finding #3: /recursos was an internal-link orphan).
+  const resourcesHref = locale === "es-AR" ? "/recursos" : `/${locale}/recursos`;
 
   // Native <details> doesn't close on outside tap or Escape (feels broken on
   // iPhone Safari). Close the account menu on Escape + pointer-down outside it.
@@ -88,6 +92,12 @@ export default function Header({ locale, user }: Props) {
                 {t(l.key)}
               </a>
             ))}
+            <Link
+              href={resourcesHref}
+              className="text-[13px] text-on-surface-variant hover:text-on-surface hover:bg-white/[0.04] px-3.5 py-2 rounded-[4px] transition-colors duration-150"
+            >
+              {t("resources")}
+            </Link>
           </nav>
 
           <div className="flex items-center gap-2">
@@ -112,6 +122,13 @@ export default function Header({ locale, user }: Props) {
                     {t(l.key)}
                   </a>
                 ))}
+                <Link
+                  href={resourcesHref}
+                  onClick={closeMobileNav}
+                  className="block px-4 py-3 text-[14px] text-on-surface-variant hover:text-on-surface hover:bg-white/[0.04] transition-colors"
+                >
+                  {t("resources")}
+                </Link>
               </div>
             </details>
 

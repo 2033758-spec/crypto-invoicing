@@ -8,6 +8,15 @@ const TITLE_BY_LOCALE: Record<string, string> = {
   "en-US": "Terms of Service · Crypto Invoicing",
 };
 
+const DESCRIPTION_BY_LOCALE: Record<string, string> = {
+  "es-AR":
+    "Términos del servicio de Crypto Invoicing: cobranza de USDC para freelancers de LATAM, diseño non-custodial, comisiones, KYC/AML por niveles y ley aplicable (Argentina).",
+  "pt-BR":
+    "Termos de Serviço da Crypto Invoicing: recebimento de USDC para freelancers da LATAM, arquitetura non-custodial, taxas, KYC/AML por níveis e lei aplicável.",
+  "en-US":
+    "Crypto Invoicing Terms of Service: USDC invoicing for LATAM freelancers, non-custodial design, fees, tiered KYC/AML and governing law (Argentina).",
+};
+
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://cryptoinvoicing.co";
 
 export async function generateMetadata({
@@ -15,11 +24,15 @@ export async function generateMetadata({
 }: {
   params: { locale: string };
 }): Promise<Metadata> {
+  // `absolute` bypasses the root layout's "%s — Crypto Invoicing" template, which
+  // otherwise produced "Términos del servicio · Crypto Invoicing — Crypto
+  // Invoicing" (audit 2026-06-11, #15).
   const title = TITLE_BY_LOCALE[params.locale] || TITLE_BY_LOCALE["es-AR"];
+  const description = DESCRIPTION_BY_LOCALE[params.locale] || DESCRIPTION_BY_LOCALE["es-AR"];
   const prefix = params.locale === "es-AR" ? "" : `/${params.locale}`;
   return {
-    title,
-    description: "Terms of Service — Crypto Invoicing.",
+    title: { absolute: title },
+    description,
     alternates: {
       canonical: `${SITE}${prefix}/legal/terms`,
       languages: {

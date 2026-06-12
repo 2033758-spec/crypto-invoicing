@@ -10,8 +10,13 @@ import ptRaw from "./pt.json";
 export type Block =
   | { type: "p"; text: string }
   | { type: "h2"; id: string; text: string }
+  | { type: "h3"; text: string }
   | { type: "ul"; items: string[] }
-  | { type: "callout"; text: string };
+  | { type: "ol"; items: string[] }
+  | { type: "callout"; text: string }
+  // Comparison table — rendered as a real <table> (format #1 for AI Overviews /
+  // featured snippets). `headers` is the first row; `rows` are body cells.
+  | { type: "table"; caption?: string; headers: string[]; rows: string[][] };
 
 export interface Article {
   slug: string;
@@ -31,6 +36,12 @@ export interface Article {
   /** Authoritative sources shown in an E-E-A-T "Fuentes" block. */
   sources: { label: string; url: string }[];
   blocks: Block[];
+  /**
+   * Optional FAQ — rendered as a Q&A section AND emitted as FAQPage JSON-LD
+   * (eligible for FAQ rich-results / AI Overviews). Keep answers self-contained,
+   * direct answer in the first sentence (~40–60 words).
+   */
+  faq?: { q: string; a: string }[];
 }
 
 // One disclaimer per locale — appended to every article (B4: "not tax advice").

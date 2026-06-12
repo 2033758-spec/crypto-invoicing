@@ -1,17 +1,28 @@
 import { ImageResponse } from "next/og";
 
-// Open Graph image — generated per-locale at edge. 1200×630 (Twitter +
-// Facebook + LinkedIn + WhatsApp standard). Jade-on-slate template matching
-// the Crypto Invoicing brand (Terminal Core, Industrial Slate canvas).
+// Shared Open Graph image renderer. 1200×630 (Twitter + Facebook + LinkedIn +
+// WhatsApp standard). Jade-on-slate template matching the Crypto Invoicing brand
+// (Terminal Core, Industrial Slate canvas).
+//
+// Two routes consume this:
+//   - app/opengraph-image.tsx          → /opengraph-image       (default es-AR)
+//   - app/[locale]/opengraph-image.tsx → /pt-BR|/en-US/opengraph-image
+//
+// Why a root-level route exists: next-intl's `localePrefix: "as-needed"` strips
+// the default-locale prefix, so /es-AR/opengraph-image 307-redirects to
+// /opengraph-image — which previously had no route and 404'd. Every social/AI
+// share of the home (es-AR) therefore had a broken preview (SEO audit
+// 2026-06-11, finding #2). A root route makes /opengraph-image resolve; the
+// [locale] route still serves the non-default locales (no stripping there).
 
-export const runtime = "edge";
-export const alt = "Crypto Invoicing — USDC invoicing for LATAM freelancers";
-export const size = { width: 1200, height: 630 } as const;
-export const contentType = "image/png";
+export const OG_SIZE = { width: 1200, height: 630 } as const;
+export const OG_CONTENT_TYPE = "image/png";
+export const OG_ALT =
+  "Crypto Invoicing — USDC invoicing for LATAM freelancers";
 
-type Locale = "es-AR" | "pt-BR" | "en-US";
+export type OgLocale = "es-AR" | "pt-BR" | "en-US";
 
-const COPY: Record<Locale, { eyebrow: string; title: string; sub: string }> = {
+const COPY: Record<OgLocale, { eyebrow: string; title: string; sub: string }> = {
   "es-AR": {
     eyebrow: "CRYPTO INVOICING",
     title: "Cobrá del exterior. En blanco. Sin perder 4%.",
@@ -29,17 +40,14 @@ const COPY: Record<Locale, { eyebrow: string; title: string; sub: string }> = {
   },
 };
 
-export default async function Image({
-  params,
-}: {
-  params: { locale: string };
-}) {
-  const locale = (
-    ["es-AR", "pt-BR", "en-US"].includes(params.locale)
-      ? params.locale
-      : "es-AR"
-  ) as Locale;
-  const copy = COPY[locale];
+export function normalizeOgLocale(locale: string | undefined): OgLocale {
+  return (["es-AR", "pt-BR", "en-US"].includes(locale ?? "")
+    ? locale
+    : "es-AR") as OgLocale;
+}
+
+export function renderOgImage(locale: string | undefined): ImageResponse {
+  const copy = COPY[normalizeOgLocale(locale)];
 
   // Jade-on-slate template. Inline styles only (next/og constraints).
   return new ImageResponse(
@@ -157,6 +165,6 @@ export default async function Image({
         </div>
       </div>
     ),
-    size,
+    OG_SIZE,
   );
 }

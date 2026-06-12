@@ -8,6 +8,15 @@ const TITLE_BY_LOCALE: Record<string, string> = {
   "en-US": "Privacy Policy · Crypto Invoicing",
 };
 
+const DESCRIPTION_BY_LOCALE: Record<string, string> = {
+  "es-AR":
+    "Política de privacidad de Crypto Invoicing: qué datos recolectamos, con qué base legal, con quién los compartimos, cuánto los retenemos y tus derechos (Ley 25.326).",
+  "pt-BR":
+    "Política de privacidade da Crypto Invoicing: quais dados coletamos, base legal, com quem compartilhamos, tempo de retenção e seus direitos.",
+  "en-US":
+    "Crypto Invoicing privacy policy: what data we collect, lawful bases, processors we share with, retention periods and your data-subject rights.",
+};
+
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://cryptoinvoicing.co";
 
 export async function generateMetadata({
@@ -16,10 +25,11 @@ export async function generateMetadata({
   params: { locale: string };
 }): Promise<Metadata> {
   const title = TITLE_BY_LOCALE[params.locale] || TITLE_BY_LOCALE["es-AR"];
+  const description = DESCRIPTION_BY_LOCALE[params.locale] || DESCRIPTION_BY_LOCALE["es-AR"];
   const prefix = params.locale === "es-AR" ? "" : `/${params.locale}`;
   return {
-    title,
-    description: "Privacy Policy — Crypto Invoicing.",
+    title: { absolute: title },
+    description,
     alternates: {
       canonical: `${SITE}${prefix}/legal/privacy`,
       languages: {

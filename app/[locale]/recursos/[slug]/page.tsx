@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { unstable_setRequestLocale } from "next-intl/server";
 import { isSupportedLocale, locales } from "../../../../i18n";
+import { ogImageUrl } from "../../../lib/og";
 import {
   type Article,
   type Block,
@@ -42,6 +43,7 @@ export async function generateMetadata({
     if (getArticle(l, params.slug)) languages[l] = articleUrl(l, params.slug);
   }
 
+  const ogImage = ogImageUrl(SITE, params.locale);
   return {
     title: article.title,
     description: article.description,
@@ -54,6 +56,13 @@ export async function generateMetadata({
       publishedTime: article.datePublished,
       modifiedTime: article.dateModified,
       authors: [article.author],
+      images: [{ url: ogImage, width: 1200, height: 630, alt: article.title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description: article.description,
+      images: [ogImage],
     },
     robots: { index: true, follow: true },
   };
@@ -71,6 +80,15 @@ function renderBlock(block: Block, i: number) {
           {block.text}
         </h2>
       );
+    case "h3":
+      return (
+        <h3
+          key={i}
+          className="font-display font-semibold text-[20px] tracking-[-0.01em] text-on-surface mt-8 mb-3"
+        >
+          {block.text}
+        </h3>
+      );
     case "p":
       return (
         <p key={i} className="text-on-surface-variant text-[17px] leading-[1.7] mb-5">
@@ -84,6 +102,53 @@ function renderBlock(block: Block, i: number) {
             <li key={j}>{it}</li>
           ))}
         </ul>
+      );
+    case "ol":
+      return (
+        <ol key={i} className="list-decimal pl-6 mb-5 space-y-2 text-on-surface-variant text-[17px] leading-[1.7] marker:text-primary marker:font-semibold">
+          {block.items.map((it, j) => (
+            <li key={j} className="pl-1">{it}</li>
+          ))}
+        </ol>
+      );
+    case "table":
+      return (
+        <figure key={i} className="my-8 overflow-x-auto">
+          <table className="w-full border-collapse text-[15px] text-on-surface-variant">
+            <thead>
+              <tr>
+                {block.headers.map((h, j) => (
+                  <th
+                    key={j}
+                    scope="col"
+                    className="text-left font-display font-semibold text-on-surface border-b border-outline-variant px-3 py-2.5 align-bottom"
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {block.rows.map((row, r) => (
+                <tr key={r} className="border-b border-outline-variant/60">
+                  {row.map((cell, c) => (
+                    <td
+                      key={c}
+                      className={`px-3 py-2.5 align-top ${c === 0 ? "text-on-surface font-medium" : ""}`}
+                    >
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {block.caption && (
+            <figcaption className="mt-2 text-[13px] text-on-surface-placeholder italic">
+              {block.caption}
+            </figcaption>
+          )}
+        </figure>
       );
     case "callout":
       return (
@@ -141,12 +206,36 @@ export default function ArticlePage({
     ],
   };
 
+  // FAQPage JSON-LD (rich-results / AI Overviews eligible) — only when the
+  // article carries an faq block.
+  const faqLd =
+    article.faq && article.faq.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: article.faq.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        }
+      : null;
+
+  const FAQ_HEADING: Record<string, string> = {
+    "es-AR": "Preguntas frecuentes",
+    "pt-BR": "Perguntas frequentes",
+    "en-US": "Frequently asked questions",
+  };
+
   const dateFmt = new Intl.DateTimeFormat(params.locale, { year: "numeric", month: "long", day: "numeric" });
 
   return (
     <main className="relative min-h-screen px-4 sm:px-8 lg:px-16 py-12">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      {faqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      )}
 
       <article className="max-w-2xl mx-auto">
         <nav aria-label="Breadcrumb" className="font-mono text-[12px] text-on-surface-variant mb-8">
@@ -181,11 +270,42 @@ export default function ArticlePage({
                   </a>
                 </li>
               ))}
+              {article.faq && article.faq.length > 0 && (
+                <li>
+                  <a href="#faq" className="text-on-surface-variant text-[15px] hover:text-primary transition-colors">
+                    {FAQ_HEADING[params.locale] ?? FAQ_HEADING["es-AR"]}
+                  </a>
+                </li>
+              )}
             </ul>
           </nav>
         )}
 
         <div>{article.blocks.map((b, i) => renderBlock(b, i))}</div>
+
+        {/* FAQ — mirrors the FAQPage JSON-LD above. Native <details> so it's
+            keyboard-accessible and crawlable without JS. */}
+        {article.faq && article.faq.length > 0 && (
+          <section className="mt-12 pt-8 border-t border-outline-variant">
+            <h2 className="font-display font-semibold text-[26px] tracking-[-0.01em] text-on-surface mb-5 scroll-mt-24" id="faq">
+              {FAQ_HEADING[params.locale] ?? FAQ_HEADING["es-AR"]}
+            </h2>
+            <div className="space-y-3">
+              {article.faq.map((f, j) => (
+                <details
+                  key={j}
+                  className="group rounded-lg border border-outline-variant bg-surface-container-low px-5 py-4"
+                >
+                  <summary className="flex cursor-pointer items-center justify-between gap-3 font-display font-medium text-[17px] text-on-surface list-none">
+                    {f.q}
+                    <span aria-hidden className="text-primary transition-transform group-open:rotate-45">+</span>
+                  </summary>
+                  <p className="mt-3 text-on-surface-variant text-[16px] leading-[1.7]">{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* E-E-A-T sources */}
         {article.sources.length > 0 && (

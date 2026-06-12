@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { unstable_setRequestLocale } from "next-intl/server";
 import { isSupportedLocale } from "../../../i18n";
+import { ogImageUrl } from "../../lib/og";
 import { getArticles, RESOURCES_UI } from "./_content/articles";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://cryptoinvoicing.co";
@@ -34,7 +35,19 @@ export async function generateMetadata({
         "x-default": resourcesUrl("es-AR"),
       },
     },
-    openGraph: { title: ui.indexTitle, description: ui.indexDescription, url: canonical, type: "website" },
+    openGraph: {
+      title: ui.indexTitle,
+      description: ui.indexDescription,
+      url: canonical,
+      type: "website",
+      images: [{ url: ogImageUrl(SITE, params.locale), width: 1200, height: 630, alt: ui.indexTitle }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: ui.indexTitle,
+      description: ui.indexDescription,
+      images: [ogImageUrl(SITE, params.locale)],
+    },
     robots: { index: true, follow: true },
   };
 }

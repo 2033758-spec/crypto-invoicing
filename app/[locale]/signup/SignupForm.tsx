@@ -256,7 +256,8 @@ export default function SignupForm({ locale }: Props) {
               </div>
 
               {/* Email magic-link */}
-              <form onSubmit={handleSubmit} className="space-y-4">
+              {/* ym-hide-content: keep email out of Yandex Webvisor recordings (PII). */}
+              <form onSubmit={handleSubmit} className="space-y-4 ym-hide-content">
                 <div>
                   <label
                     htmlFor="signup-email"
