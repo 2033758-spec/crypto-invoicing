@@ -144,9 +144,12 @@ export default function Header({ locale, user }: Props) {
                   title={user.email}
                   aria-label={`${t("dashboard")} — ${user.email}`}
                 >
-                  {/* Avatar circle with first letter (decorative — Link carries the label) */}
-                  <div aria-hidden="true" className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-on text-[12px] font-semibold">
-                    {user.email?.[0]?.toUpperCase() || "U"}
+                  {/* User icon (decorative — Link carries the accessible label) */}
+                  <div aria-hidden="true" className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-on">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
                   </div>
                   {/* Email (hidden on mobile) */}
                   <span className="text-[13px] text-on-surface hidden sm:inline truncate max-w-[150px]">
