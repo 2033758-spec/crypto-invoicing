@@ -17,15 +17,41 @@ import { ensureUserOrg } from "../../../lib/provision";
 import { notifyFounder, tgEscape } from "../../../lib/telegram";
 import { checkRateLimit, getClientIp } from "../../../lib/rate-limit";
 
+interface LineItemIn {
+  description?: string;
+  qty?: number | string;
+  unit_price?: number | string;
+}
+interface RecipientIn {
+  name?: string;
+  company?: string;
+  address?: string;
+  country?: string;
+  tax_id?: string;
+  email?: string;
+}
 interface Body {
   client_name?: string;
   client_email?: string;
   amount_usd?: number | string;
   description?: string;
   country?: "AR" | "BR";
+  // v1 rich invoice (optional — legacy callers still send only the above)
+  recipient?: RecipientIn;
+  line_items?: LineItemIn[];
+  terms_notes?: string;
 }
 
 const EMAIL_RE = /^\S+@\S+\.\S+$/;
+const SAFE_ADDRESS = process.env.SAFE_MULTISIG_ADDRESS || "";
+
+function num(v: unknown): number {
+  return typeof v === "number" ? v : parseFloat(String(v));
+}
+function s(v: unknown, max: number): string | null {
+  const t = typeof v === "string" ? v.trim() : "";
+  return t ? t.slice(0, max) : null;
+}
 
 export async function POST(req: NextRequest) {
   let body: Body;
@@ -51,9 +77,33 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid client_email" }, { status: 400 });
   }
 
-  const amount_raw = body.amount_usd;
+  // Line items (v1 rich). Server computes every amount + the total — never
+  // trust client-sent totals (money-path).
+  const lineItems: { description: string; qty: number; unit_price: number; amount: number }[] = [];
+  if (Array.isArray(body.line_items)) {
+    if (body.line_items.length > 50) {
+      return NextResponse.json({ error: "Too many line items (max 50)" }, { status: 400 });
+    }
+    for (const raw of body.line_items) {
+      const description = s(raw?.description, 200);
+      if (!description) continue; // skip blank rows
+      const qty = num(raw?.qty);
+      const unit_price = num(raw?.unit_price);
+      if (!Number.isFinite(qty) || qty <= 0 || qty > 100_000) {
+        return NextResponse.json({ error: "Invalid item quantity" }, { status: 400 });
+      }
+      if (!Number.isFinite(unit_price) || unit_price < 0 || unit_price > 1_000_000) {
+        return NextResponse.json({ error: "Invalid item price" }, { status: 400 });
+      }
+      lineItems.push({ description, qty, unit_price, amount: Math.round(qty * unit_price * 100) / 100 });
+    }
+  }
+
+  // amount_usd = computed total when items present (legacy: from body.amount_usd).
   const amount_usd =
-    typeof amount_raw === "number" ? amount_raw : parseFloat(String(amount_raw));
+    lineItems.length > 0
+      ? Math.round(lineItems.reduce((acc, it) => acc + it.amount, 0) * 100) / 100
+      : num(body.amount_usd);
   if (!Number.isFinite(amount_usd) || amount_usd <= 0 || amount_usd > 1_000_000) {
     return NextResponse.json(
       { error: "amount_usd must be a positive number ≤ 1,000,000" },
@@ -116,6 +166,39 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Build factura-E fields. Issuer snapshot is read from the user's profile
+  // (denormalized into the invoice so historical CUIT/punto-venta stay correct).
+  const { data: profile } = await service
+    .from("users")
+    .select("legal_name, full_name, tax_id, fiscal_address, iva_condition, punto_venta, email")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const issuer_snapshot = {
+    legal_name: profile?.legal_name || profile?.full_name || null,
+    cuit: profile?.tax_id || null,
+    fiscal_address: profile?.fiscal_address || null,
+    iva_condition: profile?.iva_condition || null,
+    punto_venta: profile?.punto_venta || null,
+    email: profile?.email || user.email || null,
+  };
+
+  const recipient = body.recipient
+    ? {
+        name: s(body.recipient.name, 120),
+        company: s(body.recipient.company, 120),
+        address: s(body.recipient.address, 200),
+        country: s(body.recipient.country, 60),
+        tax_id: s(body.recipient.tax_id, 60),
+        email: s(body.recipient.email, 160),
+      }
+    : null;
+
+  // IVA exento (export of services) → total = subtotal.
+  const total_usd = amount_usd;
+  const subtotal_usd = amount_usd;
+  const payment = SAFE_ADDRESS ? { usdc_address: SAFE_ADDRESS, network: "base", reference: null } : null;
+
   // Insert via service-role (bypasses RLS, incl. the RETURNING select) so a
   // policy quirk can't reject a legitimate, already-authenticated write.
   const { data: inserted, error: insertError } = await service
@@ -128,9 +211,19 @@ export async function POST(req: NextRequest) {
       amount_usd,
       description,
       country,
+      // v1 rich fields (additive; null/[] when legacy caller omits them)
+      recipient,
+      line_items: lineItems,
+      issuer_snapshot,
+      subtotal_usd,
+      total_usd,
+      tax_note: "IVA exento — exportación de servicios",
+      terms_notes: s(body.terms_notes, 500),
+      currency: "USD",
+      payment,
     })
     .select(
-      "id, client_name, client_email, amount_usd, description, country, status, created_at",
+      "id, client_name, client_email, amount_usd, description, country, status, created_at, public_token",
     )
     .single();
 

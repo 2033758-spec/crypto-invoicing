@@ -61,18 +61,55 @@ function fmt(n: number | null | undefined): string {
   return v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-export default async function HostedInvoice({ params }: { params: { token: string } }) {
-  const supabase = getServerSupabase();
-  const { data, error } = await supabase
-    .from("invoice_requests")
-    .select(
-      "client_name, amount_usd, description, country, status, usdc_address, created_at, invoice_number, issue_date, currency, issuer_snapshot, recipient, line_items, subtotal_usd, total_usd, tax_note, terms_notes, payment",
-    )
-    .eq("public_token", params.token)
-    .maybeSingle();
+// Hardcoded demo invoice for /i/ejemplo — no DB, no secrets. Lets people
+// (and us) preview the full hosted page before there's real data. Linked from
+// trust pages / empty states ("ver factura de ejemplo").
+const DEMO = {
+  client_name: "Acme Inc.",
+  amount_usd: 1800,
+  description: null,
+  country: "AR",
+  status: "payment_link_ready",
+  usdc_address: null,
+  created_at: "2026-06-15",
+  invoice_number: "FE-0001-00000007",
+  issue_date: "2026-06-15",
+  currency: "USD",
+  issuer_snapshot: {
+    legal_name: "Juan Pérez",
+    cuit: "20-35123456-7",
+    fiscal_address: "Av. Corrientes 1234, CABA",
+    iva_condition: "monotributo",
+  },
+  recipient: { company: "Acme Inc.", address: "548 Market St, San Francisco", country: "United States", tax_id: "EIN 88-1234567" },
+  line_items: [
+    { description: "Diseño de producto — Junio 2026", qty: 1, unit_price: 1500, amount: 1500 },
+    { description: "Soporte y ajustes (3 h)", qty: 3, unit_price: 100, amount: 300 },
+  ],
+  subtotal_usd: 1800,
+  total_usd: 1800,
+  tax_note: "IVA exento — exportación de servicios",
+  terms_notes: "Pago a 7 días. Gracias por tu confianza.",
+  payment: { usdc_address: "0x69daB6ec0FFEE5a7c3b4a3D1e2f0A9b8C7d6E5f4", network: "Base", reference: "FE-0001-00000007" },
+};
 
-  // 404 (not 403) on unknown/invalid token — don't confirm existence.
-  if (error || !data) notFound();
+export default async function HostedInvoice({ params }: { params: { token: string } }) {
+  let data: Record<string, unknown>;
+  if (params.token === "ejemplo") {
+    data = DEMO;
+  } else {
+    const supabase = getServerSupabase();
+    const res = await supabase
+      .from("invoice_requests")
+      .select(
+        "client_name, amount_usd, description, country, status, usdc_address, created_at, invoice_number, issue_date, currency, issuer_snapshot, recipient, line_items, subtotal_usd, total_usd, tax_note, terms_notes, payment",
+      )
+      .eq("public_token", params.token)
+      .maybeSingle();
+    // 404 (not 403) on unknown/invalid token — don't confirm existence.
+    if (res.error || !res.data) notFound();
+    data = res.data;
+  }
 
   const status = (data.status as string) || "pending_setup";
   const st = STATUS[status] ?? STATUS.pending_setup;
@@ -120,7 +157,8 @@ export default async function HostedInvoice({ params }: { params: { token: strin
           <div className="flex items-baseline justify-between gap-3 mb-6">
             <h1 className="font-display font-semibold text-[22px] text-on-surface">{number}</h1>
             <span className="font-mono text-[12px] text-on-surface-variant">
-              {new Date(issueDate).toLocaleDateString("es-AR")}
+              {/* parse as local noon so a YYYY-MM-DD date doesn't roll back a day in UTC-3 */}
+              {new Date(`${String(issueDate).slice(0, 10)}T12:00:00`).toLocaleDateString("es-AR")}
             </span>
           </div>
 
@@ -156,19 +194,19 @@ export default async function HostedInvoice({ params }: { params: { token: strin
             <table className="w-full text-[14px] mb-2">
               <thead>
                 <tr className="border-b border-outline-variant text-on-surface-placeholder">
-                  <th className="text-left font-mono text-[10px] uppercase tracking-widest py-2">Descripción</th>
-                  <th className="text-right font-mono text-[10px] uppercase tracking-widest py-2">Cant.</th>
-                  <th className="text-right font-mono text-[10px] uppercase tracking-widest py-2">Precio</th>
-                  <th className="text-right font-mono text-[10px] uppercase tracking-widest py-2">Importe</th>
+                  <th className="text-left font-mono text-[10px] uppercase tracking-widest py-2 pr-3 w-1/2">Descripción</th>
+                  <th className="text-right font-mono text-[10px] uppercase tracking-widest py-2 pl-4 whitespace-nowrap">Cant.</th>
+                  <th className="text-right font-mono text-[10px] uppercase tracking-widest py-2 pl-4 whitespace-nowrap">Precio</th>
+                  <th className="text-right font-mono text-[10px] uppercase tracking-widest py-2 pl-4 whitespace-nowrap">Importe</th>
                 </tr>
               </thead>
               <tbody>
                 {items.map((it, i) => (
                   <tr key={i} className="border-b border-outline-variant/40 text-on-surface-variant">
-                    <td className="py-2 text-on-surface">{it.description}</td>
-                    <td className="py-2 text-right font-mono">{it.qty ?? 1}</td>
-                    <td className="py-2 text-right font-mono">{fmt(it.unit_price)}</td>
-                    <td className="py-2 text-right font-mono text-on-surface">{fmt(it.amount)}</td>
+                    <td className="py-2 pr-3 text-on-surface">{it.description}</td>
+                    <td className="py-2 pl-4 text-right font-mono whitespace-nowrap">{it.qty ?? 1}</td>
+                    <td className="py-2 pl-4 text-right font-mono whitespace-nowrap">{fmt(it.unit_price)}</td>
+                    <td className="py-2 pl-4 text-right font-mono text-on-surface whitespace-nowrap">{fmt(it.amount)}</td>
                   </tr>
                 ))}
               </tbody>

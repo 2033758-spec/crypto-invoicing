@@ -20,6 +20,11 @@ interface Body {
   payout_destination?: string;
   tax_status?: string;
   telegram_handle?: string;
+  // factura-E issuer fields (optional — used to populate the invoice issuer block)
+  legal_name?: string;
+  fiscal_address?: string;
+  iva_condition?: string;
+  punto_venta?: string;
 }
 
 function str(v: unknown): string {
@@ -40,6 +45,13 @@ export async function POST(req: NextRequest) {
   const payout_destination = str(body.payout_destination);
   const tax_status = str(body.tax_status);
   const telegram_handle = str(body.telegram_handle);
+  const legal_name = str(body.legal_name).slice(0, 120);
+  const fiscal_address = str(body.fiscal_address).slice(0, 200);
+  const punto_venta = str(body.punto_venta).slice(0, 12);
+  let iva_condition = str(body.iva_condition);
+  if (iva_condition && iva_condition !== "monotributo" && iva_condition !== "responsable_inscripto") {
+    return NextResponse.json({ field: "iva_condition", error: "invalid" }, { status: 400 });
+  }
 
   // Field-level validation — return the offending field so the UI can highlight it.
   if (!full_name || full_name.length > 120) {
@@ -91,6 +103,10 @@ export async function POST(req: NextRequest) {
         payout_destination,
         tax_status: tax_status || null,
         telegram_handle: telegram_normalized,
+        legal_name: legal_name || null,
+        fiscal_address: fiscal_address || null,
+        iva_condition: iva_condition || null,
+        punto_venta: punto_venta || null,
         profile_completed_at: new Date().toISOString(),
       })
       .eq("id", user.id);
