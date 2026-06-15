@@ -28,6 +28,8 @@ interface InvoiceRequest {
   payment_link_sent_at: string | null;
   created_at: string;
   public_token: string | null;
+  recipient?: { name?: string; company?: string; address?: string; country?: string; tax_id?: string; email?: string } | null;
+  line_items?: { description: string; qty: number; unit_price: number; amount?: number }[] | null;
 }
 
 type FormStatus = "idle" | "submitting" | "ok" | "error";
@@ -55,6 +57,15 @@ export default function DashboardClient({ locale }: Props) {
   const [formError, setFormError] = useState<string | null>(null);
   const [spoofingWarning, setSpoofingWarning] = useState<string | null>(null);
 
+  // v1 rich invoice — recipient (the client's company details) + line items.
+  // Optional: if items are added, the total is computed from them and the plain
+  // amount field is hidden. Enriches the factura-E document on the hosted page.
+  const [rCompany, setRCompany] = useState("");
+  const [rAddress, setRAddress] = useState("");
+  const [rTaxId, setRTaxId] = useState("");
+  const [rCountryName, setRCountryName] = useState("");
+  const [items, setItems] = useState<{ description: string; qty: string; unit_price: string }[]>([]);
+
   // B3: payout profile (CUIT/CBU/Pix/tax) — concierge can't settle without it.
   const [pFirstName, setPFirstName] = useState("");
   const [pLastName, setPLastName] = useState("");
@@ -63,6 +74,11 @@ export default function DashboardClient({ locale }: Props) {
   const [pPayout, setPPayout] = useState("");
   const [pTaxStatus, setPTaxStatus] = useState("");
   const [pTelegram, setPTelegram] = useState("");
+  // factura-E issuer fields (populate the invoice "De" block)
+  const [pLegalName, setPLegalName] = useState("");
+  const [pFiscalAddress, setPFiscalAddress] = useState("");
+  const [pIvaCondition, setPIvaCondition] = useState("");
+  const [pPuntoVenta, setPPuntoVenta] = useState("");
   const [profileStatus, setProfileStatus] = useState<FormStatus>("idle");
   const [profileComplete, setProfileComplete] = useState(false);
   const [profileFieldError, setProfileFieldError] = useState<string | null>(null);
@@ -124,7 +140,7 @@ export default function DashboardClient({ locale }: Props) {
         // maybeSingle → null is fine before the migration is applied).
         supabase
           .from("users")
-          .select("full_name,country,tax_id,payout_destination,tax_status,telegram_handle")
+          .select("full_name,country,tax_id,payout_destination,tax_status,telegram_handle,legal_name,fiscal_address,iva_condition,punto_venta")
           .eq("id", data.user.id)
           .maybeSingle()
           .then(({ data: prof }: { data: Record<string, string | null> | null }) => {
@@ -147,6 +163,10 @@ export default function DashboardClient({ locale }: Props) {
             if (prof.payout_destination) setPPayout(prof.payout_destination);
             if (prof.tax_status) setPTaxStatus(prof.tax_status);
             if (prof.telegram_handle) setPTelegram(prof.telegram_handle);
+            if (prof.legal_name) setPLegalName(prof.legal_name);
+            if (prof.fiscal_address) setPFiscalAddress(prof.fiscal_address);
+            if (prof.iva_condition) setPIvaCondition(prof.iva_condition);
+            if (prof.punto_venta) setPPuntoVenta(prof.punto_venta);
             setProfileComplete(
               Boolean(prof.country && prof.tax_id && prof.payout_destination),
             );
@@ -173,11 +193,48 @@ export default function DashboardClient({ locale }: Props) {
     router.replace(homeHref);
   };
 
+  // ── Line-item helpers (v1 rich invoice) ──
+  const itemsTotal = items.reduce((acc, it) => {
+    const q = parseFloat(it.qty);
+    const p = parseFloat(it.unit_price);
+    return acc + (Number.isFinite(q) && Number.isFinite(p) ? q * p : 0);
+  }, 0);
+  const addItem = () => setItems((xs) => [...xs, { description: "", qty: "1", unit_price: "" }]);
+  const updateItem = (i: number, field: "description" | "qty" | "unit_price", val: string) =>
+    setItems((xs) => xs.map((it, j) => (j === i ? { ...it, [field]: val } : it)));
+  const removeItem = (i: number) => setItems((xs) => xs.filter((_, j) => j !== i));
+
+  // Clone an existing invoice into the form as a draft for a new one.
+  const cloneInvoice = (r: InvoiceRequest) => {
+    setClientName(r.client_name || "");
+    setClientEmail(r.client_email || "");
+    setCountry(r.country);
+    setDescription(r.description || "");
+    setRCompany(r.recipient?.company || "");
+    setRAddress(r.recipient?.address || "");
+    setRTaxId(r.recipient?.tax_id || "");
+    setRCountryName(r.recipient?.country || "");
+    const li = r.line_items;
+    if (Array.isArray(li) && li.length > 0) {
+      setItems(li.map((x) => ({ description: x.description || "", qty: String(x.qty ?? 1), unit_price: String(x.unit_price ?? "") })));
+      setAmountUsd("");
+    } else {
+      setItems([]);
+      setAmountUsd(r.amount_usd ? String(r.amount_usd) : "");
+    }
+    track("invoice_cloned");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormError(null);
 
-    const amount = parseFloat(amountUsd);
+    // Items present → total computed from them; else use the plain amount field.
+    const hasItems = items.some(
+      (it) => it.description.trim() && parseFloat(it.qty) > 0 && Number.isFinite(parseFloat(it.unit_price)),
+    );
+    const amount = hasItems ? itemsTotal : parseFloat(amountUsd);
     if (!clientName.trim()) {
       setFormError(t("form.errClientName"));
       return;
@@ -201,9 +258,29 @@ export default function DashboardClient({ locale }: Props) {
         body: JSON.stringify({
           client_name: clientName.trim(),
           client_email: clientEmail.trim() || undefined,
-          amount_usd: amount,
+          amount_usd: hasItems ? undefined : amount,
           description: description.trim() || undefined,
           country,
+          recipient:
+            rCompany.trim() || rAddress.trim() || rTaxId.trim() || rCountryName.trim()
+              ? {
+                  name: clientName.trim() || undefined,
+                  company: rCompany.trim() || undefined,
+                  address: rAddress.trim() || undefined,
+                  country: rCountryName.trim() || undefined,
+                  tax_id: rTaxId.trim() || undefined,
+                  email: clientEmail.trim() || undefined,
+                }
+              : undefined,
+          line_items: hasItems
+            ? items
+                .filter((it) => it.description.trim())
+                .map((it) => ({
+                  description: it.description.trim(),
+                  qty: parseFloat(it.qty) || 1,
+                  unit_price: parseFloat(it.unit_price) || 0,
+                }))
+            : undefined,
         }),
       });
       if (!res.ok) {
@@ -225,6 +302,11 @@ export default function DashboardClient({ locale }: Props) {
       setAmountUsd("");
       setDescription("");
       setSpoofingWarning(null);
+      setRCompany("");
+      setRAddress("");
+      setRTaxId("");
+      setRCountryName("");
+      setItems([]);
       setTimeout(() => {
         setFormStatus((s) => (s === "ok" ? "idle" : s));
       }, 2500);
@@ -263,6 +345,10 @@ export default function DashboardClient({ locale }: Props) {
           payout_destination: pPayout.trim(),
           tax_status: pTaxStatus.trim(),
           telegram_handle: tg,
+          legal_name: pLegalName.trim() || undefined,
+          fiscal_address: pFiscalAddress.trim() || undefined,
+          iva_condition: pIvaCondition.trim() || undefined,
+          punto_venta: pPuntoVenta.trim() || undefined,
         }),
       });
       if (res.status === 401) {
@@ -420,6 +506,20 @@ export default function DashboardClient({ locale }: Props) {
                     {profileFieldError === "telegram_handle" && <p className="mt-1 text-[11px] text-tertiary">{t("profile.errTelegram")}</p>}
                   </Field>
                 </div>
+                {/* factura-E issuer details — populate the invoice "De" block */}
+                <div className="rounded-lg border border-outline-variant/60 p-3 space-y-3">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-on-surface-placeholder">Datos para factura E · opcional</p>
+                  <input value={pLegalName} onChange={(e) => setPLegalName(e.target.value)} placeholder="Razón social (si difiere de tu nombre)" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
+                  <input value={pFiscalAddress} onChange={(e) => setPFiscalAddress(e.target.value)} placeholder="Domicilio fiscal" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <select value={pIvaCondition} onChange={(e) => setPIvaCondition(e.target.value)} aria-label="Condición frente al IVA" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface focus:border-primary focus:outline-none transition-colors duration-150">
+                      <option value="">Condición IVA…</option>
+                      <option value="monotributo">Monotributo</option>
+                      <option value="responsable_inscripto">Responsable Inscripto</option>
+                    </select>
+                    <input value={pPuntoVenta} onChange={(e) => setPPuntoVenta(e.target.value)} placeholder="Punto de venta (ej: 0001)" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
+                  </div>
+                </div>
                 <div className="flex items-center gap-3">
                   <button type="submit" disabled={profileStatus === "submitting" || profileStatus === "ok"} className={`inline-flex items-center justify-center gap-2 rounded px-5 py-2.5 font-mono text-[13px] uppercase tracking-wider transition-colors duration-150 ${profileStatus === "ok" ? "bg-primary/20 text-primary cursor-default" : profileStatus === "submitting" ? "bg-primary/60 text-primary-on cursor-wait" : "bg-primary text-primary-on hover:bg-primary-hover"}`}>
                     {profileStatus === "ok" ? t("profile.saved") : profileStatus === "submitting" ? t("profile.saving") : t("profile.save")}
@@ -501,29 +601,71 @@ export default function DashboardClient({ locale }: Props) {
                 </div>
               )}
 
-              <div className="grid sm:grid-cols-2 gap-4">
-                <Field label={t("form.amount")} htmlFor="amount_usd">
-                  <div className="relative">
-                    <span
-                      id="amount-unit"
-                      className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-[12px] text-on-surface-placeholder"
-                    >
-                      USD
+              {/* Recipient details — optional, but turn the note into a real factura */}
+              <div className="rounded-lg border border-outline-variant/60 p-3 space-y-3">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-on-surface-placeholder">
+                  Datos del cliente (para la factura) · opcional
+                </p>
+                <input value={rCompany} onChange={(e) => setRCompany(e.target.value)} placeholder="Empresa (ej: Acme Inc.)" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
+                <input value={rAddress} onChange={(e) => setRAddress(e.target.value)} placeholder="Dirección" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <input value={rCountryName} onChange={(e) => setRCountryName(e.target.value)} placeholder="País (ej: United States)" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
+                  <input value={rTaxId} onChange={(e) => setRTaxId(e.target.value)} placeholder="Tax ID / EIN (opcional)" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
+                </div>
+              </div>
+
+              {/* Line items — optional itemized breakdown; total overrides the plain amount */}
+              <div className="rounded-lg border border-outline-variant/60 p-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-on-surface-placeholder">Ítems · opcional</p>
+                  {items.length > 0 && (
+                    <span className="font-mono text-[12px] text-primary">
+                      Total: USD {itemsTotal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </span>
-                    <input
-                      id="amount_usd"
-                      type="number"
-                      required
-                      min="1"
-                      step="0.01"
-                      value={amountUsd}
-                      onChange={(e) => setAmountUsd(e.target.value)}
-                      placeholder="2500"
-                      aria-describedby="amount-unit"
-                      className="w-full rounded border border-outline-variant bg-surface pl-12 pr-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150"
-                    />
+                  )}
+                </div>
+                {items.map((it, i) => (
+                  <div key={i} className="flex gap-2 items-center">
+                    <input value={it.description} onChange={(e) => updateItem(i, "description", e.target.value)} placeholder="Descripción" className="flex-1 min-w-0 rounded border border-outline-variant bg-surface px-2 py-1.5 text-[13px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none" />
+                    <input value={it.qty} onChange={(e) => updateItem(i, "qty", e.target.value)} type="number" min="1" placeholder="Cant" aria-label="Cantidad" className="w-14 rounded border border-outline-variant bg-surface px-2 py-1.5 text-[13px] text-on-surface text-right focus:border-primary focus:outline-none" />
+                    <input value={it.unit_price} onChange={(e) => updateItem(i, "unit_price", e.target.value)} type="number" min="0" step="0.01" placeholder="Precio" aria-label="Precio unitario" className="w-20 rounded border border-outline-variant bg-surface px-2 py-1.5 text-[13px] text-on-surface text-right focus:border-primary focus:outline-none" />
+                    <button type="button" onClick={() => removeItem(i)} className="text-on-surface-placeholder hover:text-tertiary px-1 text-[18px] leading-none" aria-label="Quitar ítem">×</button>
                   </div>
-                </Field>
+                ))}
+                <button type="button" onClick={addItem} className="font-mono text-[11px] uppercase tracking-widest text-primary hover:underline">+ Agregar ítem</button>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                {items.length === 0 ? (
+                  <Field label={t("form.amount")} htmlFor="amount_usd">
+                    <div className="relative">
+                      <span
+                        id="amount-unit"
+                        className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-[12px] text-on-surface-placeholder"
+                      >
+                        USD
+                      </span>
+                      <input
+                        id="amount_usd"
+                        type="number"
+                        required
+                        min="1"
+                        step="0.01"
+                        value={amountUsd}
+                        onChange={(e) => setAmountUsd(e.target.value)}
+                        placeholder="2500"
+                        aria-describedby="amount-unit"
+                        className="w-full rounded border border-outline-variant bg-surface pl-12 pr-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150"
+                      />
+                    </div>
+                  </Field>
+                ) : (
+                  <Field label="Total (de los ítems)" htmlFor="items_total">
+                    <div id="items_total" className="rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] font-mono text-primary">
+                      USD {itemsTotal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </div>
+                  </Field>
+                )}
 
                 <Field label={t("form.country")} htmlFor="country">
                   <div
@@ -674,17 +816,26 @@ export default function DashboardClient({ locale }: Props) {
                         >
                           Ver / compartir factura →
                         </a>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const url = `${window.location.origin}/i/${r.public_token}`;
-                            navigator.clipboard?.writeText(url).catch(() => {});
-                            track("invoice_link_copied");
-                          }}
-                          className="font-mono text-[11px] uppercase tracking-widest text-on-surface-variant hover:text-primary whitespace-nowrap"
-                        >
-                          Copiar link
-                        </button>
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => cloneInvoice(r)}
+                            className="font-mono text-[11px] uppercase tracking-widest text-on-surface-variant hover:text-primary whitespace-nowrap"
+                          >
+                            Duplicar
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const url = `${window.location.origin}/i/${r.public_token}`;
+                              navigator.clipboard?.writeText(url).catch(() => {});
+                              track("invoice_link_copied");
+                            }}
+                            className="font-mono text-[11px] uppercase tracking-widest text-on-surface-variant hover:text-primary whitespace-nowrap"
+                          >
+                            Copiar link
+                          </button>
+                        </div>
                       </div>
                     )}
                     {r.status === "payment_link_ready" && r.usdc_address && (
