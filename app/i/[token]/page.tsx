@@ -115,6 +115,10 @@ export default async function HostedInvoice({ params }: { params: { token: strin
   const st = STATUS[status] ?? STATUS.pending_setup;
   const isPaid = status === "paid" || status === "settled";
   const isCancelled = status === "cancelled";
+  // Payment instructions appear only AFTER the founder reviews the request and
+  // moves it to payment_link_ready — gating the branded payment page behind a
+  // human check (anti phishing-host abuse, tester EVIL-H1).
+  const isPayable = status === "payment_link_ready";
 
   const issuer = (data.issuer_snapshot as Issuer | null) ?? null;
   const recipient = (data.recipient as Recipient | null) ?? null;
@@ -128,7 +132,10 @@ export default async function HostedInvoice({ params }: { params: { token: strin
   const subtotal = (data.subtotal_usd as number | null) ?? total;
   const taxNote = (data.tax_note as string | null) || "IVA exento — exportación de servicios";
 
-  const address = payment?.usdc_address || (data.usdc_address as string | null) || SAFE_ADDRESS;
+  // Payout address is sourced from the trusted env FIRST — never from the
+  // per-invoice row — so no future write to payment.usdc_address can ever
+  // redirect funds (latent money-path hardening, tester EVIL-H2).
+  const address = SAFE_ADDRESS || payment?.usdc_address || (data.usdc_address as string | null) || "";
   const reference =
     payment?.reference || (data.invoice_number as string | null) || params.token.slice(0, 8).toUpperCase();
   const network = payment?.network || "Base";
@@ -167,7 +174,7 @@ export default async function HostedInvoice({ params }: { params: { token: strin
             <div className="rounded-lg border border-outline-variant/60 p-4">
               <p className="font-mono text-[10px] uppercase tracking-widest text-on-surface-placeholder mb-2">De</p>
               <p className="text-[14px] text-on-surface font-medium">
-                {issuer?.legal_name || "Crypto Invoicing"}
+                {issuer?.legal_name || "—"}
               </p>
               {issuer?.cuit && <p className="text-[13px] text-on-surface-variant">CUIT {issuer.cuit}</p>}
               {issuer?.fiscal_address && (
@@ -235,8 +242,8 @@ export default async function HostedInvoice({ params }: { params: { token: strin
             </div>
           </div>
 
-          {/* Payment block (only while awaiting payment) */}
-          {!isPaid && !isCancelled && address && (
+          {/* Payment block — only once the founder has reviewed + enabled it */}
+          {isPayable && address && (
             <div className="mt-7 rounded-lg border border-primary/40 bg-surface-container-high p-5">
               <p className="font-mono text-[11px] uppercase tracking-widest text-primary mb-3">[ Pagar con USDC ]</p>
               <div className="rounded bg-primary/10 text-on-surface text-[12px] px-3 py-2 mb-4">
@@ -269,6 +276,14 @@ export default async function HostedInvoice({ params }: { params: { token: strin
               </div>
               <p className="mt-4 font-mono text-[11px] text-on-surface-placeholder">
                 1 Enviás USDC → 2 La red {network} confirma → 3 Marcamos pagado
+              </p>
+            </div>
+          )}
+
+          {status === "pending_setup" && (
+            <div className="mt-7 rounded-lg border border-outline-variant bg-surface-container-high p-5 text-center">
+              <p className="font-mono text-[12px] text-on-surface-variant">
+                El emisor está preparando el link de pago. Esta página se actualiza cuando esté listo.
               </p>
             </div>
           )}

@@ -194,11 +194,19 @@ export default function DashboardClient({ locale }: Props) {
   };
 
   // ── Line-item helpers (v1 rich invoice) ──
+  // Per-line rounding to match the server exactly (avoids the displayed total
+  // differing from the saved total by a cent).
   const itemsTotal = items.reduce((acc, it) => {
     const q = parseFloat(it.qty);
     const p = parseFloat(it.unit_price);
-    return acc + (Number.isFinite(q) && Number.isFinite(p) ? q * p : 0);
+    return acc + (Number.isFinite(q) && Number.isFinite(p) ? Math.round(q * p * 100) / 100 : 0);
   }, 0);
+  // "Itemized mode" requires ≥1 real line (description + price > 0). A blank/
+  // priced-0 row must NOT hide the plain amount field (that caused a dead-end:
+  // amount lost, Total 0, generic "amount required" error with no amount field).
+  const hasItems = items.some(
+    (it) => it.description.trim() && parseFloat(it.qty) > 0 && parseFloat(it.unit_price) > 0,
+  );
   const addItem = () => setItems((xs) => [...xs, { description: "", qty: "1", unit_price: "" }]);
   const updateItem = (i: number, field: "description" | "qty" | "unit_price", val: string) =>
     setItems((xs) => xs.map((it, j) => (j === i ? { ...it, [field]: val } : it)));
@@ -231,9 +239,6 @@ export default function DashboardClient({ locale }: Props) {
     setFormError(null);
 
     // Items present → total computed from them; else use the plain amount field.
-    const hasItems = items.some(
-      (it) => it.description.trim() && parseFloat(it.qty) > 0 && Number.isFinite(parseFloat(it.unit_price)),
-    );
     const amount = hasItems ? itemsTotal : parseFloat(amountUsd);
     if (!clientName.trim()) {
       setFormError(t("form.errClientName"));
@@ -509,15 +514,15 @@ export default function DashboardClient({ locale }: Props) {
                 {/* factura-E issuer details — populate the invoice "De" block */}
                 <div className="rounded-lg border border-outline-variant/60 p-3 space-y-3">
                   <p className="font-mono text-[10px] uppercase tracking-widest text-on-surface-placeholder">Datos para factura E · opcional</p>
-                  <input value={pLegalName} onChange={(e) => setPLegalName(e.target.value)} placeholder="Razón social (si difiere de tu nombre)" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
-                  <input value={pFiscalAddress} onChange={(e) => setPFiscalAddress(e.target.value)} placeholder="Domicilio fiscal" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
+                  <input value={pLegalName} onChange={(e) => setPLegalName(e.target.value)} placeholder="Razón social (si difiere de tu nombre)" aria-label="Razón social" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
+                  <input value={pFiscalAddress} onChange={(e) => setPFiscalAddress(e.target.value)} placeholder="Domicilio fiscal" aria-label="Domicilio fiscal" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
                   <div className="grid sm:grid-cols-2 gap-3">
                     <select value={pIvaCondition} onChange={(e) => setPIvaCondition(e.target.value)} aria-label="Condición frente al IVA" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface focus:border-primary focus:outline-none transition-colors duration-150">
                       <option value="">Condición IVA…</option>
                       <option value="monotributo">Monotributo</option>
                       <option value="responsable_inscripto">Responsable Inscripto</option>
                     </select>
-                    <input value={pPuntoVenta} onChange={(e) => setPPuntoVenta(e.target.value)} placeholder="Punto de venta (ej: 0001)" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
+                    <input value={pPuntoVenta} onChange={(e) => setPPuntoVenta(e.target.value)} placeholder="Punto de venta (ej: 0001)" aria-label="Punto de venta" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -606,11 +611,11 @@ export default function DashboardClient({ locale }: Props) {
                 <p className="font-mono text-[10px] uppercase tracking-widest text-on-surface-placeholder">
                   Datos del cliente (para la factura) · opcional
                 </p>
-                <input value={rCompany} onChange={(e) => setRCompany(e.target.value)} placeholder="Empresa (ej: Acme Inc.)" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
-                <input value={rAddress} onChange={(e) => setRAddress(e.target.value)} placeholder="Dirección" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
+                <input value={rCompany} onChange={(e) => setRCompany(e.target.value)} placeholder="Empresa (ej: Acme Inc.)" aria-label="Empresa del cliente" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
+                <input value={rAddress} onChange={(e) => setRAddress(e.target.value)} placeholder="Dirección" aria-label="Dirección del cliente" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
                 <div className="grid sm:grid-cols-2 gap-3">
-                  <input value={rCountryName} onChange={(e) => setRCountryName(e.target.value)} placeholder="País (ej: United States)" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
-                  <input value={rTaxId} onChange={(e) => setRTaxId(e.target.value)} placeholder="Tax ID / EIN (opcional)" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
+                  <input value={rCountryName} onChange={(e) => setRCountryName(e.target.value)} placeholder="País (ej: United States)" aria-label="País del cliente" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
+                  <input value={rTaxId} onChange={(e) => setRTaxId(e.target.value)} placeholder="Tax ID / EIN (opcional)" aria-label="Tax ID del cliente" className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150" />
                 </div>
               </div>
 
@@ -625,18 +630,20 @@ export default function DashboardClient({ locale }: Props) {
                   )}
                 </div>
                 {items.map((it, i) => (
-                  <div key={i} className="flex gap-2 items-center">
-                    <input value={it.description} onChange={(e) => updateItem(i, "description", e.target.value)} placeholder="Descripción" className="flex-1 min-w-0 rounded border border-outline-variant bg-surface px-2 py-1.5 text-[13px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none" />
-                    <input value={it.qty} onChange={(e) => updateItem(i, "qty", e.target.value)} type="number" min="1" placeholder="Cant" aria-label="Cantidad" className="w-14 rounded border border-outline-variant bg-surface px-2 py-1.5 text-[13px] text-on-surface text-right focus:border-primary focus:outline-none" />
-                    <input value={it.unit_price} onChange={(e) => updateItem(i, "unit_price", e.target.value)} type="number" min="0" step="0.01" placeholder="Precio" aria-label="Precio unitario" className="w-20 rounded border border-outline-variant bg-surface px-2 py-1.5 text-[13px] text-on-surface text-right focus:border-primary focus:outline-none" />
-                    <button type="button" onClick={() => removeItem(i)} className="text-on-surface-placeholder hover:text-tertiary px-1 text-[18px] leading-none" aria-label="Quitar ítem">×</button>
+                  <div key={i} className="flex flex-wrap sm:flex-nowrap gap-2 items-center">
+                    <input value={it.description} onChange={(e) => updateItem(i, "description", e.target.value)} placeholder="Descripción" aria-label="Descripción del ítem" className="w-full sm:flex-1 min-w-0 rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none" />
+                    <div className="flex gap-2 items-center w-full sm:w-auto">
+                      <input value={it.qty} onChange={(e) => updateItem(i, "qty", e.target.value)} inputMode="numeric" placeholder="Cant" aria-label="Cantidad" className="flex-1 sm:w-16 rounded border border-outline-variant bg-surface px-2 py-2 text-[14px] text-on-surface text-right focus:border-primary focus:outline-none" />
+                      <input value={it.unit_price} onChange={(e) => updateItem(i, "unit_price", e.target.value)} inputMode="decimal" placeholder="Precio" aria-label="Precio unitario" className="flex-1 sm:w-24 rounded border border-outline-variant bg-surface px-2 py-2 text-[14px] text-on-surface text-right focus:border-primary focus:outline-none" />
+                      <button type="button" onClick={() => removeItem(i)} className="shrink-0 w-9 h-9 flex items-center justify-center rounded text-on-surface-placeholder hover:text-tertiary hover:bg-tertiary/10 text-[20px] leading-none" aria-label="Quitar ítem">×</button>
+                    </div>
                   </div>
                 ))}
                 <button type="button" onClick={addItem} className="font-mono text-[11px] uppercase tracking-widest text-primary hover:underline">+ Agregar ítem</button>
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4">
-                {items.length === 0 ? (
+                {!hasItems ? (
                   <Field label={t("form.amount")} htmlFor="amount_usd">
                     <div className="relative">
                       <span

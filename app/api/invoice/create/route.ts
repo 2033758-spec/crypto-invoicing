@@ -174,13 +174,14 @@ export async function POST(req: NextRequest) {
     .eq("id", user.id)
     .maybeSingle();
 
+  // No email in the snapshot — it ends up on the public hosted page payload and
+  // the issuer never consented to publish it (tester SEC PII finding).
   const issuer_snapshot = {
     legal_name: profile?.legal_name || profile?.full_name || null,
     cuit: profile?.tax_id || null,
     fiscal_address: profile?.fiscal_address || null,
     iva_condition: profile?.iva_condition || null,
     punto_venta: profile?.punto_venta || null,
-    email: profile?.email || user.email || null,
   };
 
   const recipient = body.recipient
