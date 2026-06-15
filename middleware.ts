@@ -80,6 +80,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api|_next|_vercel|monitoring|icon|apple-icon|opengraph-image|.*\\..*).*)",
+    "/((?!api|_next|_vercel|monitoring|icon|apple-icon|opengraph-image|i/|.*\\..*).*)",
   ],
 };

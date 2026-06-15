@@ -27,6 +27,7 @@ interface InvoiceRequest {
   usdc_address: string | null;
   payment_link_sent_at: string | null;
   created_at: string;
+  public_token: string | null;
 }
 
 type FormStatus = "idle" | "submitting" | "ok" | "error";
@@ -663,6 +664,29 @@ export default function DashboardClient({ locale }: Props) {
                         {new Date(r.created_at).toLocaleDateString(locale)}
                       </span>
                     </div>
+                    {r.public_token && (
+                      <div className="mt-3 pt-3 border-t border-outline-variant flex items-center justify-between gap-2">
+                        <a
+                          href={`/i/${r.public_token}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-mono text-[11px] text-primary hover:underline"
+                        >
+                          Ver / compartir factura →
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const url = `${window.location.origin}/i/${r.public_token}`;
+                            navigator.clipboard?.writeText(url).catch(() => {});
+                            track("invoice_link_copied");
+                          }}
+                          className="font-mono text-[11px] uppercase tracking-widest text-on-surface-variant hover:text-primary whitespace-nowrap"
+                        >
+                          Copiar link
+                        </button>
+                      </div>
+                    )}
                     {r.status === "payment_link_ready" && r.usdc_address && (
                       <div className="mt-3 pt-3 border-t border-outline-variant">
                         <p className="font-mono text-[10px] uppercase tracking-widest text-primary mb-1">

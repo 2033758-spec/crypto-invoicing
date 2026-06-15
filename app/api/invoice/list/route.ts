@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   const { data, error, count } = await supabase
     .from("invoice_requests")
     .select(
-      "id, client_name, client_email, amount_usd, description, country, status, usdc_address, payment_link_sent_at, created_at",
+      "id, client_name, client_email, amount_usd, description, country, status, usdc_address, payment_link_sent_at, created_at, public_token",
       { count: "exact" },
     )
     .order("created_at", { ascending: false })
