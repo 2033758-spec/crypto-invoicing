@@ -40,7 +40,15 @@ export async function middleware(request: NextRequest) {
               maxAge: SESSION_MAX_AGE, // 30-day persistence (refreshed cookies keep the long expiry)
               sameSite: "lax", // Allow cross-tab cookies
               secure: isSecure, // HTTPS in prod, allow HTTP on localhost
-              httpOnly: true, // Not accessible from JS
+              // httpOnly MUST stay false on the Supabase auth cookie. The app
+              // reads the session client-side via getBrowserSupabase() (the
+              // /dashboard auth gate + profile query). @supabase/ssr stores the
+              // session in a JS-readable cookie by design; forcing httpOnly:true
+              // here made the browser client see no session after the first
+              // middleware refresh → /dashboard bounced logged-in users to
+              // /signup even though the server (home header) saw them logged in
+              // (incident 2026-06-12). Server reads are unaffected by this flag.
+              httpOnly: false,
             });
           },
           remove(name: string, options: any) {
