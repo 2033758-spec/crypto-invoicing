@@ -74,7 +74,7 @@ const DEMO = {
   status: "payment_link_ready",
   usdc_address: null,
   created_at: "2026-06-15",
-  invoice_number: "FE-0001-00000007",
+  invoice_number: "INV-0001-00000007",
   issue_date: "2026-06-15",
   currency: "USD",
   issuer_snapshot: {
@@ -92,7 +92,7 @@ const DEMO = {
   total_usd: 1800,
   tax_note: "IVA exento — exportación de servicios",
   terms_notes: "Pago a 7 días. Gracias por tu confianza.",
-  payment: { usdc_address: "0x69daB6ec0FFEE5a7c3b4a3D1e2f0A9b8C7d6E5f4", network: "Base", reference: "FE-0001-00000007" },
+  payment: { usdc_address: "0x69daB6ec0FFEE5a7c3b4a3D1e2f0A9b8C7d6E5f4", network: "Base", reference: "INV-0001-00000007" },
 };
 
 export default async function HostedInvoice({ params }: { params: { token: string } }) {
@@ -148,7 +148,7 @@ export default async function HostedInvoice({ params }: { params: { token: strin
   const reference =
     payment?.reference || (data.invoice_number as string | null) || params.token.slice(0, 8).toUpperCase();
   const network = payment?.network || "Base";
-  const number = (data.invoice_number as string | null) || `FE-${params.token.slice(0, 8).toUpperCase()}`;
+  const number = (data.invoice_number as string | null) || `INV-${params.token.slice(0, 8).toUpperCase()}`;
   const issueDate = (data.issue_date as string | null) || (data.created_at as string);
 
   return (
@@ -169,7 +169,7 @@ export default async function HostedInvoice({ params }: { params: { token: strin
         {/* Invoice document */}
         <article id="invoice-doc" className="rounded-xl border border-outline-variant bg-surface p-6 sm:p-8">
           <p className="font-mono text-[11px] uppercase tracking-widest text-primary mb-1">
-            [ FACTURA E · EXPORTACIÓN DE SERVICIOS ]
+            [ FACTURA PRO-FORMA · EXPORTACIÓN DE SERVICIOS ]
           </p>
           <div className="flex items-baseline justify-between gap-3 mb-6">
             <h1 className="font-display font-semibold text-[22px] text-on-surface">{number}</h1>
@@ -314,6 +314,10 @@ export default async function HostedInvoice({ params }: { params: { token: strin
           {(data.terms_notes as string | null) && (
             <p className="mt-6 text-[12px] text-on-surface-placeholder italic">{data.terms_notes as string}</p>
           )}
+
+          <p className="mt-6 pt-4 border-t border-outline-variant/40 text-[11px] text-on-surface-placeholder leading-relaxed">
+            Documento comercial (pro-forma) — no es comprobante fiscal autorizado por AFIP. La factura E de exportación de servicios se emite por separado.
+          </p>
         </article>
 
         {/* Trust footer */}
