@@ -65,6 +65,7 @@ export default function DashboardClient({ locale }: Props) {
   const [rTaxId, setRTaxId] = useState("");
   const [rCountryName, setRCountryName] = useState("");
   const [items, setItems] = useState<{ description: string; qty: string; unit_price: string }[]>([]);
+  const [termsNotes, setTermsNotes] = useState("");
 
   // B3: payout profile (CUIT/CBU/Pix/tax) — concierge can't settle without it.
   const [pFirstName, setPFirstName] = useState("");
@@ -286,6 +287,7 @@ export default function DashboardClient({ locale }: Props) {
                   unit_price: parseFloat(it.unit_price) || 0,
                 }))
             : undefined,
+          terms_notes: termsNotes.trim() || undefined,
         }),
       });
       if (!res.ok) {
@@ -312,6 +314,7 @@ export default function DashboardClient({ locale }: Props) {
       setRTaxId("");
       setRCountryName("");
       setItems([]);
+      setTermsNotes("");
       setTimeout(() => {
         setFormStatus((s) => (s === "ok" ? "idle" : s));
       }, 2500);
@@ -538,6 +541,27 @@ export default function DashboardClient({ locale }: Props) {
           </details>
         </section>
 
+        {/* Inc 4: how-it-works — orients the user on what happens after they create. */}
+        <section className="mb-8 rounded-lg border border-outline-variant bg-surface-container-low p-6">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-primary mb-5">[ Cómo funciona ]</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
+            {([
+              ["1", "Creás la factura", "Cargás cliente e ítems. Generamos un link profesional."],
+              ["2", "Compartís el link", "Se lo mandás a tu cliente del exterior. Paga en USDC."],
+              ["3", "Convertimos", "Pasamos USDC a pesos al mejor cambio, sin spread oculto."],
+              ["4", "Cobrás en tu CBU", "Pesos en tu cuenta en 2–4 h hábiles, con factura E lista."],
+            ] as const).map(([n, title, desc]) => (
+              <div key={n}>
+                <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-primary/15 border border-primary/40 font-mono text-[12px] text-primary mb-2">
+                  {n}
+                </span>
+                <p className="font-display font-medium text-[14px] text-on-surface mb-1">{title}</p>
+                <p className="text-on-surface-variant text-[12px] leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <div className="grid lg:grid-cols-[1.2fr_1fr] gap-8">
           {/* LEFT — Create-invoice form */}
           <section
@@ -714,6 +738,18 @@ export default function DashboardClient({ locale }: Props) {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder={t("form.descriptionPlaceholder")}
+                  maxLength={500}
+                  className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150 resize-none"
+                />
+              </Field>
+
+              <Field label="Condiciones / notas" htmlFor="terms_notes" hint="Opcional — ej: «Pago a 7 días». Aparece al pie de la factura.">
+                <textarea
+                  id="terms_notes"
+                  rows={2}
+                  value={termsNotes}
+                  onChange={(e) => setTermsNotes(e.target.value)}
+                  placeholder="Pago a 7 días. Gracias por tu confianza."
                   maxLength={500}
                   className="w-full rounded border border-outline-variant bg-surface px-3 py-2 text-[14px] text-on-surface placeholder:text-on-surface-placeholder focus:border-primary focus:outline-none transition-colors duration-150 resize-none"
                 />

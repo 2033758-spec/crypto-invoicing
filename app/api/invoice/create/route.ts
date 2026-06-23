@@ -52,6 +52,10 @@ function s(v: unknown, max: number): string | null {
   const t = typeof v === "string" ? v.trim() : "";
   return t ? t.slice(0, max) : null;
 }
+// Reject emails on our own domain (anti-spoofing — a "client" can't be us).
+function isOwnDomain(email: string): boolean {
+  return /@cryptoinvoicing\.(co|com)$/i.test(email.trim());
+}
 
 export async function POST(req: NextRequest) {
   let body: Body;
@@ -73,7 +77,7 @@ export async function POST(req: NextRequest) {
 
   const client_email =
     typeof body.client_email === "string" ? body.client_email.trim() : "";
-  if (client_email && !EMAIL_RE.test(client_email)) {
+  if (client_email && (!EMAIL_RE.test(client_email) || isOwnDomain(client_email))) {
     return NextResponse.json({ error: "Invalid client_email" }, { status: 400 });
   }
 
@@ -194,6 +198,9 @@ export async function POST(req: NextRequest) {
         email: s(body.recipient.email, 160),
       }
     : null;
+  if (recipient?.email && (!EMAIL_RE.test(recipient.email) || isOwnDomain(recipient.email))) {
+    return NextResponse.json({ error: "Invalid recipient email" }, { status: 400 });
+  }
 
   // IVA exento (export of services) → total = subtotal.
   const total_usd = amount_usd;

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import QRCode from "qrcode";
 import { getServerSupabase } from "../../lib/supabase";
 import CopyButton from "./CopyButton";
 
@@ -136,6 +137,13 @@ export default async function HostedInvoice({ params }: { params: { token: strin
   // per-invoice row — so no future write to payment.usdc_address can ever
   // redirect funds (latent money-path hardening, tester EVIL-H2).
   const address = SAFE_ADDRESS || payment?.usdc_address || (data.usdc_address as string | null) || "";
+
+  // QR of the payout address (server-generated PNG data URL — no client JS, no
+  // third-party image service). Only when the invoice is actually payable.
+  const qrDataUrl =
+    isPayable && address
+      ? await QRCode.toDataURL(address, { margin: 1, width: 240, color: { dark: "#0a0f0d", light: "#ffffff" } }).catch(() => null)
+      : null;
   const reference =
     payment?.reference || (data.invoice_number as string | null) || params.token.slice(0, 8).toUpperCase();
   const network = payment?.network || "Base";
@@ -249,6 +257,12 @@ export default async function HostedInvoice({ params }: { params: { token: strin
               <div className="rounded bg-primary/10 text-on-surface text-[12px] px-3 py-2 mb-4">
                 ⚠ Send only <strong>USDC on the {network} network</strong>. Other networks or tokens may be lost.
               </div>
+              {qrDataUrl && (
+                <div className="flex justify-center mb-4">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={qrDataUrl} alt="QR del address de pago" width={160} height={160} className="rounded-lg bg-white p-2" />
+                </div>
+              )}
               <div className="space-y-3">
                 <div>
                   <p className="font-mono text-[10px] uppercase tracking-widest text-on-surface-placeholder mb-1">
