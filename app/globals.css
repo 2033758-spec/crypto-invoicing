@@ -783,3 +783,30 @@ details.faq-item[open] .faq-plus {
 .account-menu-summary::-webkit-details-marker {
   display: none;
 }
+
+/* Print → Save as PDF (hosted invoice /i/{token}). Flip the dark invoice to a
+   clean light document and hide interactive chrome (.no-print). */
+@media print {
+  @page {
+    margin: 14mm;
+  }
+  body {
+    background: #fff !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  #invoice-doc {
+    background: #fff !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  #invoice-doc * {
+    color: #111 !important;
+    background: transparent !important;
+    border-color: #ddd !important;
+  }
+  #invoice-doc img {
+    background: #fff !important;
+  }
+}

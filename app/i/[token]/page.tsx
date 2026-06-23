@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import QRCode from "qrcode";
 import { getServerSupabase } from "../../lib/supabase";
 import CopyButton from "./CopyButton";
+import PrintButton from "./PrintButton";
 
 // Public hosted invoice page — /i/{token}. The artifact a freelancer shares
 // with their overseas client. NO auth: access is via the unguessable
@@ -153,19 +154,20 @@ export default async function HostedInvoice({ params }: { params: { token: strin
   return (
     <main className="relative min-h-screen px-4 sm:px-6 py-8 bg-[var(--surface-container-lowest,#0a0f0d)]">
       <div className="mx-auto max-w-[720px]">
-        {/* Brand bar */}
-        <div className="flex items-center justify-center gap-2 mb-6">
+        {/* Brand bar + actions — not printed */}
+        <div className="no-print flex items-center justify-between gap-2 mb-6">
           <span className="font-display font-medium text-[15px] text-on-surface">Crypto Invoicing</span>
+          <PrintButton />
         </div>
 
         {/* Status bar */}
-        <div className="rounded-lg border border-outline-variant bg-surface px-5 py-3 mb-5 flex items-center justify-between gap-3">
+        <div className="no-print rounded-lg border border-outline-variant bg-surface px-5 py-3 mb-5 flex items-center justify-between gap-3">
           <span className={`font-mono text-[11px] uppercase tracking-widest ${st.tone}`}>● {st.label}</span>
           <span className="font-mono text-[11px] text-on-surface-placeholder">{number}</span>
         </div>
 
         {/* Invoice document */}
-        <article className="rounded-xl border border-outline-variant bg-surface p-6 sm:p-8">
+        <article id="invoice-doc" className="rounded-xl border border-outline-variant bg-surface p-6 sm:p-8">
           <p className="font-mono text-[11px] uppercase tracking-widest text-primary mb-1">
             [ FACTURA E · EXPORTACIÓN DE SERVICIOS ]
           </p>
@@ -315,7 +317,7 @@ export default async function HostedInvoice({ params }: { params: { token: strin
         </article>
 
         {/* Trust footer */}
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 font-mono text-[10px] uppercase tracking-widest text-on-surface-placeholder">
+        <div className="no-print mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 font-mono text-[10px] uppercase tracking-widest text-on-surface-placeholder">
           <span>Non-custodial · Safe multisig</span>
           <span>Circle USDC</span>
           <span>Buenos Aires · LATAM</span>

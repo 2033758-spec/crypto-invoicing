@@ -24,7 +24,7 @@ export default function CopyButton({
           /* clipboard blocked — no-op */
         }
       }}
-      className="font-mono text-[11px] uppercase tracking-widest text-primary hover:underline whitespace-nowrap"
+      className="no-print font-mono text-[11px] uppercase tracking-widest text-primary hover:underline whitespace-nowrap"
     >
       {copied ? "✓ Copiado" : label}
     </button>
