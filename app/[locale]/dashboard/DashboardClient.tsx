@@ -66,6 +66,7 @@ export default function DashboardClient({ locale }: Props) {
   const [rCountryName, setRCountryName] = useState("");
   const [items, setItems] = useState<{ description: string; qty: string; unit_price: string }[]>([]);
   const [termsNotes, setTermsNotes] = useState("");
+  const [cloneNotice, setCloneNotice] = useState(false);
 
   // B3: payout profile (CUIT/CBU/Pix/tax) — concierge can't settle without it.
   const [pFirstName, setPFirstName] = useState("");
@@ -232,6 +233,8 @@ export default function DashboardClient({ locale }: Props) {
       setAmountUsd(r.amount_usd ? String(r.amount_usd) : "");
     }
     track("invoice_cloned");
+    setCloneNotice(true);
+    setTimeout(() => setCloneNotice(false), 8000);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -585,6 +588,12 @@ export default function DashboardClient({ locale }: Props) {
             <p className="text-[13px] text-on-surface-variant mb-6">
               {t("form.subtitle")}
             </p>
+
+            {cloneNotice && (
+              <div className="mb-4 rounded border border-primary/40 bg-primary/10 px-3 py-2 text-[13px] text-primary">
+                ✓ Copiado de una factura anterior. Revisá / cambiá lo que necesites y tocá <strong>Crear factura</strong> para crear la nueva.
+              </div>
+            )}
 
             {/* ym-hide-content: invoice client names / amounts out of Webvisor. */}
             <form onSubmit={handleSubmit} className="space-y-4 ym-hide-content">

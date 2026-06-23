@@ -44,6 +44,7 @@ interface Body {
 
 const EMAIL_RE = /^\S+@\S+\.\S+$/;
 const SAFE_ADDRESS = process.env.SAFE_MULTISIG_ADDRESS || "";
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://cryptoinvoicing.co";
 
 function num(v: unknown): number {
   return typeof v === "number" ? v : parseFloat(String(v));
@@ -229,6 +230,11 @@ export async function POST(req: NextRequest) {
       terms_notes: s(body.terms_notes, 500),
       currency: "USD",
       payment,
+      // Auto-advance to payable when a real payout address is configured, so the
+      // freelancer gets an instantly-shareable invoice (no manual founder flip).
+      // Without an address, stay pending_setup (don't show an empty payment block).
+      // The founder still gates the money-out step (paid → settled) manually.
+      status: SAFE_ADDRESS ? "payment_link_ready" : "pending_setup",
     })
     .select(
       "id, client_name, client_email, amount_usd, description, country, status, created_at, public_token",
@@ -257,7 +263,9 @@ export async function POST(req: NextRequest) {
     `Country: <code>${tgEscape(country)}</code>\n` +
     (description ? `\nDescription:\n${tgEscape(description)}\n` : "") +
     `\nRequest ID: <code>${tgEscape(inserted.id)}</code>\n` +
-    `Next: provision Safe address, mark <code>payment_link_ready</code>.`;
+    (SAFE_ADDRESS
+      ? `✅ <b>Link de pago listo</b>: ${SITE}/i/${tgEscape(inserted.public_token)}\nNext: cuando llegue el USDC → <code>paid</code> → tras pagar el CBU → <code>settled</code>.`
+      : `⚠️ <code>SAFE_MULTISIG_ADDRESS</code> no configurado — quedó en <code>pending_setup</code> (sin link de pago).`);
 
   try {
     // Await with 5s timeout so we don't block response indefinitely
